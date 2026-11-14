@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GroundTwin</title>
+<meta name="description" content="GroundTwin — Earth's ground truth for the Moon and Mars. NASA Space Apps Challenge 2026, Team Code Influence.">
+<!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
+</head>
+<body>
+<div id="demo-banner" hidden>DEMO DATA — the numbers on this site are placeholders. Replace docs/data/*.json with pipeline output before submission.</div>
+
+<header class="nav">
+  <a class="brand" href="#home" aria-label="GroundTwin home">
+    <svg width="34" height="26" viewBox="0 0 34 26" aria-hidden="true"><circle cx="12" cy="13" r="10" fill="var(--ice)"/><circle cx="21" cy="13" r="10" fill="none" stroke="var(--text)" stroke-width="2.2"/></svg>
+    <span>GroundTwin</span>
+  </a>
+  <nav id="navlinks">
+    <a href="#radar">Radar Twin</a>
+    <a href="#explore">Explore Earth</a>
+    <a href="#mangystau">Mars Field Twin</a>
+    <a href="#method">Method</a>
+    <a href="#about">About</a>
+  </nav>
+  <button class="menu" id="menu" aria-label="Menu">☰</button>
+</header>
+
+<main>
+<!-- ================= HOME ================= -->
+<section class="page" data-page="home">
+  <div class="hero">
+    <p class="kicker">NASA Space Apps Challenge 2026 · Team Code Influence</p>
+    <h1>Where does Earth <em>echo</em> like the Moon?</h1>
+    <p class="lead"><b>GroundTwin — Earth's ground truth for the Moon and Mars.</b> Lunar radar can mistake rocks for ice. We measure the same radar signal on Earth, where we know the answer, and use it to read the Moon — plus a global map of Earth twins and Mangystau in Kazakhstan, the floor of a vanished sea, as a field twin of Mars.</p>
+    <div class="cta">
+      <a class="btn primary" href="#radar">Decode the Moon's radar →</a>
+      <a class="btn" href="#explore">Find Earth twins</a>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="cards3">
+    <a class="card module" href="#radar">
+      <span class="tag ice">Moon</span>
+      <h3>Radar Twin</h3>
+      <p>Is that bright radar crater full of ice — or just rocks? Canada's RCM radar shares the design of NASA's Mini-RF, so Earth glaciers and rock fields become the answer key.</p>
+      <span class="more">Open →</span>
+    </a>
+    <a class="card module" href="#explore">
+      <span class="tag earth">Whole Earth</span>
+      <h3>Analog Engine</h3>
+      <p>Pick a target on the Moon or Mars and a mission goal. Every land cell on Earth gets a similarity score — with what matches and what doesn't.</p>
+      <span class="more">Open →</span>
+    </a>
+    <a class="card module" href="#mangystau">
+      <span class="tag mars">Mars</span>
+      <h3>Mars Field Twin</h3>
+      <p>Mangystau in Kazakhstan is the floor of a vanished sea: layered rocks, salt flats and stone concretions. We test it against Gale crater and Meridiani on Mars with NASA data.</p>
+      <span class="more">Open →</span>
+    </a>
+  </div>
+  <div class="card why">
+    <h3>Why it matters</h3>
+    <ol>
+      <li><b>Ice decides where the first Moon base goes.</b> It means water, oxygen and rocket fuel on site.</li>
+      <li><b>Radar can't tell ice from rocks alone.</b> High "twisted echo" (CPR) comes from both — scientists have debated it for over a decade.</li>
+      <li><b>Earth analogs are still picked mostly by hand.</b> GroundTwin searches with data and shows where each analogy breaks.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= RADAR TWIN ================= -->
+<section class="page" data-page="radar" hidden>
+  <h2>Radar Twin <span class="muted">— is it ice or rock?</span></h2>
+  <div class="steps">
+    <div class="step"><span>1</span><p>The radar sends a <b>twisted</b> (circularly polarized) wave.</p></div>
+    <div class="step"><span>2</span><p><b>Smooth</b> ground flips the twist. <b>Rocks and ice</b> keep part of it.</p></div>
+    <div class="step"><span>3</span><p><b>CPR</b> = kept ÷ flipped. High CPR means rocks <i>or</i> ice — so we need Earth's answer key.</p></div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-h"><h3>Lunar south pole</h3><span class="muted small">Click a crater</span></div>
+      <svg id="polar" viewBox="0 0 520 520" role="img" aria-label="Map of lunar south pole targets"></svg>
+      <div class="legend" id="polar-legend"></div>
+    </div>
+    <div class="card" id="crater-card"></div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h3>The Earth ruler</h3><span class="muted small">Canadian RCM radar over places where we know the ground truth</span></div>
+    <svg id="ruler" role="img" aria-label="CPR of Earth reference sites with the selected lunar crater"></svg>
+    <p class="note" id="ruler-note"></p>
+  </div>
+</section>
+
+<!-- ================= EXPLORE ================= -->
+<section class="page" data-page="explore" hidden>
+  <h2>Explore Earth twins</h2>
+  <div class="controls">
+    <label>Target <select id="target"></select></label>
+    <div class="seg" id="modes" role="tablist"></div>
+    <label class="check"><input type="checkbox" id="known" checked> Known analog sites</label>
+  </div>
+  <div class="grid-explore">
+    <div class="card map-card">
+      <div id="map"></div>
+      <div class="map-legend"><span>Similarity:</span><i class="ramp"></i><span>top 50%</span><span>top 1%</span></div>
+      <p class="note" id="lift-note"></p>
+    </div>
+    <div class="side">
+      <div class="card" id="place-card"><p class="muted">Click anywhere on land, or pick a place from the list.</p></div>
+      <div class="card"><h3>Top 10 for this goal</h3><ol id="top10" class="top10"></ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MANGYSTAU ================= -->
+<section class="page" data-page="mangystau" hidden>
+  <h2>Mars Field Twin: Mangystau <span class="muted">— the floor of a vanished sea</span></h2>
+  <p class="lead narrow">Mars once had lakes in craters like <b>Gale</b> and <b>Jezero</b>; then the water left, and layered rocks, salts and dust remained. <b>Mangystau</b> in western Kazakhstan is the floor of the ancient <b>Tethys Sea</b>: striped sedimentary cliffs, salt flats (sors) and giant stone concretions, in a dry land with almost no plants.</p>
+  <div class="stats" id="mgs-rank"></div>
+  <div class="card" id="mgs-images"></div>
+  <div class="card">
+    <h3>Field sites</h3>
+    <div class="table-wrap" id="mgs-places"></div>
+  </div>
+  <div class="card">
+    <h3>What matches — and what doesn't</h3>
+    <div class="table-wrap"><table class="cmp">
+      <thead><tr><th></th><th>Mangystau (Earth)</th><th>Gale crater (Mars)</th><th>Meridiani Planum (Mars)</th></tr></thead>
+      <tbody>
+        <tr><td>Layered sediments left by water</td><td class="yes">Tethys Sea sediments — Bozzhyra, Sherkala</td><td class="yes">Ancient lake sediments, Mount Sharp [Grotzinger et al. 2014/2015]</td><td>—</td></tr>
+        <tr><td>Salts after the water dried</td><td class="yes">Sors (salt flats), e.g. Tuzbair</td><td class="yes" colspan="2">Salts left as the water disappeared</td></tr>
+        <tr><td>Concretions cemented by groundwater</td><td class="yes">Stone balls of the Torysh valley</td><td>—</td><td class="yes">"Blueberry" spherules found by Opportunity [Squyres et al. 2004]</td></tr>
+        <tr><td>Dry, barren, windy</td><td class="yes">Desert with almost no plants</td><td class="yes" colspan="2">Cold, hyper-arid desert</td></tr>
+        <tr><td>Concretion size and material</td><td class="no">Metres across, sandstone</td><td>—</td><td class="no">Millimetres, hematite (iron oxide)</td></tr>
+        <tr><td>Kind of water body</td><td class="no">A sea</td><td class="no" colspan="2">Lakes</td></tr>
+        <tr><td>Environment</td><td class="no">Air, warmth, occasional rain, life</td><td class="no" colspan="2">Air below 1% of Earth's pressure, cold, radiation</td></tr>
+        <tr><td>Age and history</td><td class="no" colspan="3">Different ages and histories</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">The Karagiye Depression, about 132 m below sea level, is the lowest point in Kazakhstan; it formed later, as rocks dissolved. Travel writing calls Mangystau a "Martian landscape", but we found no scientific study of it as a Mars analog — GroundTwin tests the idea with NASA data.</p>
+  </div>
+</section>
+
+<!-- ================= METHOD ================= -->
+<section class="page" data-page="method" hidden>
+  <h2>Method</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>1 · Radar Twin</h3>
+      <p>CPR from Canada's RCM compact-polarimetric radar (Earth) and NASA's Mini-RF (Moon):</p>
+      <div class="tex" data-tex="CPR = \frac{\sigma_{SC}}{\sigma_{OC}}"></div>
+      <p>Earth reference classes: <span class="dot smooth"></span>smooth ground, <span class="dot rock"></span>rock fields, <span class="dot ice"></span>glacier ice. Dry winter scenes, local incidence angle 30–60°, 5×5-pixel averaging.</p>
+      <p><b>Ice Evidence Score</b> for each lunar crater (0–3):</p>
+      <div class="tex" data-tex="IES = [\,CPR_{in}/CPR_{out} > 1.2\,] + [\,\text{smooth floor}\,] + [\,T_{max} < 110\,K\,]"></div>
+      <p class="muted small">Mini-RF radar · LOLA slopes · Diviner temperatures. "Consistent with ice", never "ice confirmed".</p>
+    </div>
+    <div class="card">
+      <h3>2 · Analog Engine</h3>
+      <p>Each land cell gets percentiles <i>p</i> for 7 features (how extreme it is by Earth's standards). Each target has a profile <i>t</i>; each mission goal has weights <i>w</i>.</p>
+      <div class="tex" data-tex="s_i = 1 - |p_i - t_i| \qquad S = \frac{\sum_i w_i s_i}{\sum_i w_i}"></div>
+      <h3>3 · Validation</h3>
+      <div class="tex" data-tex="Lift = \frac{\text{share of known analog sites in the top 10\%}}{0.10}"></div>
+      <p id="method-lift"></p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Data</h3>
+    <div class="table-wrap"><table class="cmp">
+      <thead><tr><th>Dataset</th><th>Agency</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td>LRO Mini-RF polar CPR mosaics</td><td>NASA</td><td>Lunar radar (CPR inside / outside craters)</td></tr>
+        <tr><td>LRO Diviner polar temperatures</td><td>NASA</td><td>Cold-trap test (T<sub>max</sub> &lt; 110 K)</td></tr>
+        <tr><td>LRO LOLA polar topography</td><td>NASA</td><td>Crater floor slope and roughness</td></tr>
+        <tr><td>RADARSAT Constellation Mission, CEOS-ARD</td><td>CSA / NRCan</td><td>Earth radar reference (CPR)</td></tr>
+        <tr><td>MODIS LST, NDVI, aerosols</td><td>NASA</td><td>Temperature swing, cold, vegetation, dust</td></tr>
+        <tr><td>GPM IMERG</td><td>NASA / JAXA</td><td>Aridity</td></tr>
+        <tr><td>Copernicus DEM GLO-30</td><td>ESA</td><td>Mangystau elevation, slopes, Karagiye depth</td></tr>
+        <tr><td>Copernicus Sentinel-2</td><td>ESA</td><td>Mangystau true-colour imagery, approximate salt index</td></tr>
+        <tr><td>USGS Known Terrestrial Analog Sites</td><td>USGS</td><td>Validation</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card limits">
+    <h3>Honest limits</h3>
+    <ul>
+      <li>Earth cannot reproduce low gravity, vacuum, the thin Martian air or space radiation.</li>
+      <li>RCM (C-band, ~5.5 cm) and Mini-RF (S-band, 12.6 cm) use different wavelengths: we compare the <b>order</b> of classes and the inside/outside contrast, not exact numbers.</li>
+      <li>Earth ice is cleaner than lunar ice mixed with regolith; moisture changes radar on Earth, so we use dry winter scenes.</li>
+      <li>The global grid is coarse: GroundTwin is a screening tool, not a replacement for field work.</li>
+      <li>Target profiles and weights are our choices — all of them are visible and editable.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="page" data-page="about" hidden>
+  <h2>About</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Team Code Influence</h3>
+      <p>[Team member names] · Kazakhstan</p>
+      <p>Challenge: <b>[exact challenge title]</b> · NASA Space Apps Challenge 2026.</p>
+      <p><a href="https://github.com/[login]/groundtwin">Code on GitHub</a> · <a href="paper/groundtwin_paper.pdf">Research paper (PDF)</a></p>
+    </div>
+    <div class="card">
+      <h3>Use of AI</h3>
+      <p>We used Claude (Anthropic) to help write Python and HTML/JavaScript code, debug, and edit English text. The project concept (using Canada's RCM as an Earth calibration twin for NASA's Mini-RF), the choice of sites and data, all checks and interpretation, and the visual design are our own. No AI-generated images or videos are used.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Credits</h3>
+    <p class="small">RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT is an official mark of the Canadian Space Agency. Lunar data: NASA Lunar Reconnaissance Orbiter (Mini-RF, Diviner, LOLA) via the Planetary Data System. Earth data: NASA MODIS, GPM; ESA Copernicus (Sentinel-2, Copernicus DEM). Basemap © OpenStreetMap contributors © CARTO. Libraries: Leaflet, Chart.js, KaTeX. GroundTwin is not endorsed by NASA or any space agency.</p>
+  </div>
+</section>
+</main>
+
+<footer class="foot">GroundTwin · Earth's ground truth for the Moon and Mars · Open source (MIT)</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 > Этот файл Claude Code читает автоматически. Он описывает весь проект, порядок работы и правила.
 > Команда: **Code Influence** (2 человека). Аруна — данные, радар, сайт, код. Подруга — дизайн и 7 слайдов.
-> Хакатон: **NASA Space Apps Challenge 2026**, челлендж *«Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars»*.
+> Хакатон: **NASA Space Apps Challenge 2026**, челлендж про земные аналоги Луны и Марса (**точное название взять со страницы челленджа на spaceappschallenge.org** и вписать на сайт, в слайды и сабмишн).
 > **Жёсткий дедлайн сдачи: воскресенье 15 ноября 2026, 13:00 (Asia/Bishkek, UTC+6). Всё должно быть отправлено к 12:00 с запасом.**
 
 ---
@@ -27,7 +27,7 @@
 Три модуля в одном сайте:
 1. **Radar Twin (Луна)** — флагман. CPR на Земле (RCM) по классам «лёд / камни / гладко» + CPR, температура (Diviner) и рельеф (LOLA) в кратерах южного полюса Луны → **Ice Evidence Score**.
 2. **Analog Engine (вся Земля)** — карта сходства каждой клетки Земли с целью на Луне/Марсе по физическим признакам, режимы (Наука / Операции / Строительство / Ресурсы), проверка метода (**Lift**) на известных аналогах.
-3. **Process Twin (Марс)** — Аральское море как «Марс в ускоренной перемотке»: высыхание озера, соли, пыль (Landsat + MODIS) против древних озёр в кратерах Gale и Jezero.
+3. **Mars Field Twin (Марс)** — Мангистау (Казахстан): дно исчезнувшего моря, соры, конкреции Торыш, сухость (DEM + MODIS + GPM + Sentinel-2) против кратеров Gale, Jezero и Meridiani.
 
 Подробная теория — в `docs_internal/GroundTwin_explained.pdf` (если положили) — и в разделах ниже.
 
@@ -54,14 +54,14 @@ groundtwin/
   pipeline/
     01_earth_radar.py       ← то же, что ноутбук 01, но скриптом
     02_moon_radar.py        ← Mini-RF + Diviner + LOLA по кратерам
-    03_aral_process.py      ← Арал: Landsat NDWI + MODIS AOD (Google Earth Engine)
+    03_mangystau_field.py   ← Мангистау: DEM, MODIS, GPM, Sentinel-2 (Google Earth Engine)
     04_analog_engine.py     ← глобальная карта сходства (Google Earth Engine)
     05_validation.py        ← Lift по известным аналогам
     common.py
   data/                     ← только маленькие готовые JSON/GeoJSON/PNG (каждый < 5 МБ)
-  docs/                     ← САЙТ (GitHub Pages публикует из /docs)
-    index.html  radar.html  explore.html  aral.html  method.html  paper.html  about.html
-    assets/ (css, js, img)  data/ (копии нужных JSON)
+  docs/                     ← САЙТ (GitHub Pages публикует из /docs) — УЖЕ ГОТОВ
+    index.html  assets/style.css  assets/app.js  assets/img/  data/*.json  paper/
+  tools/make_demo_data.py   ← образец структуры всех JSON (demo)
   paper/
     groundtwin_paper.md → groundtwin_paper.pdf
   submission/
@@ -98,14 +98,20 @@ groundtwin/
 - **Запасной вариант**, если мозаика Mini-RF не скачивается за 40 мин: используй значения CPR кратеров из таблиц Spudis et al. 2013 (https://ntrs.nasa.gov/api/citations/20140016845/downloads/20140016845.pdf) с пометкой `"source": "literature: Spudis et al. 2013"`. Diviner/LOLA всё равно постарайся посчитать.
 - Выход: `data/moon_targets.json` (по каждой цели: координаты, CPR_in, CPR_out, Tmax, slope, IES, источник), `data/moon_vs_earth_cpr.png`, карта южного полюса с целями `data/moon_south_pole_map.png`.
 
-### T3 — Process Twin: Аральское море (≤ 1,5 ч) — ПРИОРИТЕТ 2
-- Google Earth Engine, Python API.
-- **Вода:** Landsat Collection 2 Level-2 (`LANDSAT/LT05/C02/T1_L2`, `LE07`, `LC08`, `LC09`), летние композиты (июль–сентябрь) **каждые 2–3 года 1985–2025**, маска облаков по QA_PIXEL, NDWI = (Green − NIR)/(Green + NIR) > 0 → площадь воды (км²) в границах бассейна Арала (bbox примерно 43.3–47.2° с.ш., 58.0–62.5° в.д. — проверь, что включает Северный и Южный Арал и Аралкум).
-- **Пыль:** MODIS AOD (`MODIS/061/MCD19A2_GRANULES`, Optical_Depth_047) — среднее за весну (апрель–май) по годам 2001–2025 над Аралкумом.
-- **Картинки:** 6–8 кадров RGB (например 1985, 1995, 2005, 2010, 2015, 2020, 2025) одинакового охвата → PNG + анимированный GIF для сайта (`geemap` или PIL).
-- Сравнительная таблица Aral ↔ Gale ↔ Jezero (что похоже / что нет) — текстом, со ссылками.
-- Выход: `data/aral_water_area.json`, `data/aral_aod.json`, `docs/assets/img/aral_timelapse.gif`, кадры PNG.
-- Запасной вариант: если GEE не работает — NASA Earth Observatory снимки Арала (ссылки, не копировать) + MODIS данные через Worldview только визуально; честно пометить.
+### T3 — Mars Field Twin: Мангистау (≤ 1,5 ч) — ПРИОРИТЕТ 2
+Идея: Мангистау (Казахстан) — дно исчезнувшего моря Тетис: слоистые осадочные породы (как в кратере Gale), соры с солями (как соляные отложения на Марсе), каменные шары-конкреции долины Торыш (форма и способ образования похожи на «черничины» Opportunity в Meridiani; размер и состав другие — говорить честно), сухо, почти нет растений, впадина Карагие ниже уровня моря.
+- **Места:** долина шаров Торыш, Бозжыра, сор Тузбаир, впадина Карагие, Шеркала. Координаты НЕ выдумывать: взять из OpenStreetMap или Википедии, записать источник у каждой точки.
+- **Данные (Google Earth Engine, Python API; NASA и открытые):**
+  - Copernicus DEM GLO-30 (`COPERNICUS/DEM/GLO30`) — высота, уклоны, глубина Карагие;
+  - MODIS LST (`MODIS/061/MOD11A2`) — перепад температуры день/ночь;
+  - MODIS NDVI (`MODIS/061/MOD13A2`) — насколько нет растений;
+  - GPM IMERG (`NASA/GPM_L3/IMERG_MONTHLY_V07`) — осадки;
+  - Sentinel-2 SR Harmonized — безоблачная картинка в естественных цветах и индекс солей и карбонатов по SWIR (пометить «ориентировочный»).
+- **Связь с T4:** посчитать, в какой процент лучших по Земле попадают клетки Мангистау в Analog Engine для mars_gale и mars_jezero (если T4 ещё не готов — сделать этот пункт после T4).
+- Таблица «Мангистау ↔ Gale ↔ Meridiani» (что похоже / что нет) со ссылками: Grotzinger et al. 2014/2015 (озеро в Gale), Squyres et al. 2004 (сферулы Opportunity).
+- Выход: `docs/data/mangystau.json` (`demo: false`; места: name, lat, lon, coord_source, признаки; region_stats; rank_vs_mars {mars_gale, mars_jezero}; comparison), картинки `docs/assets/img/mangystau_*.png`.
+- Страница сайта `#mangystau` («Mars Field Twin: Mangystau») уже есть и читает `docs/data/mangystau.json` — менять только данные.
+- Запасной вариант: если GEE не работает — значения из открытых источников с пометкой `"source"`; честно пометить.
 
 ### T4 — Analog Engine (≤ 2 ч) — ПРИОРИТЕТ 2
 - GEE, сетка **0.5°** по суше (маска суши, без Антарктиды или с ней — реши и запиши).
@@ -129,20 +135,21 @@ groundtwin/
 - Новые места с высоким S, которых нет в эталоне → «candidates» (особенно Центральная Азия / Казахстан).
 - Выход: `data/validation.json`.
 
-### T6 — Сайт (≤ 3 ч, параллельно с данными) — ПРИОРИТЕТ 1
-- Статический, **GitHub Pages из `/docs`**, без сборщиков. Библиотеки только с cdnjs/jsdelivr: Leaflet, Chart.js. Один `assets/style.css`, один `assets/app.js` + по скрипту на страницу.
-- Страницы:
-  1. **Home** — hero «GroundTwin — Earth's ground truth for the Moon and Mars», проблема за 3 строки, три модуля карточками, главная цифра (Lift и/или CPR-эталон), кнопки.
-  2. **Radar Twin** — объяснение CPR (простая анимация/схема), график земных классов, таблица лунных целей с IES, карта южного полюса, честный блок «what Earth can't reproduce».
-  3. **Explore** — карта мира Leaflet, выбор цели и режима, раскраска клеток по S (считается в браузере), клик по клетке → радар-диаграмма (Chart.js) признаков места vs цели + «what matches / what doesn't», список топ-10.
-  4. **Aral Story** — скролл-история: таймлапс GIF, график площади воды, график пыли, таблица Aral ↔ Gale ↔ Jezero, ограничения.
-  5. **Method** — формулы (KaTeX с cdnjs), данные, валидация Lift, ограничения.
-  6. **Paper** — аннотация + ссылка на PDF.
-  7. **About** — команда Code Influence, челлендж, **все источники данных с кредитами** (RCM: «RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT is an official mark of the Canadian Space Agency.»), **AI use statement**, лицензия.
-- Дизайн: цвета и шрифт даст подруга (HEX + Google Font). До этого — тёмная тема, CSS-переменные в `:root`, чтобы поменять одной строкой. Мобильная вёрстка (360 px), без горизонтального скролла.
-- Данные сайт берёт из `docs/data/*.json`. Сайт должен работать, даже если какой-то JSON ещё не готов (показывает «coming soon», а не ломается).
-- Включи GitHub Pages (Settings → Pages → Branch `main`, folder `/docs`) — подскажи Аруне по шагам. Проверь сайт с телефона.
-- ✅ Готово, когда все страницы открываются по ссылке `https://<username>.github.io/groundtwin/` и показывают реальные данные.
+### T6 — Сайт (УЖЕ ПОСТРОЕН — подключить реальные данные) — ПРИОРИТЕТ 1
+Сайт готов в `docs/` (одна страница с разделами #home #radar #explore #mangystau #method #about): `docs/index.html`, `docs/assets/style.css`, `docs/assets/app.js`. Библиотеки: Leaflet 1.9.4, Chart.js 4.4.1, KaTeX 0.16.9 (cdnjs). Сейчас в `docs/data/*.json` лежат **DEMO-данные** из `tools/make_demo_data.py` (`"demo": true` → сайт показывает жёлтый баннер DEMO и метки на графиках).
+**Задача:** пайплайн T1–T5 пишет НАСТОЯЩИЕ файлы в `docs/data/` ТОЧНО в той же структуре и с `"demo": false`. Пока хоть один файл demo — баннер висит. **Сдавать с demo-данными запрещено.**
+
+Контракты данных (смотри `tools/make_demo_data.py` как образец):
+- `earth_cpr.json` — {demo, convention, look, inc_range, credit, sites:[{site, cls ∈ smooth|rough_rock|ice, lon, lat, date, scene, winter, inc_mean, n_cells, median, p25, p75, frac_gt1, hist[40]}], classes:{cls:{median,p25,p75,frac_gt1,n}}} — это ровно выход ноутбука 01.
+- `moon_targets.json` — {demo, band, ratio_threshold, cold_threshold_k, slope_threshold_deg, targets:[{name, kind, lat, lon(восточная долгота, −180..180), cpr_in, cpr_out, tmax_k, slope_deg, clues:{radar,smooth,cold}, ies, source}]}. В demo координаты ПРИБЛИЗИТЕЛЬНЫЕ — заменить по IAU Gazetteer.
+- `analog_grid.json` — {demo, cell_deg (0.5), features:[aridity,barren,thermal_range,cold,dust,roughness,elevation], cells:[[lon_center, lat_center, p1..p7], ...]} — p = процентили 0..1 «в экстремальную сторону».
+- `targets.json` — профили целей, режимы и веса (уже заполнен командой; можно уточнять, всё видно на сайте).
+- `validation.json` — {demo, top_fraction, lift:{target:{mode:value}}, p_value, known_sites:[{name,lat,lon}]}.
+- `mangystau.json` — {demo, places:[{name, lat, lon, coord_source, elevation_m, slope_deg, lst_range_k, ndvi_max, precip_mm_yr, salt_index}], region_stats:{те же признаки}, rank_vs_mars:{mars_gale, mars_jezero} (= «в лучших X% клеток Земли», число 0–100), images:[{file, caption}]}; картинки — `docs/assets/img/mangystau_*.png`. Таблица «Мангистау ↔ Gale ↔ Meridiani» — текстом в `docs/index.html`.
+- `moon_targets.json`: у гор (не кратеров) `ies` и `clues` = null — сайт показывает «n/a».
+- Реальные T1/T2 копирует в `docs/data/` скрипт `pipeline/export_site_data.py` (из `data/*.json`).
+Также: вписать имена команды, точное название челленджа и логин GitHub в раздел #about (`docs/index.html`, плейсхолдеры в квадратных скобках); поменять цвета/шрифт в `:root` в `style.css`, когда подруга даст бренд. Включить GitHub Pages: Settings → Pages → Branch `main`, folder `/docs`. Проверить сайт с телефона и в инкогнито.
+✅ Готово, когда сайт открывается по `https://<login>.github.io/groundtwin/`, баннера DEMO нет, все разделы показывают реальные данные.
 
 ### T7 — Research paper (≤ 2 ч, воскресенье утром) — ПРИОРИТЕТ 2
 - `paper/groundtwin_paper.md` → PDF (pandoc или HTML → PDF). 4–6 страниц, английский.
@@ -171,7 +178,7 @@ groundtwin/
 |---|---|---|
 | Сб 11:00–12:00 | T0, запустить T1 (или взять результат Colab) | Бренд, цвета, шрифт → Аруне |
 | Сб 12:00–15:00 | T2 Луна; параллельно каркас сайта T6 | Шаблон 7 слайдов |
-| Сб 15:00–17:30 | T3 Арал | Тексты слайдов 1–4, 6 |
+| Сб 15:00–17:30 | T3 Мангистау | Тексты слайдов 1–4, 6 |
 | Сб 17:30–20:30 | T4 Analog Engine + T5 Lift | Иконки/схемы для сайта, проверка сайта |
 | Сб 20:30–23:30 | T6 сайт с реальными данными, деплой | Слайд 5 (результаты) |
 | **Сб 23:30 — контрольная точка** | Работает ли сайт со всеми модулями? Если нет — урезать | |
@@ -198,5 +205,4 @@ groundtwin/
 - IAU Gazetteer: https://planetarynames.wr.usgs.gov
 - USGS Known Terrestrial Analog Sites: https://catalog.data.gov/dataset/known-terrestrial-analog-sites-for-planetary-science
 - ESA CAFE (каталог аналогов): https://www.esa.int/Our_Activities/Preparing_for_the_Future/Discovery_and_Preparation/Cataloguing_otherworldly_landscapes_on_Earth
-- Арал: https://www.earthobservatory.nasa.gov/images/152887/dunes-and-desert-replace-the-aral-sea
 - Earthdata Search: https://search.earthdata.nasa.gov · Worldview: https://worldview.earthdata.nasa.gov
