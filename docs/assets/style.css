@@ -163,3 +163,8 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: .92rem; }
   .nav nav.open { display: flex; }
   .hero { padding-top: 24px; }
 }
+
+/* Mangystau image grid */
+.figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+.figs figure { margin: 0; }
+.figs img { width: 100%; height: auto; border-radius: 8px; display: block; }

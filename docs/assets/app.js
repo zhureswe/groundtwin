@@ -334,7 +334,7 @@ function selectCell(i, move = true) {
 }
 
 /* ---------------- mangystau ---------------- */
-const MGS_FEATS = [['elevation_m', 'Elevation, m', 0], ['slope_deg', 'Slope, °', 1], ['lst_range_k', 'Day–night swing, K', 1],
+const MGS_FEATS = [['elevation_m', 'Mean elevation, m', 0], ['elevation_min_m', 'Lowest point, m', 0], ['slope_deg', 'Slope, °', 1], ['lst_range_k', 'Day–night swing, K', 1],
   ['ndvi_max', 'Max NDVI', 2], ['precip_mm_yr', 'Rain, mm/yr', 0], ['salt_index', 'Salt index*', 2]];
 
 function renderMangystau() {
@@ -346,7 +346,7 @@ function renderMangystau() {
     `<div class="stat"><b>${r[k] != null ? `top ${fmt(r[k], 0)}%` : '–'}</b><span>of Earth's land cells for ${lab}: where Mangystau ranks in the Analog Engine${demo}</span></div>`).join('');
   const imgs = g.images || [];
   $('#mgs-images').innerHTML = imgs.length
-    ? `<div class="grid2">${imgs.map((i) => `<figure><img src="assets/img/${i.file}" alt="${i.caption}"><figcaption class="note">${i.caption}</figcaption></figure>`).join('')}</div>`
+    ? `<div class="figs">${imgs.map((i) => `<figure><img src="assets/img/${i.file}" alt="${i.caption}"><figcaption class="note">${i.caption}</figcaption></figure>`).join('')}</div>`
     : '<div class="placeholder">Sentinel-2 true-colour views of Mangystau will appear here.</div>';
   const row = (p) => `<tr><td>${p.name}${p.lat != null ? `<br><span class="muted small">${ll(p.lat, p.lon)}</span>` : ''}</td>${MGS_FEATS.map(([k, , d]) => `<td>${fmt(p[k], d)}</td>`).join('')}</tr>`;
   const stats = g.region_stats && Object.keys(g.region_stats).length ? row({ name: '<b>Whole region</b>', ...g.region_stats }) : '';

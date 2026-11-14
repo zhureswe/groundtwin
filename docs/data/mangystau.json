@@ -1,1 +1,133 @@
-{"demo":true,"places":[{"name":"Torysh (Valley of Balls)","lat":null,"lon":null,"coord_source":null,"elevation_m":null,"slope_deg":null,"lst_range_k":null,"ndvi_max":null,"precip_mm_yr":null,"salt_index":null},{"name":"Bozzhyra","lat":null,"lon":null,"coord_source":null,"elevation_m":null,"slope_deg":null,"lst_range_k":null,"ndvi_max":null,"precip_mm_yr":null,"salt_index":null},{"name":"Tuzbair sor","lat":null,"lon":null,"coord_source":null,"elevation_m":null,"slope_deg":null,"lst_range_k":null,"ndvi_max":null,"precip_mm_yr":null,"salt_index":null},{"name":"Karagiye Depression","lat":null,"lon":null,"coord_source":null,"elevation_m":null,"slope_deg":null,"lst_range_k":null,"ndvi_max":null,"precip_mm_yr":null,"salt_index":null},{"name":"Sherkala","lat":null,"lon":null,"coord_source":null,"elevation_m":null,"slope_deg":null,"lst_range_k":null,"ndvi_max":null,"precip_mm_yr":null,"salt_index":null}],"region_stats":{},"rank_vs_mars":{"mars_gale":null,"mars_jezero":null},"images":[],"images_note":"Put Sentinel-2 views in assets/img/mangystau_*.png and list them as {file, caption}"}
+{
+ "demo": false,
+ "places": [
+  {
+   "name": "Torysh (Valley of Balls)",
+   "lat": 44.3614,
+   "lon": 51.5611,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Torysh",
+   "elevation_m": 125.608,
+   "slope_deg": 3.989,
+   "elevation_min_m": 39.685,
+   "lst_range_k": 18.118,
+   "ndvi_max": 0.248,
+   "precip_mm_yr": 205.417,
+   "salt_index": 0.063
+  },
+  {
+   "name": "Sherkala",
+   "lat": 44.25638889,
+   "lon": 52.00611111,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Sherkala",
+   "elevation_m": 139.562,
+   "slope_deg": 4.72,
+   "elevation_min_m": 59.184,
+   "lst_range_k": 17.576,
+   "ndvi_max": 0.203,
+   "precip_mm_yr": 193.941,
+   "salt_index": 0.051
+  },
+  {
+   "name": "Karagiye Depression",
+   "lat": 43.4,
+   "lon": 51.79,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Karagiye",
+   "elevation_m": -130.812,
+   "slope_deg": 0.308,
+   "elevation_min_m": -133.971,
+   "lst_range_k": 9.246,
+   "ndvi_max": 0.08,
+   "precip_mm_yr": 222.651,
+   "salt_index": 0.18
+  },
+  {
+   "name": "Karynzharyk Depression",
+   "lat": 42.91667,
+   "lon": 54.41667,
+   "coord_source": "Wikipedia: https://ru.wikipedia.org/wiki/Карынжарык",
+   "elevation_m": -56.689,
+   "slope_deg": 2.437,
+   "elevation_min_m": -69.864,
+   "lst_range_k": 10.384,
+   "ndvi_max": 0.081,
+   "precip_mm_yr": 153.119,
+   "salt_index": 0.225
+  },
+  {
+   "name": "Bozzhyra",
+   "lat": 43.4045686,
+   "lon": 54.0770414,
+   "coord_source": "OpenStreetMap: https://www.openstreetmap.org/node/4282143923",
+   "elevation_m": 72.537,
+   "slope_deg": 5.366,
+   "elevation_min_m": -12.163,
+   "lst_range_k": 15.792,
+   "ndvi_max": 0.135,
+   "precip_mm_yr": 173.37,
+   "salt_index": 0.055
+  },
+  {
+   "name": "Tuzbair sor",
+   "lat": 44.0011422,
+   "lon": 53.2833108,
+   "coord_source": "OpenStreetMap: https://www.openstreetmap.org/relation/5965693",
+   "elevation_m": 17.78,
+   "slope_deg": 1.361,
+   "elevation_min_m": 7.534,
+   "lst_range_k": 12.834,
+   "ndvi_max": 0.101,
+   "precip_mm_yr": 168.652,
+   "salt_index": 0.156
+  }
+ ],
+ "region_stats": {
+  "elevation_m": 121.265,
+  "slope_deg": 0.948,
+  "lst_range_k": 18.356,
+  "ndvi_max": 0.181,
+  "precip_mm_yr": 183.857,
+  "salt_index": 0.054
+ },
+ "region_def": "land pixels (JRC surface-water occurrence < 50%) in the bounding box of the six sites + 0.3 deg: [51.26, 42.62, 54.72, 44.66]",
+ "rank_vs_mars": {
+  "mars_gale": null,
+  "mars_jezero": null
+ },
+ "rank_note": "filled by pipeline/04_analog_engine.py",
+ "images": [
+  {
+   "file": "mangystau_torysh.png",
+   "caption": "Torysh (Valley of Balls) — Sentinel-2 true colour, median 2023–2024, 10 km box. Contains modified Copernicus Sentinel data."
+  },
+  {
+   "file": "mangystau_sherkala.png",
+   "caption": "Sherkala — Sentinel-2 true colour, median 2023–2024, 10 km box. Contains modified Copernicus Sentinel data."
+  },
+  {
+   "file": "mangystau_karagiye.png",
+   "caption": "Karagiye Depression — Sentinel-2 true colour, median 2023–2024, 10 km box. Contains modified Copernicus Sentinel data."
+  },
+  {
+   "file": "mangystau_karynzharyk.png",
+   "caption": "Karynzharyk Depression — Sentinel-2 true colour, median 2023–2024, 10 km box. Contains modified Copernicus Sentinel data."
+  },
+  {
+   "file": "mangystau_bozzhyra.png",
+   "caption": "Bozzhyra — Sentinel-2 true colour, median 2023–2024, 10 km box. Contains modified Copernicus Sentinel data."
+  },
+  {
+   "file": "mangystau_tuzbair.png",
+   "caption": "Tuzbair sor — Sentinel-2 true colour, median 2023–2024, 10 km box. Contains modified Copernicus Sentinel data."
+  }
+ ],
+ "method": {
+  "site_buffer_m": 5000,
+  "period": "2015-2024",
+  "elevation": "Copernicus DEM GLO-30 (2024_1), mean (elevation_min_m = minimum in buffer; sites only)",
+  "slope_deg": "Copernicus DEM GLO-30 (2024_1), mean slope",
+  "lst_range_k": "MODIS MOD11A2 LST day minus night, mean",
+  "ndvi_max": "MODIS MOD13A2 NDVI, yearly maximum averaged over the period",
+  "precip_mm_yr": "NASA GPM IMERG V07 monthly, mean rate x 8766 h",
+  "salt_index": "Sentinel-2 SR (B11-B12)/(B11+B12), cloud-masked median 2023-2024; approximate"
+ }
+}
