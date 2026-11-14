@@ -30,6 +30,13 @@ SITES = {
     'athabasca_dunes':   ('smooth',    -108.75, 59.08, 0.02),
     'great_sand_hills':  ('smooth',    -109.30, 50.45, 0.02),
     'regina_plain':      ('smooth',    -104.60, 50.55, 0.02),
+    'wapta_icefield':    ('ice',       -116.5264, 51.6394, 0.015),
+    'clemenceau_icefield': ('ice',     -117.8000, 52.1833, 0.015),
+}
+CGNDB = 'https://geogratis.gc.ca/services/geoname/en/geonames/'
+COORD_SOURCES = {
+    'wapta_icefield': f'Canadian Geographical Names Database, NRCan ({CGNDB}JBCMN)',
+    'clemenceau_icefield': f'Canadian Geographical Names Database, NRCan ({CGNDB}JAREC)',
 }
 CLASSES = ['smooth', 'rough_rock', 'ice']
 COLORS = {'smooth': '#8C9BAB', 'rough_rock': '#D9822B', 'ice': '#4FB3D9'}
@@ -157,7 +164,9 @@ def main():
         date_range=DATE_RANGE, credit=CREDIT,
         source='RCM CEOS-ARD via EODMS STAC (collection rcm-ard), s3://rcm-ceos-ard',
         sites_without_usable_scene=sorted(set(SITES) - {r['site'] for r in results}),
-        sites=[dict(site=r['site'], cls=r['cls'], lon=r['lon'], lat=r['lat'], date=r['date'], scene=r['scene'],
+        sites=[dict(site=r['site'], cls=r['cls'], lon=r['lon'], lat=r['lat'],
+                    coord_source=COORD_SOURCES.get(r['site'], 'team selection, visually checked on satellite map'),
+                    date=r['date'], scene=r['scene'],
                     winter=r['winter'], inc_mean=r['inc_mean'], **r['stats'],
                     hist=np.histogram(np.clip(r['cpr'], 0, 2), bins=40, range=(0, 2))[0].tolist())
                for r in results],
