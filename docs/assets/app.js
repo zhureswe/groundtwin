@@ -75,6 +75,19 @@ function drawPolCheck() {
     row(`${t.target} floor`, 'Mini-RF S-band', t.inside, true), row(`${t.target} outside rim`, 'Mini-RF S-band', t.outside, false)]);
   $('#polcheck').innerHTML = `<table class="cmp"><thead>${head}</thead><tbody>${earth.join('')}${moon.join('')}</tbody></table>
     <p class="note">Shares are of radar cells passing each test. Criterion from ${d.criterion.source}. χ: ellipticity angle (negative = mostly single-bounce, positive = same-sense dominated). Highlighted rows: golden case (Earth ice and lava → Shackleton and Faustini). ${d.convention}</p>`;
+  drawFinding(d);
+}
+
+function drawFinding(d) {
+  const C = d.earth.classes, pct = (x) => `${fmt(x * 100, x < 0.01 ? 2 : 1)}%`;
+  const chiRange = (cls) => { const v = d.earth.sites.filter((s) => s.cls === cls).map((s) => s.chi_median_deg); return `${fmt(Math.min(...v), 0)}° to ${fmt(Math.max(...v), 0)}°`; };
+  const moon = d.moon.targets.filter((t) => d.golden_case.moon.includes(t.target))
+    .map((t) => `${t.target} floor ${pct(t.inside.frac_criterion)} vs outside ${pct(t.outside.frac_criterion)}`).join('; ');
+  $('#radar-finding').innerHTML = `<h3>Main radar finding: one radar clue is not enough</h3><ol>
+    <li><b>CPR &gt; 1 and DOP &lt; 0.13 barely separates ice from lava in C-band.</b> Share of RCM cells passing both tests: glacier ice ${pct(C.ice.frac_criterion)}, lava/rock fields ${pct(C.rough_rock.frac_criterion)}, smooth ground ${pct(C.smooth.frac_criterion)}. On the Moon (Mini-RF): ${moon}.</li>
+    <li><b>The ellipticity angle χ separates the classes better.</b> Median χ by class: smooth ${fmt(C.smooth.chi_median_of_sites_deg, 0)}°, rock ${fmt(C.rough_rock.chi_median_of_sites_deg, 0)}°, ice ${fmt(C.ice.chi_median_of_sites_deg, 0)}° (site medians: smooth ${chiRange('smooth')}, rock ${chiRange('rough_rock')}, ice ${chiRange('ice')}). χ is linked to CPR, so it is not a fully independent clue.</li>
+    <li><b>Conclusion:</b> a single radar number cannot tell ice from rough rock. That is why GroundTwin combines several clues — radar contrast inside vs outside, a smooth floor (LOLA) and cold (Diviner).</li></ol>
+    <p class="note">Wavelength caveat: the criterion comes from L-band (Chandrayaan-2 DFSAR); RCM is C-band (≈ 5.5 cm) and Mini-RF S-band (12.6 cm). Each band senses different roughness and depth, so these shares are compared as an order, not as calibrated values.</p>`;
 }
 
 function polarXY(lat, lon, cx, cy, R, maxColat) {
