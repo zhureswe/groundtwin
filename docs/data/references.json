@@ -1,0 +1,229 @@
+{
+ "demo": false,
+ "mode": "science",
+ "rows": [
+  {
+   "place": "Mangystau (6 sites)",
+   "n_cells": 6,
+   "features": {
+    "aridity": 0.855,
+    "barren": 0.841,
+    "thermal_range": 0.794,
+    "cold": 0.504,
+    "dust": 0.738,
+    "roughness": 0.356,
+    "elevation": 0.136
+   },
+   "mars_gale": {
+    "S": 0.822,
+    "cosine": 0.97,
+    "top_percent": 9.5
+   },
+   "mars_jezero": {
+    "S": 0.838,
+    "cosine": 0.978,
+    "top_percent": 8.3
+   }
+  },
+  {
+   "place": "Mars Desert Research Station (Utah)",
+   "n_cells": 1,
+   "features": {
+    "aridity": 0.818,
+    "barren": 0.829,
+    "thermal_range": 0.831,
+    "cold": 0.491,
+    "dust": 0.033,
+    "roughness": 0.863,
+    "elevation": 0.947
+   },
+   "mars_gale": {
+    "S": 0.768,
+    "cosine": 0.907,
+    "top_percent": 14.1
+   },
+   "mars_jezero": {
+    "S": 0.729,
+    "cosine": 0.863,
+    "top_percent": 20.6
+   }
+  },
+  {
+   "place": "San Rafael Swell (Utah)",
+   "n_cells": 1,
+   "features": {
+    "aridity": 0.822,
+    "barren": 0.837,
+    "thermal_range": 0.925,
+    "cold": 0.505,
+    "dust": 0.033,
+    "roughness": 0.795,
+    "elevation": 0.935
+   },
+   "mars_gale": {
+    "S": 0.784,
+    "cosine": 0.912,
+    "top_percent": 12.7
+   },
+   "mars_jezero": {
+    "S": 0.746,
+    "cosine": 0.873,
+    "top_percent": 17.9
+   }
+  },
+  {
+   "place": "Devon Island",
+   "n_cells": 1,
+   "features": {
+    "aridity": 0.857,
+    "barren": 0.85,
+    "thermal_range": 0.035,
+    "cold": 0.953,
+    "dust": 0.64,
+    "roughness": 0.394,
+    "elevation": 0.436
+   },
+   "mars_gale": {
+    "S": 0.758,
+    "cosine": 0.893,
+    "top_percent": 16.0
+   },
+   "mars_jezero": {
+    "S": 0.777,
+    "cosine": 0.895,
+    "top_percent": 13.7
+   }
+  },
+  {
+   "place": "Haughton impact crater",
+   "n_cells": 1,
+   "features": {
+    "aridity": 0.879,
+    "barren": 0.835,
+    "thermal_range": 0.033,
+    "cold": 0.956,
+    "dust": 0.763,
+    "roughness": 0.623,
+    "elevation": 0.388
+   },
+   "mars_gale": {
+    "S": 0.79,
+    "cosine": 0.901,
+    "top_percent": 12.1
+   },
+   "mars_jezero": {
+    "S": 0.767,
+    "cosine": 0.889,
+    "top_percent": 14.7
+   }
+  }
+ ],
+ "pca": {
+  "explained_variance": [
+   0.313,
+   0.286
+  ],
+  "loadings": {
+   "pc1": {
+    "aridity": -0.626,
+    "barren": -0.592,
+    "thermal_range": -0.172,
+    "cold": -0.325,
+    "dust": 0.1,
+    "roughness": 0.33,
+    "elevation": 0.063
+   },
+   "pc2": {
+    "aridity": 0.115,
+    "barren": 0.174,
+    "thermal_range": 0.559,
+    "cold": -0.31,
+    "dust": -0.079,
+    "roughness": 0.425,
+    "elevation": 0.601
+   }
+  },
+  "points": [
+   {
+    "name": "Askja / Vikursundar / Oskjuvatn",
+    "pc1": -0.046,
+    "pc2": 0.14,
+    "reference": false
+   },
+   {
+    "name": "Atacama Desert",
+    "pc1": -0.543,
+    "pc2": 0.846,
+    "reference": false
+   },
+   {
+    "name": "Death Valley",
+    "pc1": -0.37,
+    "pc2": 0.612,
+    "reference": false
+   },
+   {
+    "name": "Lake Salda",
+    "pc1": -0.031,
+    "pc2": 0.482,
+    "reference": false
+   },
+   {
+    "name": "Verde Valley",
+    "pc1": -0.124,
+    "pc2": 0.678,
+    "reference": false
+   },
+   {
+    "name": "Pisgah Lava Flow",
+    "pc1": -0.442,
+    "pc2": 0.656,
+    "reference": false
+   },
+   {
+    "name": "Holuhraun Lava Flow / Baugur",
+    "pc1": -0.174,
+    "pc2": 0.006,
+    "reference": false
+   },
+   {
+    "name": "Mars Desert Research Station",
+    "pc1": -0.346,
+    "pc2": 0.742,
+    "reference": true
+   },
+   {
+    "name": "San Rafael Swell",
+    "pc1": -0.398,
+    "pc2": 0.755,
+    "reference": true
+   },
+   {
+    "name": "Devon Island",
+    "pc1": -0.523,
+    "pc2": -0.393,
+    "reference": true
+   },
+   {
+    "name": "Haughton impact crater",
+    "pc1": -0.444,
+    "pc2": -0.337,
+    "reference": true
+   },
+   {
+    "name": "Mars - Gale crater (layered lake sediments)",
+    "pc1": -0.64,
+    "pc2": 0.428,
+    "reference": false
+   },
+   {
+    "name": "Mars - Jezero crater (ancient lake delta)",
+    "pc1": -0.729,
+    "pc2": 0.292,
+    "reference": false
+   }
+  ],
+  "image": "assets/img/analog_pca.png"
+ },
+ "method": "S and rank use Science-mode weights; cosine = cosine similarity between the mean percentile vector of the place and the target profile; top_percent = median rank of the place cells among all land cells."
+}

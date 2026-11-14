@@ -3,7 +3,7 @@
 'use strict';
 
 const DATA = {};
-const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau'];
+const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references'];
 const CLASS_COLOR = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
 const CLASS_NAME = { smooth: 'smooth ground', rough_rock: 'rock field', ice: 'glacier ice' };
 const FEAT_NAME = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold',
@@ -358,6 +358,21 @@ function renderMangystau() {
     <tbody>${(g.places || []).map(row).join('')}${stats}</tbody></table>
     <p class="note">Copernicus DEM, NASA MODIS (LST, NDVI), NASA GPM IMERG, Sentinel-2. *Salt index from Sentinel-2 SWIR is approximate.
     ${(g.places || []).some((p) => p.coord_source) ? 'Coordinates: ' + [...new Set(g.places.map((p) => p.coord_source).filter(Boolean))].join('; ') + '.' : ''}${demo}</p>`;
+  renderReferences();
+}
+
+function renderReferences() {
+  const r = DATA.references;
+  if (!r) { $('#mgs-refs').innerHTML = '<p class="muted">references.json not found yet.</p>'; return; }
+  const T = DATA.targets ? DATA.targets.targets : {}, tks = ['mars_gale', 'mars_jezero'];
+  const best = Object.fromEntries(tks.map((tk) => [tk, Math.min(...r.rows.map((x) => x[tk].top_percent))]));
+  $('#mgs-refs').innerHTML = `<table class="cmp"><thead><tr><th>Place</th>${tks.map((tk) => `<th colspan="3">${T[tk] ? T[tk].label : tk}</th>`).join('')}</tr>
+    <tr><th></th>${tks.map(() => '<th>S</th><th>Cosine</th><th>Rank on Earth</th>').join('')}</tr></thead>
+    <tbody>${r.rows.map((x) => `<tr><td>${x.place}</td>${tks.map((tk) => `<td>${fmt(x[tk].S)}</td><td>${fmt(x[tk].cosine)}</td>
+      <td class="${x[tk].top_percent === best[tk] ? 'yes' : ''}">top ${fmt(x[tk].top_percent, 1)}%</td>`).join('')}</tr>`).join('')}</tbody></table>
+    <p class="note">${r.method}</p>
+    <figure class="pca"><img src="${r.pca.image}" alt="PCA of Earth land cells with known analogs, Mangystau and Mars target profiles">
+    <figcaption class="note">PCA of the 7 percentile features over all land cells: PC1 ${Math.round(r.pca.explained_variance[0] * 100)}% and PC2 ${Math.round(r.pca.explained_variance[1] * 100)}% of the variance. Points closer to the blue Mars profiles are more Mars-like by our features.</figcaption></figure>`;
 }
 
 /* ---------------- method ---------------- */
