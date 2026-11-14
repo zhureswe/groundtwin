@@ -1,6 +1,6 @@
 # GroundTwin — Earth as the twin of the Moon and Mars
 
-NASA Space Apps Challenge 2026 · Team **Code Influence** (Kazakhstan) · Challenge: [CHALLENGE TITLE — to be added]
+NASA Space Apps Challenge 2026 · Team **Code Influence** (Kazakhstan) · Challenge: Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars
 
 ![GroundTwin website: Explore Earth twins](docs/assets/img/screenshot_explore.png)
 

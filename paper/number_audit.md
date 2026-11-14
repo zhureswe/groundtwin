@@ -64,4 +64,4 @@ How the numbers stay consistent:
 - The old "×3.6 better than chance" home stat was removed on 14 Nov (it is not in our results).
 
 ## 4. Still open (not numbers)
-- `[exact challenge title]` in About (member names intentionally not shown).
+- None: challenge title added; member names intentionally not shown.
