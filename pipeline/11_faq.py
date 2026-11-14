@@ -218,9 +218,7 @@ def build():
         'Team Code Influence from Kazakhstan, for the NASA Space Apps Challenge 2026. The code is open on GitHub (zhureswe/groundtwin).',
         METHOD, ['github'], '#about')
     add('How did you use AI?', ['ai', 'claude', 'artificial', 'intelligence', 'chatgpt'],
-        'We used Claude (Anthropic) to help write Python and HTML/JavaScript code, debug, and edit English text. The concept, the choice '
-        'of sites and data, all checks and interpretation, and the design are our own. No AI-generated images or videos are used. '
-        'This help box is not a live AI: it searches prepared answers.', METHOD, section='#about')
+        'We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.', METHOD, section='#about')
     add('Is this an AI model that predicts ice?', ['model', 'trained', 'machine learning', 'predict', 'neural'],
         'No. GroundTwin uses a transparent similarity formula and an evidence score, both checked against known sites. Nothing is a '
         'trained AI model.', METHOD, section='#method')

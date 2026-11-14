@@ -37,7 +37,7 @@ $summary
 **Tools.** Python (numpy, rasterio, rioxarray, pyproj, shapely, scipy, matplotlib, earthengine-api), Google Earth Engine, HTML/CSS/JavaScript with Leaflet, Chart.js, KaTeX and CesiumJS, and GitHub Pages.
 
 ## Use of Artificial Intelligence
-We used Claude (Anthropic) through Claude Code as a tool for writing code (Python and HTML/JavaScript), processing data and editing English texts. The idea, the choice of sites, all checks of the data and results, and the design are our own. No AI-generated images, videos or audio are used: all figures are plots of our data and the screenshots are of our own website. The short "By our numbers" place descriptions and the help-box answers were drafted with AI assistance from our computed data and are labelled on the site.
+We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.
 
 ## NASA Data
 - LRO Mini-RF global mosaics (CPR, degree of polarization M, Stokes S1, S4): https://science.nasa.gov/mission/lro/mini-rf/ · https://pds-geosciences.wustl.edu/missions/lro/

@@ -772,7 +772,7 @@
     "intelligence",
     "chatgpt"
    ],
-   "a": "We used Claude (Anthropic) to help write Python and HTML/JavaScript code, debug, and edit English text. The concept, the choice of sites and data, all checks and interpretation, and the design are our own. No AI-generated images or videos are used. This help box is not a live AI: it searches prepared answers.",
+   "a": "We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.",
    "label": "Our method",
    "links": [],
    "section": "#about"

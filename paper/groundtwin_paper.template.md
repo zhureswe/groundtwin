@@ -137,7 +137,7 @@ All code (Python pipeline `pipeline/01–12`) and the derived JSON files are ope
 
 ## 9. AI use statement
 
-We used Claude (Anthropic) via Claude Code to help write Python and HTML/JavaScript code, debug, and edit English text, including drafting this paper from our computed data. The project concept (using RCM as an Earth calibration twin for Mini-RF), site selection, data checks, interpretation of results and the visual design are our own. No AI-generated images or videos are used; all figures are plots of our data.
+We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.
 
 ## References
 
