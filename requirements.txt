@@ -1,0 +1,14 @@
+numpy
+pandas
+matplotlib
+rasterio
+rioxarray
+pyproj
+shapely
+geopandas
+pystac-client
+requests
+earthengine-api
+geemap
+pillow
+scipy

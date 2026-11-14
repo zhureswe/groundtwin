@@ -1,0 +1,7 @@
+raw/
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+docs_internal/
+*.zip
+.DS_Store
