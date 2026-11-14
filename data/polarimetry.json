@@ -1,0 +1,457 @@
+{
+ "demo": false,
+ "criterion": {
+  "cpr_min": 1.0,
+  "dop_max": 0.13,
+  "source": "Sinha et al. 2026, npj Space Exploration (Chandrayaan-2 DFSAR, L-band); applied here to C-band (RCM) and S-band (Mini-RF)"
+ },
+ "convention": "Circular basis, block means (5x5) of RR, RL and the cross term RRRL = <E_R E_L*> (RCM band 1 = Re, band 2 = Im). S0 = RR + RL, S3 = RL - RR (opposite minus same sense), S1 = 2 Re, S2 = 2 Im; m = sqrt(S1^2+S2^2+S3^2)/S0; sin(2chi) = -S3/(m S0); CPR = (S0 - S3)/(S0 + S3) = RR/RL. Mini-RF: m = M mosaic, sin(2chi) = -S4/(m S1).",
+ "earth": {
+  "sites": [
+   {
+    "n": 444,
+    "cpr_median": 1.2787547933130146,
+    "dop_median": 0.45523505394411456,
+    "chi_median_deg": 9.04268992836228,
+    "frac_cpr_gt1": 0.6891891891891891,
+    "frac_dop_lt013": 0.013513513513513514,
+    "frac_criterion": 0.009009009009009009,
+    "site": "columbia_icefield",
+    "cls": "ice",
+    "date": "2026-02-22",
+    "coherence_median": 0.3642105504093817,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 392,
+    "cpr_median": 0.44148046652555994,
+    "dop_median": 0.40751093530102117,
+    "chi_median_deg": -38.28471752177434,
+    "frac_cpr_gt1": 0.00510204081632653,
+    "frac_dop_lt013": 0.012755102040816327,
+    "frac_criterion": 0.002551020408163265,
+    "site": "nisgaa_lava_bed",
+    "cls": "rough_rock",
+    "date": "2026-03-07",
+    "coherence_median": 0.1039372154933129,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 524,
+    "cpr_median": 0.7406549991889335,
+    "dop_median": 0.3676991835370116,
+    "chi_median_deg": -17.217336122930874,
+    "frac_cpr_gt1": 0.37595419847328243,
+    "frac_dop_lt013": 0.02862595419847328,
+    "frac_criterion": 0.019083969465648856,
+    "site": "edziza_lava_field",
+    "cls": "rough_rock",
+    "date": "2026-02-20",
+    "coherence_median": 0.19564571091313654,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 2116,
+    "cpr_median": 0.38125590697204265,
+    "dop_median": 0.4935402278600367,
+    "chi_median_deg": -33.69958171466348,
+    "frac_cpr_gt1": 0.0,
+    "frac_dop_lt013": 0.0,
+    "frac_criterion": 0.0,
+    "site": "athabasca_dunes",
+    "cls": "smooth",
+    "date": "2026-02-18",
+    "coherence_median": 0.2101509434751287,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 2025,
+    "cpr_median": 0.11218163993131534,
+    "dop_median": 0.80667973939378,
+    "chi_median_deg": -41.42284236719646,
+    "frac_cpr_gt1": 0.0049382716049382715,
+    "frac_dop_lt013": 0.0009876543209876543,
+    "frac_criterion": 0.0004938271604938272,
+    "site": "great_sand_hills",
+    "cls": "smooth",
+    "date": "2026-02-21",
+    "coherence_median": 0.17153003256479094,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 514,
+    "cpr_median": 0.16621055361121415,
+    "dop_median": 0.7282095719710518,
+    "chi_median_deg": -40.92793172712108,
+    "frac_cpr_gt1": 0.005836575875486381,
+    "frac_dop_lt013": 0.0019455252918287938,
+    "frac_criterion": 0.0019455252918287938,
+    "site": "regina_plain",
+    "cls": "smooth",
+    "date": "2026-02-20",
+    "coherence_median": 0.14298615309778107,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 673,
+    "cpr_median": 0.9415291007152481,
+    "dop_median": 0.4153546639543607,
+    "chi_median_deg": -2.655862053912548,
+    "frac_cpr_gt1": 0.46805349182763745,
+    "frac_dop_lt013": 0.019316493313521546,
+    "frac_criterion": 0.007429420505200594,
+    "site": "wapta_icefield",
+    "cls": "ice",
+    "date": "2026-02-21",
+    "coherence_median": 0.31859122926724726,
+    "coherence_frac_gt1": 0.0
+   },
+   {
+    "n": 1011,
+    "cpr_median": 1.7248936944105757,
+    "dop_median": 0.3697825495299804,
+    "chi_median_deg": 26.43000143012418,
+    "frac_cpr_gt1": 0.8793273986152325,
+    "frac_dop_lt013": 0.03758654797230465,
+    "frac_criterion": 0.026706231454005934,
+    "site": "clemenceau_icefield",
+    "cls": "ice",
+    "date": "2026-02-21",
+    "coherence_median": 0.20525527986613484,
+    "coherence_frac_gt1": 0.0
+   }
+  ],
+  "classes": {
+   "smooth": {
+    "frac_cpr_gt1": 0.0027926960257787323,
+    "frac_dop_lt013": 0.0006444683136412459,
+    "frac_criterion": 0.0004296455424274973,
+    "dop_median_of_sites": 0.7282095719710518,
+    "chi_median_of_sites_deg": -40.92793172712108,
+    "n": 4655
+   },
+   "rough_rock": {
+    "frac_cpr_gt1": 0.21724890829694324,
+    "frac_dop_lt013": 0.021834061135371178,
+    "frac_criterion": 0.012008733624454149,
+    "dop_median_of_sites": 0.38760505941901635,
+    "chi_median_of_sites_deg": -27.751026822352607,
+    "n": 916
+   },
+   "ice": {
+    "frac_cpr_gt1": 0.7095864661654135,
+    "frac_dop_lt013": 0.026785714285714284,
+    "frac_criterion": 0.016917293233082706,
+    "dop_median_of_sites": 0.4153546639543607,
+    "chi_median_of_sites_deg": 9.04268992836228,
+    "n": 2128
+   }
+  }
+ },
+ "moon": {
+  "targets": [
+   {
+    "target": "Shackleton",
+    "tmax_in_k": 92.8990020752,
+    "ies": 2.0,
+    "inside": {
+     "n": 34175,
+     "cpr_median": 0.6947468519210815,
+     "dop_median": 0.47288069128990173,
+     "chi_median_deg": -13.721228101631578,
+     "frac_cpr_gt1": 0.26756400877834674,
+     "frac_dop_lt013": 0.016210680321872714,
+     "frac_criterion": 0.007198244330651061
+    },
+    "outside": {
+     "n": 116836,
+     "cpr_median": 0.3765338212251663,
+     "dop_median": 0.5797222852706909,
+     "chi_median_deg": -28.4641163647901,
+     "frac_cpr_gt1": 0.04157109110205758,
+     "frac_dop_lt013": 0.004964223355814989,
+     "frac_criterion": 0.0016433291108904789
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Haworth",
+    "tmax_in_k": 65.420501709,
+    "ies": 2.0,
+    "inside": {
+     "n": 207740,
+     "cpr_median": 0.47554758191108704,
+     "dop_median": 0.4794618934392929,
+     "chi_median_deg": -26.798656056950257,
+     "frac_cpr_gt1": 0.08616539905651295,
+     "frac_dop_lt013": 0.013747954173486088,
+     "frac_criterion": 0.005179551362279773
+    },
+    "outside": {
+     "n": 830402,
+     "cpr_median": 0.4645030051469803,
+     "dop_median": 0.4910416454076767,
+     "chi_median_deg": -26.90102254738312,
+     "frac_cpr_gt1": 0.07600776491386099,
+     "frac_dop_lt013": 0.012038747498199668,
+     "frac_criterion": 0.004442426680089884
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Shoemaker",
+    "tmax_in_k": 71.0429992676,
+    "ies": 2.0,
+    "inside": {
+     "n": 200972,
+     "cpr_median": 0.5719927251338959,
+     "dop_median": 0.43201790750026703,
+     "chi_median_deg": -22.29266429933422,
+     "frac_cpr_gt1": 0.13300857830941623,
+     "frac_dop_lt013": 0.01982863284437633,
+     "frac_criterion": 0.007543339370658599
+    },
+    "outside": {
+     "n": 773486,
+     "cpr_median": 0.48002012073993683,
+     "dop_median": 0.48907166719436646,
+     "chi_median_deg": -25.870211483849594,
+     "frac_cpr_gt1": 0.09133714120229713,
+     "frac_dop_lt013": 0.013462428537814517,
+     "frac_criterion": 0.005005908316375474
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Faustini",
+    "tmax_in_k": 75.0565032959,
+    "ies": 1.0,
+    "inside": {
+     "n": 141745,
+     "cpr_median": 0.507158100605011,
+     "dop_median": 0.4557703733444214,
+     "chi_median_deg": -25.72790941363476,
+     "frac_cpr_gt1": 0.08538572789163638,
+     "frac_dop_lt013": 0.01594412501322798,
+     "frac_criterion": 0.0057850365092243115
+    },
+    "outside": {
+     "n": 549351,
+     "cpr_median": 0.4369734823703766,
+     "dop_median": 0.5111527442932129,
+     "chi_median_deg": -27.92582262462985,
+     "frac_cpr_gt1": 0.0662909505944287,
+     "frac_dop_lt013": 0.010687156298978248,
+     "frac_criterion": 0.0037407777541134902
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Cabeus",
+    "tmax_in_k": 225.4429931641,
+    "ies": 2.0,
+    "inside": {
+     "n": 795828,
+     "cpr_median": 0.5579774379730225,
+     "dop_median": 0.45338064432144165,
+     "chi_median_deg": -22.663321241996908,
+     "frac_cpr_gt1": 0.16451544806164145,
+     "frac_dop_lt013": 0.01890735183984479,
+     "frac_criterion": 0.007791884678598893
+    },
+    "outside": {
+     "n": 3181612,
+     "cpr_median": 0.4281015545129776,
+     "dop_median": 0.5147880911827087,
+     "chi_median_deg": -28.328272408440302,
+     "frac_cpr_gt1": 0.06368689833958384,
+     "frac_dop_lt013": 0.010244806720618354,
+     "frac_criterion": 0.0036506651345292887
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "de Gerlache",
+    "tmax_in_k": 120.9869995117,
+    "ies": 1.0,
+    "inside": {
+     "n": 65024,
+     "cpr_median": 0.4371698647737503,
+     "dop_median": 0.5375765562057495,
+     "chi_median_deg": -26.08704930623686,
+     "frac_cpr_gt1": 0.09324249507874016,
+     "frac_dop_lt013": 0.011811023622047244,
+     "frac_criterion": 0.004629060039370078
+    },
+    "outside": {
+     "n": 308702,
+     "cpr_median": 0.4531112462282181,
+     "dop_median": 0.5108991861343384,
+     "chi_median_deg": -26.54534089941459,
+     "frac_cpr_gt1": 0.07351102357613491,
+     "frac_dop_lt013": 0.011273007625476996,
+     "frac_criterion": 0.003922877078865702
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Sverdrup",
+    "tmax_in_k": 95.8740005493,
+    "ies": 1.0,
+    "inside": {
+     "n": 84545,
+     "cpr_median": 0.4133685827255249,
+     "dop_median": 0.5321750044822693,
+     "chi_median_deg": -28.240753343080268,
+     "frac_cpr_gt1": 0.05281211189307469,
+     "frac_dop_lt013": 0.008315098468271335,
+     "frac_criterion": 0.002957005145188953
+    },
+    "outside": {
+     "n": 322905,
+     "cpr_median": 0.41214799880981445,
+     "dop_median": 0.5221604108810425,
+     "chi_median_deg": -29.04567544696834,
+     "frac_cpr_gt1": 0.04779424288877534,
+     "frac_dop_lt013": 0.008377076849228102,
+     "frac_criterion": 0.0029730106378036882
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Nobile",
+    "tmax_in_k": 239.046005249,
+    "ies": 0.0,
+    "inside": {
+     "n": 494057,
+     "cpr_median": 0.42482316493988037,
+     "dop_median": 0.5145549178123474,
+     "chi_median_deg": -28.314492112444302,
+     "frac_cpr_gt1": 0.05308901604470739,
+     "frac_dop_lt013": 0.009229704264892512,
+     "frac_criterion": 0.0032465889563349976
+    },
+    "outside": {
+     "n": 1978321,
+     "cpr_median": 0.49190157651901245,
+     "dop_median": 0.47262072563171387,
+     "chi_median_deg": -25.866799665978608,
+     "frac_cpr_gt1": 0.0858748403317763,
+     "frac_dop_lt013": 0.014273719987807843,
+     "frac_criterion": 0.005213006382685115
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Cabeus B",
+    "tmax_in_k": 238.0769958496,
+    "ies": 2.0,
+    "inside": {
+     "n": 281068,
+     "cpr_median": 0.48498398065567017,
+     "dop_median": 0.4839054048061371,
+     "chi_median_deg": -26.024230727111686,
+     "frac_cpr_gt1": 0.10634793003828255,
+     "frac_dop_lt013": 0.014672605917429235,
+     "frac_criterion": 0.00555381615836737
+    },
+    "outside": {
+     "n": 1122768,
+     "cpr_median": 0.38581328094005585,
+     "dop_median": 0.5403619408607483,
+     "chi_median_deg": -30.111919350720118,
+     "frac_cpr_gt1": 0.04874203753580437,
+     "frac_dop_lt013": 0.007804818092428712,
+     "frac_criterion": 0.0026835463782366436
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Mons Malapert",
+    "tmax_in_k": 261.9454956055,
+    "ies": null,
+    "inside": {
+     "n": 352978,
+     "cpr_median": 0.48576055467128754,
+     "dop_median": 0.47840631008148193,
+     "chi_median_deg": -25.856350453041465,
+     "frac_cpr_gt1": 0.08766268719296953,
+     "frac_dop_lt013": 0.013258616684325935,
+     "frac_criterion": 0.004980480369881409
+    },
+    "outside": {
+     "n": 1412289,
+     "cpr_median": 0.4785209894180298,
+     "dop_median": 0.48234033584594727,
+     "chi_median_deg": -26.36878857706148,
+     "frac_cpr_gt1": 0.07976341952673992,
+     "frac_dop_lt013": 0.012896793786540857,
+     "frac_criterion": 0.004658394988561123
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Mons Mouton",
+    "tmax_in_k": 263.6109924316,
+    "ies": null,
+    "inside": {
+     "n": 1331851,
+     "cpr_median": 0.48964381217956543,
+     "dop_median": 0.48334282636642456,
+     "chi_median_deg": -25.2846645742938,
+     "frac_cpr_gt1": 0.08455750680819402,
+     "frac_dop_lt013": 0.012421809947208809,
+     "frac_criterion": 0.004464463367148427
+    },
+    "outside": {
+     "n": 5317578,
+     "cpr_median": 0.4876940995454788,
+     "dop_median": 0.47722873091697693,
+     "chi_median_deg": -25.941326598247112,
+     "frac_cpr_gt1": 0.08918214269729564,
+     "frac_dop_lt013": 0.013946198814573102,
+     "frac_criterion": 0.005167766227406537
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   },
+   {
+    "target": "Slater",
+    "tmax_in_k": 77.0274963379,
+    "ies": 1.0,
+    "inside": {
+     "n": 49417,
+     "cpr_median": 0.3698187470436096,
+     "dop_median": 0.5690420866012573,
+     "chi_median_deg": -29.75778216078535,
+     "frac_cpr_gt1": 0.06667745917396847,
+     "frac_dop_lt013": 0.006940931258473805,
+     "frac_criterion": 0.0025497298500516017
+    },
+    "outside": {
+     "n": 197800,
+     "cpr_median": 0.3599812388420105,
+     "dop_median": 0.576745867729187,
+     "chi_median_deg": -29.876775047138047,
+     "frac_cpr_gt1": 0.041051567239635996,
+     "frac_dop_lt013": 0.006041456016177957,
+     "frac_criterion": 0.0019514661274014156
+    },
+    "cpr_from_stokes_vs_mosaic_median_ratio": 1.0
+   }
+  ],
+  "sources": "LRO Mini-RF global mosaics 128 ppd: M (degree of polarization), S1, S4, CPR"
+ },
+ "golden_case": {
+  "earth": [
+   "columbia_icefield",
+   "clemenceau_icefield",
+   "edziza_lava_field",
+   "nisgaa_lava_bed"
+  ],
+  "moon": [
+   "Shackleton",
+   "Faustini"
+  ]
+ },
+ "note": "Fractions are of 5x5-block cells (Earth) or 80 m LOLA-grid samples of the 128 ppd Mini-RF mosaics (Moon)."
+}

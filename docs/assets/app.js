@@ -3,7 +3,7 @@
 'use strict';
 
 const DATA = {};
-const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test'];
+const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry'];
 const CLASS_COLOR = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
 const CLASS_NAME = { smooth: 'smooth ground', rough_rock: 'rock field', ice: 'glacier ice' };
 const FEAT_NAME = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold',
@@ -59,6 +59,22 @@ function renderRadar() {
   drawPolar(m);
   const best = [...m.targets].sort((x, y) => (y.ies ?? -1) - (x.ies ?? -1) || (y.cpr_in / y.cpr_out) - (x.cpr_in / x.cpr_out))[0];
   selectCrater(best.name);
+  drawPolCheck();
+}
+
+function drawPolCheck() {
+  const d = DATA.polarimetry;
+  if (!d) { $('#polcheck').innerHTML = '<p class="muted">polarimetry.json not found yet.</p>'; return; }
+  const pct = (x, k = 1) => `${fmt(x * 100, k)}%`;
+  const gold = new Set([...d.golden_case.earth, ...d.golden_case.moon]);
+  const head = '<tr><th>Place</th><th>Radar</th><th>CPR</th><th>DOP m</th><th>χ</th><th>CPR&gt;1</th><th>DOP&lt;0.13</th><th>Both</th></tr>';
+  const row = (name, radar, x, g) => `<tr${g ? ' class="gold"' : ''}><td>${name}</td><td class="small">${radar}</td><td>${fmt(x.cpr_median)}</td><td>${fmt(x.dop_median)}</td>
+    <td>${fmt(x.chi_median_deg, 0)}°</td><td>${pct(x.frac_cpr_gt1, 0)}</td><td>${pct(x.frac_dop_lt013)}</td><td><b>${pct(x.frac_criterion)}</b></td></tr>`;
+  const earth = d.earth.sites.map((s) => row(`${pretty(s.site)} <span class="muted small">(${CLASS_NAME[s.cls]})</span>`, 'RCM C-band', s, gold.has(s.site)));
+  const moon = d.moon.targets.filter((t) => gold.has(t.target)).flatMap((t) => [
+    row(`${t.target} floor`, 'Mini-RF S-band', t.inside, true), row(`${t.target} outside rim`, 'Mini-RF S-band', t.outside, false)]);
+  $('#polcheck').innerHTML = `<table class="cmp"><thead>${head}</thead><tbody>${earth.join('')}${moon.join('')}</tbody></table>
+    <p class="note">Shares are of radar cells passing each test. Criterion from ${d.criterion.source}. χ: ellipticity angle (negative = mostly single-bounce, positive = same-sense dominated). Highlighted rows: golden case (Earth ice and lava → Shackleton and Faustini). ${d.convention}</p>`;
 }
 
 function polarXY(lat, lon, cx, cy, R, maxColat) {

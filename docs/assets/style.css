@@ -171,3 +171,5 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: .92rem; }
 
 .pca { margin: 16px 0 0; }
 .pca img { width: 100%; max-width: 760px; height: auto; display: block; border-radius: 8px; background: #fff; }
+
+tr.gold td { background: rgba(79, 209, 232, .07); }
