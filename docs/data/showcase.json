@@ -1,0 +1,416 @@
+{
+ "demo": false,
+ "mode": "science",
+ "n_cells": 60215,
+ "mars_target": "mars_gale",
+ "mars_choice_reason": "Mars - Gale crater (layered lake sediments) is shown because known Mars analog sites rank better for it in our validation (Science mode: average rank top 21.3%, p = 0.001; Mars - Jezero crater: top 24.4%), and its layered lake sediments are the Mars feature that Mangystau is compared with.",
+ "selection": "Top cells by the similarity formula S only (no manual choice), at least 600 km apart. Region names: FAO GAUL 2015 level 1 (FAO/GAUL/2015/level1 in Google Earth Engine).",
+ "top": {
+  "moon_south_pole": [
+   {
+    "rank": 1,
+    "lon": 85.75,
+    "lat": 36.75,
+    "S": 0.925,
+    "region": "Xinjiang Uygur Zizhiqu, China",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 2,
+    "lon": 78.25,
+    "lat": 35.75,
+    "S": 0.907,
+    "region": "Xinjiang Uygur Zizhiqu, China",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 3,
+    "lon": 94.75,
+    "lat": 38.75,
+    "S": 0.906,
+    "region": "Qinghai Sheng, China",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 4,
+    "lon": 95.25,
+    "lat": 46.25,
+    "S": 0.903,
+    "region": "Govi-Altai, Mongolia",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 5,
+    "lon": 88.75,
+    "lat": 42.25,
+    "S": 0.901,
+    "region": "Xinjiang Uygur Zizhiqu, China",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "differs": []
+   }
+  ],
+  "mars_gale": [
+   {
+    "rank": 1,
+    "lon": 86.75,
+    "lat": 40.25,
+    "S": 0.941,
+    "region": "Xinjiang Uygur Zizhiqu, China",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "cold",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 2,
+    "lon": 6.75,
+    "lat": 27.25,
+    "S": 0.926,
+    "region": "Illizi, Algeria",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 3,
+    "lon": 101.75,
+    "lat": 41.25,
+    "S": 0.923,
+    "region": "Nei Mongol Zizhiqu, China",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "cold",
+     "dust",
+     "roughness"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 4,
+    "lon": 33.75,
+    "lat": 25.25,
+    "S": 0.923,
+    "region": "Red Sea, Egypt",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "differs": []
+   },
+   {
+    "rank": 5,
+    "lon": -0.75,
+    "lat": 29.75,
+    "S": 0.92,
+    "region": "Bechar, Algeria",
+    "matches": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "differs": []
+   }
+  ]
+ },
+ "cards": [
+  {
+   "key": "moon_reference",
+   "title": "Moon training reference: Cinder Lake Crater Field / Meteor Crater, Arizona",
+   "target": "moon_south_pole",
+   "rows": [
+    {
+     "place": "Cinder Lake Crater Field",
+     "n_cells": 1,
+     "S": 0.679,
+     "cosine": 0.948,
+     "top_percent": 26.8,
+     "position": 16161,
+     "matches": [
+      "roughness"
+     ],
+     "differs": [
+      "cold"
+     ],
+     "features": {
+      "aridity": 0.66,
+      "barren": 0.62,
+      "thermal_range": 0.781,
+      "cold": 0.5,
+      "dust": 0.059,
+      "roughness": 0.683,
+      "elevation": 0.96
+     }
+    },
+    {
+     "place": "Meteor Crater",
+     "n_cells": 1,
+     "S": 0.764,
+     "cosine": 0.954,
+     "top_percent": 12.3,
+     "position": 7410,
+     "matches": [
+      "barren",
+      "thermal_range",
+      "roughness"
+     ],
+     "differs": [
+      "cold"
+     ],
+     "features": {
+      "aridity": 0.703,
+      "barren": 0.811,
+      "thermal_range": 0.991,
+      "cold": 0.478,
+      "dust": 0.059,
+      "roughness": 0.683,
+      "elevation": 0.951
+     }
+    }
+   ],
+   "sites": [
+    {
+     "name": "Cinder Lake Crater Field",
+     "lat": 35.30657,
+     "lon": -111.50482,
+     "coord_source": "USGS, Cinder Lake Crater Field UAS DEMs 2023-2024 (catalog.data.gov), centre of bounding box"
+    },
+    {
+     "name": "Meteor Crater",
+     "lat": 35.02806,
+     "lon": -111.02333,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Meteor_Crater"
+    }
+   ],
+   "facts": [
+    "Cinder Lake Crater Field: craters blasted by the USGS in the late 1960s as a lunar analog training site for Apollo astronauts (USGS data release, catalog.data.gov); today used to train and test Artemis astronauts and their field equipment (USGS: https://www.usgs.gov/science/science-explorer/planetary-science/terrestrial-analogs).",
+    "Meteor Crater: a real impact crater where NASA astronauts trained for the Apollo missions in the 1960s-70s (Wikipedia: Meteor Crater)."
+   ],
+   "not_like": [
+    "It was chosen for crater shapes and geology training, which our 7 climate/terrain features do not measure",
+    "1/6 gravity",
+    "hard vacuum"
+   ],
+   "in_top": false
+  },
+  {
+   "key": "mars_reference",
+   "title": "Mars training reference: MDRS / San Rafael Swell, Utah",
+   "target": "mars_gale",
+   "rows": [
+    {
+     "place": "Mars Desert Research Station (Utah)",
+     "n_cells": 1,
+     "S": 0.768,
+     "cosine": 0.907,
+     "top_percent": 14.1,
+     "position": 8471,
+     "matches": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "roughness"
+     ],
+     "differs": [
+      "dust"
+     ],
+     "features": {
+      "aridity": 0.818,
+      "barren": 0.829,
+      "thermal_range": 0.831,
+      "cold": 0.491,
+      "dust": 0.033,
+      "roughness": 0.863,
+      "elevation": 0.947
+     }
+    },
+    {
+     "place": "San Rafael Swell (Utah)",
+     "n_cells": 1,
+     "S": 0.784,
+     "cosine": 0.912,
+     "top_percent": 12.7,
+     "position": 7644,
+     "matches": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "cold",
+      "roughness"
+     ],
+     "differs": [
+      "dust"
+     ],
+     "features": {
+      "aridity": 0.822,
+      "barren": 0.837,
+      "thermal_range": 0.925,
+      "cold": 0.505,
+      "dust": 0.033,
+      "roughness": 0.795,
+      "elevation": 0.935
+     }
+    }
+   ],
+   "sites": [
+    {
+     "name": "Mars Desert Research Station (Utah)",
+     "lat": 38.40645833,
+     "lon": -110.79190278,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Mars_Desert_Research_Station"
+    },
+    {
+     "name": "San Rafael Swell (Utah)",
+     "lat": 38.813,
+     "lon": -110.855,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/San_Rafael_Swell"
+    }
+   ],
+   "facts": [
+    "MDRS is a Mars Society station for Mars-mission training (not a NASA station).",
+    "Utah is in the NASA Planetary Analog Explorer catalogue."
+   ],
+   "not_like": [
+    "3/8 gravity",
+    "air <1% of Earth pressure"
+   ],
+   "in_top": false
+  },
+  {
+   "key": "mangystau",
+   "title": "Our site: Mangystau, Kazakhstan",
+   "target": "mars_gale",
+   "rows": [
+    {
+     "place": "Mangystau (6 sites)",
+     "n_cells": 6,
+     "S": 0.822,
+     "cosine": 0.97,
+     "top_percent": 9.5,
+     "position": 5729,
+     "matches": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "cold",
+      "dust"
+     ],
+     "differs": [],
+     "features": {
+      "aridity": 0.855,
+      "barren": 0.841,
+      "thermal_range": 0.794,
+      "cold": 0.504,
+      "dust": 0.738,
+      "roughness": 0.356,
+      "elevation": 0.136
+     }
+    }
+   ],
+   "sites": [
+    {
+     "name": "Torysh (Valley of Balls)",
+     "lat": 44.3614,
+     "lon": 51.5611,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Torysh"
+    },
+    {
+     "name": "Sherkala",
+     "lat": 44.25638889,
+     "lon": 52.00611111,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Sherkala"
+    },
+    {
+     "name": "Karagiye Depression",
+     "lat": 43.4,
+     "lon": 51.79,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Karagiye"
+    },
+    {
+     "name": "Karynzharyk Depression",
+     "lat": 42.91667,
+     "lon": 54.41667,
+     "coord_source": "Wikipedia: https://ru.wikipedia.org/wiki/Карынжарык"
+    },
+    {
+     "name": "Bozzhyra",
+     "lat": 43.4045686,
+     "lon": 54.0770414,
+     "coord_source": "OpenStreetMap: https://www.openstreetmap.org/node/4282143923"
+    },
+    {
+     "name": "Tuzbair sor",
+     "lat": 44.0011422,
+     "lon": 53.2833108,
+     "coord_source": "OpenStreetMap: https://www.openstreetmap.org/relation/5965693"
+    }
+   ],
+   "facts": [
+    "Floor of the ancient Tethys Sea: layered sedimentary rocks (Bozzhyra, Sherkala), salt flats (Tuzbair), stone concretions (Torysh); the Karagiye Depression is about 132 m below sea level."
+   ],
+   "not_like": [
+    "Torysh concretions are metres across and made of sandstone; the Opportunity \"blueberries\" are millimetres across and made of hematite",
+    "Tethys was a sea; Gale and Jezero held lakes",
+    "Earth has air, warmth, occasional rain and life",
+    "3/8 gravity",
+    "air <1% of Earth pressure"
+   ],
+   "in_top": false
+  }
+ ]
+}

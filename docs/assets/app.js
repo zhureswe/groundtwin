@@ -3,7 +3,7 @@
 'use strict';
 
 const DATA = {};
-const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry', 'wavelength'];
+const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry', 'wavelength', 'showcase', 'faq'];
 const CLASS_COLOR = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
 const CLASS_NAME = { smooth: 'smooth ground', rough_rock: 'rock field', ice: 'glacier ice' };
 const FEAT_NAME = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold',
@@ -211,6 +211,23 @@ function renderExplore() {
     selectCell(i);
   });
   recompute();
+  renderShowcase();
+}
+
+function renderShowcase() {
+  const d = DATA.showcase, T = DATA.targets;
+  if (!d || !T) return;
+  const lab = (tk) => T.targets[tk].label;
+  const chips = (fs, ok) => fs.map((f) => `<span class="chip ${ok ? 'yes' : 'no'}">${ok ? '✓' : '≠'} ${FEAT_NAME[f]}</span>`).join('');
+  $('#sc-top').innerHTML = Object.entries(d.top).map(([tk, rows]) => `<div><b>${lab(tk)}</b><ol class="top10">${rows.map((r) =>
+    `<li><span class="sc">${fmt(r.S)}</span>${r.region || 'Unnamed cell'} · ${ll(r.lat, r.lon)}<span class="near">${chips(r.matches, true)}${chips(r.differs, false)}</span></li>`).join('')}</ol></div>`).join('');
+  $('#sc-note').innerHTML = `${d.selection} ${d.mars_choice_reason}`;
+  $('#sc-cards').innerHTML = d.cards.map((c) => `<div class="card"><span class="tag ${c.target.startsWith('moon') ? 'ice' : 'mars'}">vs ${lab(c.target).split(' (')[0]}</span>
+    <h3>${c.title}</h3>${c.rows.map((r) => `<p><b>${r.place}</b><br>S <b>${fmt(r.S)}</b> · cosine <b>${fmt(r.cosine)}</b> · rank <b>#${r.position.toLocaleString('en')}</b> of ${d.n_cells.toLocaleString('en')} (top ${fmt(r.top_percent, 1)}%)</p>
+      <div class="chips">${chips(r.matches, true)}${chips(r.differs, false)}</div>`).join('')}
+    <p class="small"><b>How it matches:</b> ${c.facts.join(' ')}</p>
+    <p class="small"><b>How it doesn't:</b> ${c.not_like.join('; ')}.</p>
+    <p class="note">${c.in_top ? 'In the top 5.' : 'Not in the top 5 — shown with its real rank.'} Coordinates: ${c.sites.map((s) => `${s.name} (${s.coord_source})`).join('; ')}.</p></div>`).join('');
 }
 
 function cellKey(lon, lat) {
