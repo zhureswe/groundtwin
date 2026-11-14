@@ -204,3 +204,6 @@ tr.gold td { background: rgba(79, 209, 232, .07); }
 .expl summary { cursor: pointer; color: var(--text); }
 .expl p { margin: 4px 0; }
 .lbl-ai { font-size: .68rem; padding: 1px 7px; border-radius: 999px; background: rgba(240,163,94,.15); color: var(--rock); margin-left: 4px; }
+
+.ask-panel[hidden], .ask-btn[hidden] { display: none; }
+#sc-cards .card, #sc-top > div { min-width: 0; overflow-wrap: anywhere; }

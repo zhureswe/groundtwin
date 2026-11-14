@@ -46,7 +46,7 @@ function renderHome() {
   const e = DATA.earth_cpr, m = DATA.moon_targets, v = DATA.validation, g = DATA.mangystau;
   if (e) s.push([e.sites.length, 'Earth radar reference sites']);
   if (m) { const c = m.targets.filter(hasIes); s.push([`${c.filter((t) => t.ies >= 2).length} / ${c.length}`, 'lunar craters with ≥2 of 3 ice clues']); }
-  if (v && v.mean_top_percent) s.push([`top ${fmt(v.mean_top_percent.mars_gale.science, 0)}%`,
+  if (v && v.mean_top_percent) s.push([`top ${fmt(v.mean_top_percent.mars_gale.science, 1)}%`,
     `average rank of known Mars analog sites for Gale (random places: ~50%, p = ${v.mean_top_percent_p.mars_gale.science})`]);
   if (g && g.rank_vs_mars && g.rank_vs_mars.mars_gale != null) s.push([`top ${fmt(g.rank_vs_mars.mars_gale, 1)}%`, "of Earth's land cells for Mars · Gale: where Mangystau ranks"]);
   $('#stats').innerHTML = s.map(([b, t]) => `<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
@@ -380,7 +380,7 @@ function selectCell(i, move = true) {
   const match = feats.filter((f) => parts[f] >= 0.8), diff = feats.filter((f) => parts[f] < 0.5);
   const k = nearestKnown(c[1], c[0]);
   $('#place-card').innerHTML = `
-    <div class="place-h"><div><h3 style="margin:0">${ll(c[1], c[0])}</h3><span class="muted small">${k ? `${k.km} km from ${k.name}` : 'Top ' + Math.max(1, Math.round((1 - MAP.rank[i]) * 100)) + '% of Earth for this goal'}</span></div><span class="big">${fmt(S)}</span></div>
+    <div class="place-h"><div><h3 style="margin:0">${ll(c[1], c[0])}</h3><span class="muted small">${(() => { const n = MAP.scores.length, pos = MAP.scores.reduce((c, s) => c + (s > S), 0) + 1; return `Rank #${pos.toLocaleString('en')} of ${n.toLocaleString('en')} · ${topPct(pos / n * 100)}${k ? ` · ${k.km} km from ${k.name}` : ''}`; })()}</span></div><span class="big">${fmt(S)}</span></div>
     <div class="radar-wrap"><canvas id="place-radar"></canvas></div>
     <div><b class="small">Matches</b><div class="chips">${match.map((f) => `<span class="chip yes">✓ ${FEAT_NAME[f]}</span>`).join('') || '<span class="muted small">—</span>'}</div></div>
     <div style="margin-top:8px"><b class="small">Differs</b><div class="chips">${diff.map((f) => `<span class="chip no">≠ ${FEAT_NAME[f]}</span>`).join('') || '<span class="muted small">—</span>'}</div></div>
