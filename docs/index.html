@@ -8,7 +8,7 @@
 <!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <link rel="stylesheet" href="assets/style.css">
@@ -28,7 +28,7 @@
     <a href="#mangystau">Mars Field Twin</a>
     <a href="#method">Method</a>
     <a href="#about">About</a>
-    <a href="globe.html">3D Globe</a>
+    <a href="embed/globe.html">3D Globe</a>
   </nav>
   <button class="menu" id="menu" aria-label="Menu">☰</button>
 </header>
@@ -254,19 +254,12 @@
 </section>
 </main>
 
-<button class="ask-btn" id="ask-btn" aria-expanded="false" aria-controls="ask-panel">Ask GroundTwin</button>
-<div class="ask-panel" id="ask-panel" hidden role="dialog" aria-label="Ask GroundTwin">
-  <div class="ask-head"><b>Ask GroundTwin</b><button id="ask-close" aria-label="Close">×</button></div>
-  <div class="ask-log" id="ask-log" aria-live="polite"></div>
-  <form class="ask-form" id="ask-form"><input id="ask-q" placeholder="Ask about the project, data, method…" autocomplete="off"><button>Ask</button></form>
-  <div class="ask-foot" id="ask-foot">Not a live AI: it searches prepared answers.</div>
-</div>
-
 <footer class="foot">GroundTwin · Earth's ground truth for the Moon and Mars · Open source (MIT)</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/ask.js" defer></script>
 </body>
 </html>

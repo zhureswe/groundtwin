@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GroundTwin Globe</title>
+<!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026.
+     Embeddable (?embed=1 hides header/footer). 3D: CesiumJS + NASA GIBS imagery, no Cesium ion, no API keys. 2D: the Analog Engine similarity map. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.121.0/Build/Cesium/Widgets/widgets.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="embed.css">
+<style>
+  html, body { height: 100%; }
+  body { display: flex; flex-direction: column; }
+  .g-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px clamp(10px, 2vw, 18px); }
+  .g-bar .muted { font-family: var(--font-mono); font-size: .72rem; }
+  #pane3d { position: relative; flex: 1; min-height: 420px; }
+  #globe { position: absolute; inset: 0; }
+  #pane2d { flex: 1; overflow-y: auto; }
+  #pane2d .page { padding: 0 clamp(10px, 2vw, 18px) 18px; }
+  .g-panel { position: absolute; z-index: 2; background: rgba(8,12,20,.94); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  #legend { top: 10px; left: 10px; max-width: min(300px, calc(100% - 20px)); }
+  #legend label { display: flex; align-items: center; gap: 7px; font-size: .82rem; margin: 3px 0; cursor: pointer; }
+  #legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+  #info { bottom: 28px; right: 10px; width: min(380px, calc(100% - 20px)); max-height: calc(100% - 50px); overflow-y: auto; }
+  #info h3 { margin: 0 0 2px; padding-right: 20px; }
+  #close { position: absolute; top: 6px; right: 9px; background: none; border: 0; color: var(--muted); font-size: 20px; cursor: pointer; }
+  #msg { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .cesium-viewer-bottom { opacity: .7; }
+  @media (max-width: 560px) { #legend { font-size: .8rem; padding: 8px 10px; } #legend p { display: none; } #info { bottom: 10px; max-height: 58%; } }
+</style>
+</head>
+<body>
+<header class="e-head"><a class="brand" href="../index.html" target="_top">GroundTwin</a><span class="e-title">Earth twins on a globe</span></header>
+<div class="g-bar">
+  <div class="e-tabs" role="tablist"><button type="button" class="active" data-view="3d">3D globe</button><button type="button" data-view="2d">2D map</button></div>
+  <span class="muted" id="hint">Click a pin for its score, rank and links.</span>
+</div>
+<div id="pane3d">
+  <div id="globe"></div>
+  <div class="g-panel" id="legend"><b class="small">Pins · Science mode</b><div id="legend-items"></div></div>
+  <div class="g-panel" id="info" hidden><button id="close" aria-label="Close">×</button><div id="info-body"></div></div>
+  <div class="g-panel" id="msg" hidden></div>
+</div>
+<div id="pane2d" hidden>
+  <section class="page" data-page="explore">
+    <div class="controls">
+      <label>Target <select id="target"></select></label>
+      <div class="seg" id="modes" role="tablist"></div>
+      <label class="check"><input type="checkbox" id="known" checked> Known analog sites</label>
+    </div>
+    <div class="grid-explore">
+      <div class="card map-card"><div id="map"></div>
+        <div class="map-legend"><span>Similarity:</span><i class="ramp"></i><span>top 50%</span><span>top 1%</span></div><p class="note" id="lift-note"></p></div>
+      <div class="side">
+        <div class="card" id="place-card"><p class="muted">Click anywhere on land, or pick a place from the list.</p></div>
+        <div class="card"><h3>Top 10 for this goal</h3><ol id="top10" class="top10"></ol></div>
+      </div>
+    </div>
+  </section>
+</div>
+<footer class="e-foot">Imagery: NASA Blue Marble via NASA EOSDIS GIBS · Pins and scores: GroundTwin data (showcase.json, explanations.json) · Not endorsed by NASA.</footer>
+
+<script src="common.js"></script>
+<script>window.GT_BASE = '../'; window.GT_MANUAL = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="../assets/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.121.0/Build/Cesium/Cesium.js"></script>
+<script>
+'use strict';
+(() => {   // own scope: app.js also defines fmt/topPct globally
+const { esc, fmt, topPct, ll, body, load, buttons, bars, chips } = GTE;
+const GROUPS = {
+  moon: { label: 'Top 5 · Moon south pole', color: '#4fd1e8' },
+  mars: { label: 'Top 5 · Mars', color: '#ff6a3d' },
+  moon_reference: { label: 'Moon reference · Arizona', color: '#f0c35e' },
+  mars_reference: { label: 'Mars reference · Utah', color: '#f0c35e' },
+  mangystau: { label: 'Our site · Mangystau', color: '#6fcf97' },
+};
+const msg = (t) => { const m = document.getElementById('msg'); m.textContent = t; m.hidden = false; };
+
+function pins(sc, ex, T) {
+  const out = [];
+  for (const [tk, rows] of Object.entries(sc.top)) rows.forEach((r, i) => out.push({ g: body(tk), tk, text: String(r.rank), name: r.region || 'Unnamed cell',
+    lat: r.lat, lon: r.lon, S: r.S, x: ex.top[tk][i], feats: ex.top[tk][i].features, note: `0.5° cell centre · #${r.rank} of the top 5 by formula` }));
+  for (const c of sc.cards) c.sites.forEach((s, i) => {
+    const one = c.rows.length === c.sites.length, row = one ? c.rows[i] : c.rows[0], x = one ? ex.cards[c.key][i] : ex.cards[c.key][0];
+    out.push({ g: c.key, tk: c.target, text: c.key === 'mangystau' ? 'M' : '★', name: s.name, lat: s.lat, lon: s.lon, S: row.S, x, feats: row.features,
+      note: `${one ? '' : `Score for ${row.place}. `}Coordinates: ${s.coord_source}` });
+  });
+  return out;
+}
+
+function showInfo(p, T, label) {
+  document.getElementById('info-body').innerHTML = `<h3>${esc(p.name)}</h3><span class="e-sub">${esc(GROUPS[p.g].label)} · ${ll(p.lat, p.lon)}</span>
+    <div class="e-nums"><div>S vs ${esc(T.targets[p.tk].label.split(' (')[0])}<b class="e-s ${body(p.tk)}">${fmt(p.S)}</b></div>
+      <div>Rank<b>#${p.x.position.toLocaleString('en')}</b>${topPct(p.x.top_percent)}</div></div>
+    ${bars(p.feats, p.x.profile)}${chips(p.x)}<p class="e-text">${esc(p.x.matches)} <span class="e-ai">${esc(label)}</span></p>
+    <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[p.tk].cannot.join(', '))}.</p>${buttons(p.lat, p.lon, p.tk)}
+    <p class="note">${esc(p.note)}</p>`;
+  document.getElementById('info').hidden = false;
+}
+
+async function globe() {
+  if (typeof Cesium === 'undefined') return msg('CesiumJS could not be loaded.');
+  let sc, ex, T;
+  try { [sc, ex, T] = await Promise.all(['showcase', 'explanations', 'targets'].map(load)); } catch (e) { return msg('Data not found: ' + e.message); }
+  Cesium.Ion.defaultAccessToken = '';
+  const gibs = new Cesium.UrlTemplateImageryProvider({
+    url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg',
+    tilingScheme: new Cesium.WebMercatorTilingScheme(), maximumLevel: 8, credit: 'Imagery: NASA Blue Marble via NASA EOSDIS GIBS' });
+  let viewer;
+  try {
+    viewer = new Cesium.Viewer('globe', { baseLayer: new Cesium.ImageryLayer(gibs), baseLayerPicker: false, geocoder: false, timeline: false,
+      animation: false, sceneModePicker: false, navigationHelpButton: false, infoBox: false, fullscreenButton: false, homeButton: true });
+  } catch (e) { return msg('This browser cannot show the 3D globe (WebGL is needed). Try the 2D map.'); }
+  viewer.scene.globe.depthTestAgainstTerrain = true;                            // hide pins on the far side
+  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 60000;         // GIBS Blue Marble tiles stop at zoom level 8
+  viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#05070d');
+  window.gtViewer = viewer;
+  const pb = new Cesium.PinBuilder(), byEntity = new Map(), groups = {};
+  for (const p of pins(sc, ex, T)) {
+    const e = viewer.entities.add({ position: Cesium.Cartesian3.fromDegrees(p.lon, p.lat),
+      billboard: { image: pb.fromText(p.text, Cesium.Color.fromCssColorString(GROUPS[p.g].color), 40).toDataURL(), verticalOrigin: Cesium.VerticalOrigin.BOTTOM },
+      label: { text: p.name, font: '12px sans-serif', fillColor: Cesium.Color.WHITE, outlineColor: Cesium.Color.BLACK, outlineWidth: 3,
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -44), distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 9e6) } });
+    byEntity.set(e, p); (groups[p.g] = groups[p.g] || []).push(e);
+  }
+  document.getElementById('legend-items').innerHTML = Object.entries(GROUPS).filter(([k]) => groups[k]).map(([k, g]) =>
+    `<label><input type="checkbox" data-g="${k}" checked><i style="background:${g.color}"></i>${g.label} (${groups[k].length})</label>`).join('');
+  document.getElementById('legend').addEventListener('change', (ev) => { const g = ev.target.dataset.g; if (g) groups[g].forEach((e) => { e.show = ev.target.checked; }); });
+  viewer.selectedEntityChanged.addEventListener((e) => { const p = e && byEntity.get(e); if (p) showInfo(p, T, ex.label); else document.getElementById('info').hidden = true; });
+  document.getElementById('close').addEventListener('click', () => { viewer.selectedEntity = undefined; });
+  viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(60, 35, 2.2e7) });
+}
+
+let map2d = null;
+document.querySelector('.e-tabs').addEventListener('click', (ev) => {
+  const b = ev.target.closest('button[data-view]'); if (!b) return;
+  const is2d = b.dataset.view === '2d';
+  document.querySelectorAll('.e-tabs button').forEach((x) => x.classList.toggle('active', x === b));
+  document.getElementById('pane3d').hidden = is2d; document.getElementById('pane2d').hidden = !is2d;
+  document.getElementById('hint').textContent = is2d ? 'Similarity of every land cell — choose a target and a mission mode.' : 'Click a pin for its score, rank and links.';
+  if (is2d) (map2d = map2d || GT.loadAll()).then(() => { GT.show('explore'); if (GT.MAP.map) GT.MAP.map.invalidateSize(); });
+});
+globe();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GroundTwin Analogs</title>
+<!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. Embeddable: add ?embed=1 to hide header/footer. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="embed.css">
+</head>
+<body>
+<header class="e-head"><a class="brand" href="../index.html" target="_top">GroundTwin</a><span class="e-title">Earth analogs of the Moon and Mars</span></header>
+<main class="e-wrap">
+  <h2>Earth twins of the Moon and Mars</h2>
+  <div class="card e-legend" id="legend"></div>
+  <p class="hud">Top 5 by formula · chosen by S only</p>
+  <div class="e-top" id="top"></div>
+  <p class="note" id="top-note"></p>
+  <p class="hud mars" style="margin-top:22px">Highlighted sites · honest rank, not inserted into the top 5</p>
+  <div class="e-cards" id="cards"></div>
+</main>
+<footer class="e-foot" id="foot"></footer>
+<script src="common.js"></script>
+<script>
+'use strict';
+(async () => {
+  const { FEAT, esc, fmt, topPct, ll, body, load, buttons, bars, chips } = GTE;
+  let sc, ex, T;
+  try { [sc, ex, T] = await Promise.all(['showcase', 'explanations', 'targets'].map(load)); }
+  catch (e) { document.getElementById('top').innerHTML = `<p class="muted">Data not found: ${esc(e.message)}</p>`; return; }
+  const lab = (tk) => T.targets[tk].label;
+  const w = T.modes[sc.mode].weights;
+
+  document.getElementById('legend').innerHTML = `<div><h3>How to read the score</h3>
+      <div class="e-formula">s<sub>i</sub> = 1 − |p<sub>i</sub> − t<sub>i</sub>| · S = Σ w<sub>i</sub>s<sub>i</sub> / Σ w<sub>i</sub></div>
+      <p class="small">p = how extreme a place is on Earth (percentile 0–1), t = the target profile, w = ${esc(T.modes[sc.mode].label)}-mode weights.
+      S = 1 means a perfect match on all 7 criteria. Rank is among all ${sc.n_cells.toLocaleString('en')} land cells.</p></div>
+    <div><h3>7 criteria (NASA / USGS data)</h3><ul>${Object.entries(T.features).map(([k, d]) => `<li><b>${FEAT[k]}</b> — ${esc(d)} · weight ${w[k]}</li>`).join('')}</ul></div>`;
+
+  const detail = (feats, prof, x, lat, lon, tk) => `${bars(feats, prof)}${chips(x)}
+    <p class="e-text">${esc(x.matches)} ${esc(x.differs.split(' Earth cannot reproduce:')[0])} <span class="e-ai">${esc(ex.label)}</span></p>
+    <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[tk].cannot.join(', '))}.</p>${buttons(lat, lon, tk)}`;
+
+  document.getElementById('top').innerHTML = Object.entries(sc.top).map(([tk, rows]) => `<div class="card ${body(tk)}">
+      <span class="tag ${body(tk) === 'moon' ? 'ice' : 'mars'}">${esc(lab(tk))}</span>
+      ${rows.map((r, i) => { const x = ex.top[tk][i]; return `<details class="e-place"${i === 0 ? ' open' : ''}><summary>
+        <span class="e-rank">#${r.rank}</span><span>${esc(r.region || 'Unnamed cell')}<span class="e-sub">${ll(r.lat, r.lon)} · rank #${x.position.toLocaleString('en')} · ${topPct(x.top_percent)}</span></span>
+        <span class="e-s">${fmt(r.S)}</span></summary>${detail(x.features, x.profile, x, r.lat, r.lon, tk)}</details>`; }).join('')}</div>`).join('');
+  document.getElementById('top-note').textContent = `${sc.selection} ${sc.mars_choice_reason}`;
+
+  document.getElementById('cards').innerHTML = sc.cards.map((c) => {
+    const one = c.rows.length === c.sites.length;
+    return `<article class="card e-card"><span class="tag ${body(c.target) === 'moon' ? 'ice' : 'mars'}">vs ${esc(lab(c.target).split(' (')[0])}</span><h3>${esc(c.title)}</h3>
+      ${c.rows.map((r, i) => { const x = ex.cards[c.key][i], sites = one ? [c.sites[i]] : c.sites; return `<div class="e-site"><b>${esc(r.place)}</b>
+        <div class="e-nums"><div>S<b class="e-s ${body(c.target)}">${fmt(r.S)}</b></div><div>Cosine<b>${fmt(r.cosine)}</b></div>
+          <div>Rank<b>#${r.position.toLocaleString('en')}</b></div><div>Share<b>${topPct(r.top_percent).replace(' of land cells', '')}</b>of land cells</div></div>
+        ${bars(r.features, x.profile)}${chips(x)}
+        <p class="e-text">${esc(x.matches)} ${esc(x.differs.split(' Earth cannot reproduce:')[0])} <span class="e-ai">${esc(ex.label)}</span></p>
+        ${sites.map((s) => buttons(s.lat, s.lon, c.target, sites.length > 1 ? s.name.split(' (')[0] : '')).join('')}</div>`; }).join('')}
+      <p class="small"><b>How it matches:</b> ${esc(c.facts.join(' '))}</p><p class="small"><b>How it doesn't:</b> ${esc(c.not_like.join('; '))}.</p>
+      <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[c.target].cannot.join(', '))}.</p>
+      <p class="note">${c.in_top ? 'In the top 5.' : 'Not in the top 5 — shown with its real rank.'} Coordinates: ${esc(c.sites.map((s) => `${s.name} (${s.coord_source})`).join('; '))}.</p></article>`;
+  }).join('');
+  document.getElementById('foot').textContent = `Numbers from GroundTwin data files (showcase.json, explanations.json, targets.json) · Science mode · Region names: FAO GAUL 2015 · Not endorsed by NASA.`;
+})();
+</script>
+</body>
+</html>

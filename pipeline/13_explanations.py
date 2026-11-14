@@ -34,7 +34,7 @@ def explain(name, vec, profile, S, position, n, cannot):
                 + f" Overall S = {S:.2f}, rank #{position:,} of {n:,} land cells (top {top_fmt(position, n)}% of land cells).",
                 differs=('Differs: ' + '; '.join(no) + '.' if no else 'Differs: no feature is far from the target profile.')
                         + f" Earth cannot reproduce: {', '.join(cannot)}.",
-                position=position, n_cells=n, top_percent=round(position / n * 100, 3), S=round(S, 3),
+                features={f: round(vec[f], 3) for f in ae.FEATURES}, profile=profile, position=position, n_cells=n, top_percent=round(position / n * 100, 3), S=round(S, 3),
                 match_features=match, partly_features=partly, differ_features=differ)
 
 

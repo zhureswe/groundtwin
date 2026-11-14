@@ -4,7 +4,7 @@ NASA Space Apps Challenge 2026 · Team **Code Influence** (Kazakhstan) · Challe
 
 ![GroundTwin website: Explore Earth twins](docs/assets/img/screenshot_explore.png)
 
-**Website:** https://zhureswe.github.io/groundtwin/ · **3D globe:** https://zhureswe.github.io/groundtwin/globe.html · **Paper (PDF):** [paper/groundtwin_paper.pdf](paper/groundtwin_paper.pdf) · **Demo:** [link to be added]
+**Website:** https://zhureswe.github.io/groundtwin/ · **3D globe:** https://zhureswe.github.io/groundtwin/embed/globe.html · **Paper (PDF):** [paper/groundtwin_paper.pdf](paper/groundtwin_paper.pdf) · **Demo:** [link to be added]
 
 $summary
 

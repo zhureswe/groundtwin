@@ -4,7 +4,7 @@ NASA Space Apps Challenge 2026 · Team **Code Influence** (Kazakhstan) · Challe
 
 ![GroundTwin website: Explore Earth twins](docs/assets/img/screenshot_explore.png)
 
-**Website:** https://zhureswe.github.io/groundtwin/ · **3D globe:** https://zhureswe.github.io/groundtwin/globe.html · **Paper (PDF):** [paper/groundtwin_paper.pdf](paper/groundtwin_paper.pdf) · **Demo:** [link to be added]
+**Website:** https://zhureswe.github.io/groundtwin/ · **3D globe:** https://zhureswe.github.io/groundtwin/embed/globe.html · **Paper (PDF):** [paper/groundtwin_paper.pdf](paper/groundtwin_paper.pdf) · **Demo:** [link to be added]
 
 GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our Analog Engine scores all 60,215 land cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven features from NASA data. For each place it shows what matches, what does not, and what Earth can never reproduce. Tested on known analog sites, it recognised 7 of 11 Mars analogs in a blind test. Mangystau in Kazakhstan, the floor of a vanished sea, ranks in the top 9.5% of Earth's land cells for Gale crater. Second, Canada's RCM radar shares the design of NASA's Mini-RF, so we check radar ice signatures on Earth, where the truth is known. We then combine Mini-RF, LOLA and Diviner into an Ice Evidence Score for south-pole craters that helps choose where a lunar base could find ice. Everything is open and traceable to data.
 

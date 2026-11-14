@@ -1,0 +1,86 @@
+/* Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. */
+/* "Ask GroundTwin" guide — self-contained styles (all classes prefixed gta-) */
+#gt-ask-root { --gta-bg: #05070d; --gta-s1: #0b111c; --gta-s2: #121a2b; --gta-line: #1e2a40; --gta-text: #e8edf5; --gta-muted: #93a0b5;
+  --gta-ice: #4fd1e8; --gta-mars: #ff6a3d; --gta-ok: #6fcf97; --gta-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  font: 15px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--gta-text); }
+#gt-ask-root *, #gt-ask-root *::before, #gt-ask-root *::after { box-sizing: border-box; }
+#gt-ask-root [hidden] { display: none !important; }
+#gt-ask-root button, #gt-ask-root input, #gt-ask-root select { font: inherit; color: inherit; }
+
+.gta-launch { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 2147483000; display: flex; align-items: center; gap: 10px;
+  padding: 8px 18px 8px 8px; border-radius: 999px; border: 1px solid rgba(79,209,232,.5); background: rgba(5,7,13,.92); cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(79,209,232,.15), 0 0 24px rgba(79,209,232,.35), 0 8px 24px rgba(0,0,0,.5); transition: transform .15s; }
+.gta-launch:hover { transform: translateY(-2px); }
+.gta-launch-t { font: 600 14px "Space Grotesk", Inter, sans-serif; letter-spacing: .02em; }
+.gta-orb { display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none; border-radius: 50%; font: 700 18px "Space Grotesk", sans-serif; color: #04131a;
+  background: radial-gradient(circle at 35% 30%, #bdf4ff, var(--gta-ice) 55%, #1b7f95); box-shadow: 0 0 16px rgba(79,209,232,.6); animation: gta-pulse 3s ease-in-out infinite; }
+.gta-head .gta-orb { width: 34px; height: 34px; font-size: 15px; animation: none; }
+@keyframes gta-pulse { 50% { box-shadow: 0 0 26px rgba(79,209,232,.9); } }
+
+.gta-panel { position: fixed; right: 18px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 2147483000; width: min(410px, calc(100vw - 36px));
+  height: min(640px, calc(100vh - 110px)); display: flex; flex-direction: column; overflow: hidden; border-radius: 16px;
+  background: linear-gradient(rgba(79,209,232,.035) 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, rgba(79,209,232,.035) 1px, transparent 1px) 0 0 / 28px 28px, var(--gta-bg);
+  border: 1px solid var(--gta-line); box-shadow: 0 0 0 1px rgba(79,209,232,.12), 0 18px 48px rgba(0,0,0,.6); animation: gta-in .18s ease; }
+@keyframes gta-in { from { opacity: 0; transform: translateY(8px); } }
+.gta-page .gta-panel { position: static; width: 100%; height: 100vh; height: 100dvh; border-radius: 0; border: 0; animation: none; }
+
+.gta-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--gta-line); background: rgba(11,17,28,.9); }
+.gta-head div { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.gta-head b { font: 600 16px "Space Grotesk", sans-serif; }
+.gta-sub { font: 11px var(--gta-mono); color: var(--gta-muted); text-transform: uppercase; letter-spacing: .06em; }
+.gta-x { background: none; border: 0; color: var(--gta-muted); font-size: 22px; cursor: pointer; line-height: 1; padding: 4px 8px; }
+
+.gta-cats { display: flex; gap: 6px; padding: 10px 12px 4px; overflow-x: auto; scrollbar-width: thin; flex: none; }
+.gta-cat { flex: none; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--gta-line); background: var(--gta-s1); cursor: pointer; font: 12px var(--gta-mono) !important; color: var(--gta-muted) !important; white-space: nowrap; }
+.gta-cat[aria-selected="true"] { border-color: var(--gta-ice); color: var(--gta-ice) !important; box-shadow: 0 0 10px rgba(79,209,232,.25); }
+.gta-sugg { padding: 4px 12px 8px; border-bottom: 1px solid var(--gta-line); flex: none; max-height: 30%; overflow-y: auto; }
+
+.gta-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.gta-chip { text-align: left; padding: 5px 10px; border-radius: 10px; border: 1px solid var(--gta-line); background: var(--gta-s2); cursor: pointer; font-size: 13px; }
+.gta-chip:hover { border-color: var(--gta-ice); }
+
+.gta-log { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.gta-msg { max-width: 94%; padding: 10px 12px; border-radius: 14px; font-size: 14px; overflow-wrap: anywhere; min-width: 0; }
+.gta-msg p { margin: 6px 0; }
+.gta-bot { align-self: flex-start; background: var(--gta-s1); border: 1px solid var(--gta-line); border-top-left-radius: 4px; }
+.gta-me { align-self: flex-end; background: rgba(79,209,232,.14); border: 1px solid rgba(79,209,232,.35); border-top-right-radius: 4px; }
+.gta-q { display: block; margin: 4px 0 2px; font-family: "Space Grotesk", sans-serif; }
+.gta-badge { display: inline-block; font: 600 11px var(--gta-mono); padding: 2px 8px; border-radius: 999px; letter-spacing: .03em; }
+.gta-official { background: rgba(79,209,232,.15); color: var(--gta-ice); }
+.gta-result { background: rgba(111,207,151,.15); color: var(--gta-ok); }
+.gta-method { background: rgba(255,106,61,.15); color: var(--gta-mars); }
+.gta-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.gta-btn { display: inline-block; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--gta-line); background: var(--gta-s2); color: var(--gta-text) !important; text-decoration: none; font-size: 12.5px; }
+.gta-btn:hover { border-color: var(--gta-ice); }
+.gta-site { border-color: rgba(79,209,232,.5); color: var(--gta-ice) !important; }
+.gta-fb { display: flex; align-items: center; gap: 4px; margin-top: 8px; font: 11px var(--gta-mono); color: var(--gta-muted); }
+.gta-fb button { background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer; padding: 1px 6px; filter: grayscale(1); opacity: .7; }
+.gta-fb button[aria-pressed="true"] { filter: none; opacity: 1; border-color: var(--gta-line); }
+.gta-rel { margin-top: 8px; font: 11px var(--gta-mono); color: var(--gta-muted); text-transform: uppercase; }
+.gta-dim { color: var(--gta-muted); font-size: 12px; }
+.gta-cannot { font-size: 13px; color: #c3cddc; }
+.gta-msg a { color: var(--gta-ice); }
+
+.gta-table { overflow-x: auto; max-width: 100%; margin: 8px 0; }
+.gta-table table { border-collapse: collapse; font-size: 12.5px; min-width: 100%; }
+.gta-table th, .gta-table td { padding: 4px 8px; border-bottom: 1px solid var(--gta-line); text-align: left; overflow-wrap: normal; }
+.gta-table th { font: 11px var(--gta-mono); color: var(--gta-muted); min-width: 6em; }
+.gta-table td:not(:first-child) { white-space: nowrap; }
+.gta-table td:first-child { min-width: 8.5em; }
+
+.gta-pick { display: grid; gap: 6px; margin-top: 8px; }
+.gta-pick label { display: grid; gap: 2px; font: 11px var(--gta-mono); color: var(--gta-muted); }
+.gta-pick select { width: 100%; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--gta-line); background: var(--gta-bg); }
+
+.gta-form { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--gta-line); background: rgba(11,17,28,.9); flex: none; }
+.gta-in { flex: 1; min-width: 0; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--gta-line); background: var(--gta-bg); outline: none; }
+.gta-in:focus { border-color: var(--gta-ice); box-shadow: 0 0 0 3px rgba(79,209,232,.15); }
+.gta-send { padding: 0 16px; border-radius: 10px; border: 0; background: var(--gta-ice); color: #04131a !important; font-weight: 600; cursor: pointer; min-height: 36px; }
+.gta-foot { padding: 0 12px 10px; font: 10.5px/1.4 var(--gta-mono); color: var(--gta-muted); background: rgba(11,17,28,.9); flex: none; }
+
+@media (max-width: 480px) {
+  .gta-panel { inset: 0; right: 0; bottom: 0; width: 100%; height: 100%; height: 100dvh; border-radius: 0; border: 0; }
+  .gta-open .gta-launch { display: none; }
+  .gta-launch-t { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .gta-orb, .gta-panel { animation: none; } }

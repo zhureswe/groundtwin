@@ -18,7 +18,10 @@ $summary
 
 ## Final Project
 - Website: https://zhureswe.github.io/groundtwin/
-- 3D globe: https://zhureswe.github.io/groundtwin/globe.html
+- 3D globe: https://zhureswe.github.io/groundtwin/embed/globe.html
+- Analogs (top places and reference cards): https://zhureswe.github.io/groundtwin/embed/analogs.html
+- Working prototype (Analog Engine + Radar Twin): https://zhureswe.github.io/groundtwin/embed/prototype.html
+- Ask GroundTwin guide: https://zhureswe.github.io/groundtwin/embed/ask.html
 - Research paper (PDF): https://zhureswe.github.io/groundtwin/paper/groundtwin_paper.pdf
 - Code and data: https://github.com/zhureswe/groundtwin
 

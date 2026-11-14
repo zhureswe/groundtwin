@@ -57,10 +57,12 @@ def build():
     lim = list(w['rcm']['h_cm_at_filter_limits'].items())
 
     q = []
+    cur = {}
     add = lambda question, kw, answer, label, links=(), section=None: q.append(dict(
-        q=question, keywords=kw, a=answer, label=label, links=[dict(text=L[k][0], url=L[k][1]) for k in links], section=section))
+        q=question, cat=cur['cat'], keywords=kw, a=answer, label=label, links=[dict(text=L[k][0], url=L[k][1]) for k in links], section=section))
 
     # --- about the project
+    cur['cat'] = 'About the project'
     add('What is GroundTwin?', ['what', 'groundtwin', 'about', 'project', 'idea'],
         "GroundTwin is Earth's ground truth for the Moon and Mars. Lunar radar can mistake rocks for ice; we measure the same "
         'kind of radar signal on Earth, where we know the answer, and use it to read the Moon. It also maps Earth places that '
@@ -83,6 +85,7 @@ def build():
         'It is free, open and needs no login.', METHOD)
 
     # --- radar
+    cur['cat'] = 'Moon radar'
     add('What is CPR?', ['cpr', 'circular', 'polarization', 'ratio', 'twist'],
         'CPR (circular polarization ratio) = echo that kept the same "twist" ÷ echo whose twist flipped. Smooth ground flips the twist '
         '(low CPR); rocks and ice keep part of it (high CPR). So high CPR means rocks OR ice.', METHOD, ['minirf'], '#radar')
@@ -134,6 +137,7 @@ def build():
         '(Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9).', OFFICIAL)
 
     # --- analog engine
+    cur['cat'] = 'Analogs'
     add('How does the Analog Engine work?', ['analog', 'engine', 'similarity', 'formula', 'score', 'percentile'],
         f"Each of {sc['n_cells']:,} land cells (0.5°) gets percentiles p for 7 features: dryness, no plants, day–night swing, cold, dust, "
         'rough terrain, elevation. Each target has a profile t, each mission mode has weights w: s_i = 1 − |p_i − t_i|, '
@@ -176,6 +180,7 @@ def build():
         RESULT, ['nae'], '#explore')
 
     # --- Mangystau
+    cur['cat'] = 'Analogs'
     add('Why Mangystau?', ['mangystau', 'kazakhstan', 'why', 'tethys'],
         'Mangystau is the floor of the ancient Tethys Sea: layered sedimentary rocks (Bozzhyra, Sherkala), salt flats (Tuzbair), '
         'stone concretions (Torysh) and the Karagiye Depression about 132 m below sea level, in a dry land with almost no plants. '
@@ -193,6 +198,7 @@ def build():
         f"{g['region_stats']['ndvi_max']:.2f}.", RESULT, ['cop_dem', 's2', 'gpm'], '#mangystau')
 
     # --- data
+    cur['cat'] = 'Data & NASA sources'
     add('Which NASA data do you use?', ['nasa', 'data', 'datasets', 'lro', 'modis'],
         'LRO Mini-RF (lunar radar), LRO Diviner (temperature), LRO LOLA (topography), MODIS (temperature, vegetation, dust), '
         'GPM IMERG (rain), and the NASA GIBS Blue Marble basemap.', OFFICIAL, ['lro', 'pds', 'gpm', 'gibs'], '#method')
@@ -207,6 +213,7 @@ def build():
         OFFICIAL, ['earthdata', 'worldview', 'pds', 'rcm_ard'])
 
     # --- limits, team, AI
+    cur['cat'] = 'Method & limits'
     add('What can Earth never reproduce?', ['limits', 'limitations', 'gravity', 'vacuum', 'radiation', 'cannot'],
         'Gravity six times lower (Moon) or almost three times lower (Mars), vacuum or very thin air, no protection from space '
         'radiation, and sharp lunar dust. Also: different radar wavelengths, cleaner Earth ice, a coarse 0.5° grid and target '
@@ -234,12 +241,28 @@ def build():
     return q
 
 
+CATEGORIES = ['About the project', 'Using the site', 'Analogs', 'Moon radar', 'Data & NASA sources', 'Method & limits', 'Team & AI use']
+MOVE = {  # questions whose topic differs from their group above
+    'What is next for GroundTwin?': 'About the project',
+    'How do I use the Explore Earth page?': 'Using the site', 'What are the mission modes?': 'Using the site',
+    'How do I compare two places?': 'Using the site', 'Is the code open? How do I run it?': 'Using the site',
+    'Can I explore the raw data myself?': 'Data & NASA sources',
+    'Why do wavelengths matter?': 'Method & limits', 'How did you validate the Analog Engine?': 'Method & limits',
+    'What is the blind test?': 'Method & limits', 'Did you prove there is ice on the Moon?': 'Method & limits',
+    'Who made GroundTwin?': 'Team & AI use', 'How did you use AI?': 'Team & AI use',
+    'Is this an AI model that predicts ice?': 'Team & AI use', 'Is GroundTwin endorsed by NASA?': 'Team & AI use',
+}
+
+
 def main():
     q = build()
+    for it in q:
+        it['cat'] = MOVE.get(it['q'], it['cat'])
+    assert set(MOVE) <= {it['q'] for it in q} and {it['cat'] for it in q} == set(CATEGORIES)
     popular = ['What is GroundTwin?', 'What is CPR?', 'What is the Ice Evidence Score?', 'Which lunar craters score highest?',
                'How does the Analog Engine work?', 'Why Mangystau?', 'How do I compare two places?', 'Which NASA data do you use?', 'How did you use AI?']
     assert all(p in {x['q'] for x in q} for p in popular)
-    out = dict(demo=False, note='Answers prepared with AI assistance from our verified data', popular=popular, items=q)
+    out = dict(demo=False, categories=CATEGORIES, note='Answers prepared with AI assistance from our verified data', popular=popular, items=q)
     (SITE_DATA / 'faq.json').write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding='utf-8')
     print(len(q), 'answers')
 

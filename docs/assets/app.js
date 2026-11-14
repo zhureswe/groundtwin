@@ -2,8 +2,10 @@
 // All numbers come from docs/data/*.json (written by the Python pipeline). Nothing is hard-coded here.
 'use strict';
 
+// Embed pages set window.GT_BASE = '../' (path to docs/) and window.GT_MANUAL = true (they call GT.start() themselves).
+const BASE = window.GT_BASE || '';
 const DATA = {};
-const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry', 'wavelength', 'showcase', 'faq', 'explanations'];
+const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry', 'wavelength', 'showcase', 'explanations'];
 const CLASS_COLOR = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
 const CLASS_NAME = { smooth: 'smooth ground', rough_rock: 'rock field', ice: 'glacier ice' };
 const FEAT_NAME = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold',
@@ -20,21 +22,21 @@ const isDemo = (k) => DATA[k] && DATA[k].demo;
 async function loadAll() {
   await Promise.all(FILES.map(async (f) => {
     try {
-      const r = await fetch(`data/${f}.json`, { cache: 'no-store' });
+      const r = await fetch(`${BASE}data/${f}.json`, { cache: 'no-store' });
       DATA[f] = r.ok ? await r.json() : null;
     } catch (e) { DATA[f] = null; }
   }));
-  if (FILES.some(isDemo)) $('#demo-banner').hidden = false;
+  if (FILES.some(isDemo) && $('#demo-banner')) $('#demo-banner').hidden = false;
 }
 
 /* ---------------- router ---------------- */
 const rendered = {};
 function show(page) {
-  if (!document.querySelector(`[data-page="${page}"]`)) page = 'home';
+  const pages = [...document.querySelectorAll('.page')];
+  if (!pages.some((p) => p.dataset.page === page)) page = pages[0] ? pages[0].dataset.page : 'home';
   document.querySelectorAll('.page').forEach((p) => { p.hidden = p.dataset.page !== page; });
-  document.querySelectorAll('#navlinks a').forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + page));
-  $('#navlinks').classList.remove('open');
-  window.scrollTo(0, 0);
+  document.querySelectorAll('#navlinks a, [data-tab]').forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + page));
+  if ($('#navlinks')) { $('#navlinks').classList.remove('open'); window.scrollTo(0, 0); }
   const fn = { home: renderHome, radar: renderRadar, explore: renderExplore, mangystau: renderMangystau, method: renderMethod }[page];
   if (fn && !rendered[page]) { rendered[page] = true; fn(); }
   if (page === 'explore' && MAP.map) setTimeout(() => MAP.map.invalidateSize(), 50);
@@ -236,7 +238,7 @@ function renderExplore() {
     selectCell(i);
   });
   recompute();
-  renderShowcase();
+  if ($('#sc-top')) renderShowcase();
 }
 
 function renderShowcase() {
@@ -409,7 +411,7 @@ function renderMangystau() {
     `<div class="stat"><b>${r[k] != null ? `top ${fmt(r[k], 1)}%` : '–'}</b><span>of Earth's land cells for ${lab}: where Mangystau ranks in the Analog Engine${demo}</span></div>`).join('');
   const imgs = g.images || [];
   $('#mgs-images').innerHTML = imgs.length
-    ? `<div class="figs">${imgs.map((i) => `<figure><img src="assets/img/${i.file}" alt="${i.caption}"><figcaption class="note">${i.caption}</figcaption></figure>`).join('')}</div>`
+    ? `<div class="figs">${imgs.map((i) => `<figure><img src="${BASE}assets/img/${i.file}" alt="${i.caption}"><figcaption class="note">${i.caption}</figcaption></figure>`).join('')}</div>`
     : '<div class="placeholder">Sentinel-2 true-colour views of Mangystau will appear here.</div>';
   const row = (p) => `<tr><td>${p.name}${p.lat != null ? `<br><span class="muted small">${ll(p.lat, p.lon)}</span>` : ''}</td>${MGS_FEATS.map(([k, , d]) => `<td>${fmt(p[k], d)}</td>`).join('')}</tr>`;
   const stats = g.region_stats && Object.keys(g.region_stats).length ? row({ name: '<b>Whole region</b>', ...g.region_stats }) : '';
@@ -430,7 +432,7 @@ function renderReferences() {
     <tbody>${r.rows.map((x) => `<tr><td>${x.place}</td>${tks.map((tk) => `<td>${fmt(x[tk].S)}</td><td>${fmt(x[tk].cosine)}</td>
       <td class="${x[tk].top_percent === best[tk] ? 'yes' : ''}">${topPct(x[tk].top_percent)}</td>`).join('')}</tr>`).join('')}</tbody></table>
     <p class="note">${r.method}</p>
-    <figure class="pca"><img src="${r.pca.image}" alt="PCA of Earth land cells with known analogs, Mangystau and Mars target profiles">
+    <figure class="pca"><img src="${BASE}${r.pca.image}" alt="PCA of Earth land cells with known analogs, Mangystau and Mars target profiles">
     <figcaption class="note">PCA of the 7 percentile features over all land cells: PC1 ${Math.round(r.pca.explained_variance[0] * 100)}% and PC2 ${Math.round(r.pca.explained_variance[1] * 100)}% of the variance. Points closer to the blue Mars profiles are more Mars-like by our features.</figcaption></figure>`;
 }
 
@@ -475,105 +477,11 @@ function fillLimits() {
   if (v && T) set('lift', `Science-mode Lift: ${Object.keys(v.lift).map((t) => `${T.targets[t].label.split(' (')[0]} ×${fmt(v.lift[t].science, 2)} (p ${v.p_values[t].science})`).join(', ')} — only the average-rank test is clearly better than chance for Mars.`);
 }
 
-/* ---------------- Ask GroundTwin (prepared answers, keyword search, no live AI) ---------------- */
-const STOP = new Set('a an the is are was were do does did i you your we our of to in on for and or what how why which who where when it this that with can about there by be me tell'.split(' '));
-const LABEL_CLASS = { 'Official source': 'official', 'Our result': 'result', 'Our method': 'method' };
-const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-function askSearch(text) {
-  const qn = text.toLowerCase(), toks = qn.split(/[^a-z0-9α-ωχ.\-]+/).filter((t) => t.length > 1 && !STOP.has(t));
-  return DATA.faq.items.map((it) => {
-    const kw = it.keywords, ql = it.q.toLowerCase();
-    let s = kw.filter((k) => k.includes(' ') && qn.includes(k)).length * 3;
-    toks.forEach((t) => {
-      if (kw.some((k) => k === t || (t.length > 3 && (k.startsWith(t) || t.startsWith(k))))) s += 2;
-      else if (ql.includes(t)) s += 1;
-    });
-    return [s, it];
-  }).filter(([s]) => s >= 2).sort((a, b) => b[0] - a[0]);
-}
-
-function askSay(html, who) {
-  const d = document.createElement('div'); d.className = `ask-msg ${who}`; d.innerHTML = html;
-  $('#ask-log').appendChild(d); $('#ask-log').scrollTop = 1e9; return d;
-}
-const askButtons = (qs) => `<div class="ask-sugg">${qs.map((q) => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`;
-
-/* compare mode: "compare A and B", "A vs B" — places of the same kind, numbers from our JSON */
-function compareEntities() {
-  const E = [], T = DATA.targets ? DATA.targets.targets : {};
-  const m = DATA.moon_targets;
-  if (m) m.targets.forEach((t) => E.push({ kind: 'Lunar target', name: t.name, rows: {
-    'CPR inside / outside (Mini-RF)': `${fmt(t.cpr_in)} / ${fmt(t.cpr_out)}`, 'Contrast in/out': `×${fmt(t.cpr_in / t.cpr_out)}`,
-    'Floor slope (LOLA)': `${fmt(t.slope_deg, 1)}°`, 'Median Tmax (Diviner)': `${Math.round(t.tmax_k)} K`,
-    [`Floor colder than ${m.cold_threshold_k} K`]: t.frac_floor_below_110k != null ? `${fmt(t.frac_floor_below_110k * 100, 0)}%` : '–',
-    'Ice Evidence Score': hasIes(t) ? `${t.ies}/3` : 'n/a' } }));
-  if (DATA.earth_cpr) DATA.earth_cpr.sites.forEach((s) => E.push({ kind: 'Earth radar site', name: pretty(s.site), rows: {
-    'Class': CLASS_NAME[s.cls], 'Median CPR (RCM)': fmt(s.median), 'Middle 50%': `${fmt(s.p25)}–${fmt(s.p75)}`, 'Share CPR > 1': `${fmt(s.frac_gt1 * 100, 1)}%`, 'Scene date': s.date } }));
-  const analog = (name, x) => E.push({ kind: 'Analog place', name, rows: Object.fromEntries(['mars_gale', 'mars_jezero'].filter((tk) => x[tk])
-    .flatMap((tk) => { const l = (T[tk] ? T[tk].label : tk).split(' (')[0]; return [[`${l}: S`, fmt(x[tk].S)], [`${l}: cosine`, fmt(x[tk].cosine)], [`${l}: rank`, topPct(x[tk].top_percent)]]; })) });
-  if (DATA.references) DATA.references.rows.forEach((x) => analog(x.place.replace(' (6 sites)', ''), x));
-  if (DATA.showcase) DATA.showcase.cards.forEach((c) => c.rows.forEach((r) => {
-    if (E.some((e) => norm(e.name.replace(/\(.*?\)/g, '')) === norm(r.place.replace(/\(.*?\)/g, '')))) return;
-    const l = (T[c.target] ? T[c.target].label : c.target).split(' (')[0];
-    E.push({ kind: 'Analog place', name: r.place, rows: { [`${l}: S`]: fmt(r.S), [`${l}: cosine`]: fmt(r.cosine), [`${l}: rank`]: `#${r.position.toLocaleString('en')} · ${topPct(r.top_percent)}` } });
-  }));
-  return E;
-}
-
-const norm = (s) => s.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-function findEntities(text, E) {
-  const q = ` ${norm(text)} `;
-  const key = (e) => norm(e.name.replace(/\(.*?\)/g, ''));
-  const hits = [];
-  const names = (e) => { const w = key(e).split(' '); return w.length >= 3 ? [key(e), w.map((x) => x[0]).join('')] : [key(e)]; };   // + acronym, e.g. MDRS
-  E.forEach((e) => names(e).forEach((n) => { const k = ` ${n} `; for (let i = q.indexOf(k); i >= 0; i = q.indexOf(k, i + 1)) hits.push([i, i + k.length, e]); }));
-  const inside = ([s, f, e]) => hits.some(([s2, f2, o]) => o !== e && s2 <= s && f <= f2 && f2 - s2 > f - s);   // "Cabeus B" covers "Cabeus" only where it occurs
-  const seen = new Set();
-  return hits.filter((h) => !inside(h)).sort((a, b) => a[0] - b[0]).map((h) => h[2]).filter((e) => !seen.has(e) && seen.add(e));
-}
-
-function askCompare(text) {
-  if (!/\bcompare\b|\bvs\.?\b|\bversus\b|difference between/i.test(text)) return false;
-  const E = compareEntities(), found = findEntities(text, E).slice(0, 2);
-  const kinds = [...new Set(E.map((e) => e.kind))];
-  const examples = kinds.map((k) => `<b>${k}s:</b> ${E.filter((e) => e.kind === k).map((e) => e.name).join(', ')}`).join('<br>');
-  if (found.length < 2) { askSay(`<span class="lbl result">Our result</span><br>To compare, name two places of the same kind, e.g. "compare Shackleton and Faustini" or "Mangystau vs San Rafael Swell".<br><span class="small">${examples}</span>`, 'bot'); return true; }
-  const [a, b] = found;
-  if (a.kind !== b.kind) { askSay(`<span class="lbl result">Our result</span><br>${esc(a.name)} is ${/^[aeiou]/i.test(a.kind) ? 'an' : 'a'} ${a.kind.toLowerCase()} and ${esc(b.name)} is ${/^[aeiou]/i.test(b.kind) ? 'an' : 'a'} ${b.kind.toLowerCase()} — they are measured differently, so I can't put them side by side. Try two places of the same kind.<br><span class="small">${examples}</span>`, 'bot'); return true; }
-  const keys = [...new Set([...Object.keys(a.rows), ...Object.keys(b.rows)])];
-  askSay(`<span class="lbl result">Our result</span><br><b>${esc(a.name)} vs ${esc(b.name)}</b> <span class="small muted">(${a.kind.toLowerCase()})</span>
-    <div class="ask-table"><table class="cmp small"><thead><tr><th></th><th>${esc(a.name)}</th><th>${esc(b.name)}</th></tr></thead><tbody>${keys.map((k) =>
-    `<tr><td>${k}</td><td>${a.rows[k] ?? '–'}</td><td>${b.rows[k] ?? '–'}</td></tr>`).join('')}</tbody></table></div>
-    <div class="small muted">Numbers from our data files (moon_targets, earth_cpr, references, showcase).</div>`, 'bot');
-  return true;
-}
-
-function askAnswer(text) {
-  askSay(esc(text), 'me');
-  if (askCompare(text)) return;
-  const hits = askSearch(text);
-  if (!hits.length) { askSay(`<b>I don't know yet.</b> Try one of the popular questions:${askButtons(DATA.faq.popular)}`, 'bot'); return; }
-  const it = hits[0][1], more = hits.slice(1, 4).map(([, x]) => x.q);
-  askSay(`<span class="lbl ${LABEL_CLASS[it.label]}">${it.label}</span><br><b>${esc(it.q)}</b><br>${esc(it.a)}
-    ${it.links.length ? `<ul>${it.links.map((l) => `<li><a href="${l.url}" target="_blank" rel="noopener">${esc(l.text)}</a></li>`).join('')}</ul>` : ''}
-    ${it.section ? `<div class="small"><a href="${it.section}">Open this part of the site →</a></div>` : ''}
-    ${more.length ? `<div class="small muted" style="margin-top:6px">Related:</div>${askButtons(more)}` : ''}`, 'bot');
-}
-
-function initAsk() {
-  const f = DATA.faq; if (!f) { $('#ask-btn').hidden = true; return; }
-  const panel = $('#ask-panel'), btn = $('#ask-btn');
-  const toggle = (open) => { panel.hidden = !open; btn.setAttribute('aria-expanded', open); if (open) $('#ask-q').focus(); };
-  btn.addEventListener('click', () => toggle(panel.hidden));
-  $('#ask-close').addEventListener('click', () => toggle(false));
-  $('#ask-foot').textContent = `Not a live AI: it searches ${f.items.length} prepared answers. ${f.note}.`;
-  askSay(`Hi! Ask me about GroundTwin, its data, method or results. Popular questions:${askButtons(f.popular)}`, 'bot');
-  $('#ask-log').addEventListener('click', (ev) => { const b = ev.target.closest('button[data-q]'); if (b) askAnswer(b.dataset.q); });
-  $('#ask-form').addEventListener('submit', (ev) => { ev.preventDefault(); const q = $('#ask-q').value.trim(); if (q) { askAnswer(q); $('#ask-q').value = ''; } });
-}
-
 /* ---------------- boot ---------------- */
-$('#menu').addEventListener('click', () => $('#navlinks').classList.toggle('open'));
-window.addEventListener('hashchange', () => show(location.hash.slice(1) || 'home'));
-loadAll().then(() => { initAsk(); show(location.hash.slice(1) || 'home'); });
+function start() {
+  if ($('#menu')) $('#menu').addEventListener('click', () => $('#navlinks').classList.toggle('open'));
+  window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+  return loadAll().then(() => show(location.hash.slice(1)));
+}
+window.GT = { DATA, MAP, loadAll, show, start };
+if (!window.GT_MANUAL) start();
