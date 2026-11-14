@@ -413,7 +413,7 @@
     "places",
     "twin"
    ],
-   "a": "Top 5 by formula for Moon - south pole base (Science mode): 1. Xinjiang Uygur Zizhiqu, China (S 0.93); 2. Xinjiang Uygur Zizhiqu, China (S 0.91); 3. Qinghai Sheng, China (S 0.91); 4. Govi-Altai, Mongolia (S 0.90); 5. Xinjiang Uygur Zizhiqu, China (S 0.90).",
+   "a": "Top 5 by formula for Moon - south pole base (Science mode): 1. Xinjiang Uygur Zizhiqu, China (S 0.93, rank #1 of 60,215, top 0.002% of land cells); 2. Xinjiang Uygur Zizhiqu, China (S 0.91, rank #12 of 60,215, top 0.020% of land cells); 3. Qinghai Sheng, China (S 0.91, rank #15 of 60,215, top 0.025% of land cells); 4. Govi-Altai, Mongolia (S 0.90, rank #18 of 60,215, top 0.030% of land cells); 5. Xinjiang Uygur Zizhiqu, China (S 0.90, rank #31 of 60,215, top 0.051% of land cells).",
    "label": "Our result",
    "links": [],
    "section": "#explore"
@@ -428,7 +428,7 @@
     "gale",
     "jezero"
    ],
-   "a": "Top 5 by formula for Mars - Gale crater (layered lake sediments) (Science mode): 1. Xinjiang Uygur Zizhiqu, China (S 0.94); 2. Illizi, Algeria (S 0.93); 3. Nei Mongol Zizhiqu, China (S 0.92); 4. Red Sea, Egypt (S 0.92); 5. Bechar, Algeria (S 0.92). Mars - Gale crater (layered lake sediments) is shown because known Mars analog sites rank better for it in our validation (Science mode: average rank top 21.3%, p = 0.001; Mars - Jezero crater: top 24.4%), and its layered lake sediments are the Mars feature that Mangystau is compared with.",
+   "a": "Top 5 by formula for Mars - Gale crater (layered lake sediments) (Science mode): 1. Xinjiang Uygur Zizhiqu, China (S 0.94, rank #1 of 60,215, top 0.002% of land cells); 2. Illizi, Algeria (S 0.93, rank #26 of 60,215, top 0.043% of land cells); 3. Nei Mongol Zizhiqu, China (S 0.92, rank #33 of 60,215, top 0.055% of land cells); 4. Red Sea, Egypt (S 0.92, rank #34 of 60,215, top 0.056% of land cells); 5. Bechar, Algeria (S 0.92, rank #43 of 60,215, top 0.071% of land cells). Mars - Gale crater (layered lake sediments) is shown because known Mars analog sites rank better for it in our validation (Science mode: average rank top 21.3%, p = 0.001; Mars - Jezero crater: top 24.4%), and its layered lake sediments are the Mars feature that Mangystau is compared with.",
    "label": "Our result",
    "links": [],
    "section": "#explore"
@@ -503,7 +503,7 @@
     "artemis",
     "training"
    ],
-   "a": "USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): Cinder Lake Crater Field S 0.68, top 26.8%; Meteor Crater S 0.76, top 12.3% — they were chosen for crater geology, which our 7 features do not measure.",
+   "a": "USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): Cinder Lake Crater Field S 0.68, rank #16,161, top 26.8% of land cells; Meteor Crater S 0.76, rank #7,410, top 12.3% of land cells — they were chosen for crater geology, which our 7 features do not measure.",
    "label": "Official source",
    "links": [
     {
@@ -521,7 +521,7 @@
     "san rafael",
     "mars society"
    ],
-   "a": "MDRS is a Mars Society station for Mars-mission training (not a NASA station); Utah is in the NASA Planetary Analog Explorer. For Mars - Gale crater (layered lake sediments): Mars Desert Research Station (Utah) S 0.77, top 14.1%; San Rafael Swell (Utah) S 0.78, top 12.7%.",
+   "a": "MDRS is a Mars Society station for Mars-mission training (not a NASA station); Utah is in the NASA Planetary Analog Explorer. For Mars - Gale crater (layered lake sediments): Mars Desert Research Station (Utah) S 0.77, rank #8,471, top 14.1% of land cells; San Rafael Swell (Utah) S 0.78, rank #7,644, top 12.7% of land cells.",
    "label": "Our result",
    "links": [
     {
@@ -553,7 +553,7 @@
     "result",
     "top"
    ],
-   "a": "Mangystau ranks in the top 9.5% of Earth's land cells for Gale and top 8.3% for Jezero (Science mode). Against Gale: S 0.822, cosine 0.97. It ranks above the Utah and Devon references in our table.",
+   "a": "Mangystau ranks #5,729 of 60,215, in the top 9.5% of Earth's land cells for Gale and top 8.3% for Jezero (Science mode). Against Gale: S 0.822, cosine 0.97. It ranks above the Utah and Devon references in our table.",
    "label": "Our result",
    "links": [],
    "section": "#mangystau"

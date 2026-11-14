@@ -48,7 +48,10 @@ def build():
     cab = next(t for t in m['targets'] if t['name'] == 'Cabeus')
     lab = lambda tk: T['targets'][tk]['label']
     mgs_ref = next(x for x in r['rows'] if x['place'].startswith('Mangystau'))
-    top_line = lambda tk: '; '.join(f"{x['rank']}. {x['region']} (S {x['S']:.2f})" for x in sc['top'][tk])
+    ex = load('explanations')
+    tp = lambda x: f"top {x:.1f}%" if x >= 0.1 else f"top {x:.3f}%"
+    top_line = lambda tk: '; '.join(f"{x['rank']}. {x['region']} (S {x['S']:.2f}, rank #{e['position']:,} of {e['n_cells']:,}, {tp(e['top_percent'])} of land cells)"
+                                    for x, e in zip(sc['top'][tk], ex['top'][tk]))
     card = {c['key']: c for c in sc['cards']}
     gold = {t['target']: t for t in p['moon']['targets'] if t['target'] in p['golden_case']['moon']}
     lim = list(w['rcm']['h_cm_at_filter_limits'].items())
@@ -165,11 +168,11 @@ def build():
     add('What about Cinder Lake and Meteor Crater?', ['cinder', 'meteor', 'arizona', 'apollo', 'artemis', 'training'],
         'USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is '
         'used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): '
-        + '; '.join(f"{x['place']} S {x['S']:.2f}, top {x['top_percent']}%" for x in card['moon_reference']['rows'])
+        + '; '.join(f"{x['place']} S {x['S']:.2f}, rank #{x['position']:,}, top {x['top_percent']}% of land cells" for x in card['moon_reference']['rows'])
         + ' — they were chosen for crater geology, which our 7 features do not measure.', OFFICIAL, ['usgs_analogs'], '#explore')
     add('What about MDRS in Utah?', ['mdrs', 'utah', 'san rafael', 'mars society'],
         'MDRS is a Mars Society station for Mars-mission training (not a NASA station); Utah is in the NASA Planetary Analog Explorer. '
-        f"For {lab(sc['mars_target'])}: " + '; '.join(f"{x['place']} S {x['S']:.2f}, top {x['top_percent']}%" for x in card['mars_reference']['rows']) + '.',
+        f"For {lab(sc['mars_target'])}: " + '; '.join(f"{x['place']} S {x['S']:.2f}, rank #{x['position']:,}, top {x['top_percent']}% of land cells" for x in card['mars_reference']['rows']) + '.',
         RESULT, ['nae'], '#explore')
 
     # --- Mangystau
@@ -178,7 +181,7 @@ def build():
         'stone concretions (Torysh) and the Karagiye Depression about 132 m below sea level, in a dry land with almost no plants. '
         'We found no scientific study of it as a Mars analog — only travel writing.', OFFICIAL, section='#mangystau')
     add('How Mars-like is Mangystau by your numbers?', ['mangystau', 'rank', 'score', 'result', 'top'],
-        f"Mangystau ranks in the top {g['rank_vs_mars']['mars_gale']}% of Earth's land cells for Gale and top {g['rank_vs_mars']['mars_jezero']}% "
+        f"Mangystau ranks #{card['mangystau']['rows'][0]['position']:,} of {sc['n_cells']:,}, in the top {g['rank_vs_mars']['mars_gale']}% of Earth's land cells for Gale and top {g['rank_vs_mars']['mars_jezero']}% "
         f"for Jezero (Science mode). Against Gale: S {mgs_ref['mars_gale']['S']}, cosine {mgs_ref['mars_gale']['cosine']}. It ranks above "
         'the Utah and Devon references in our table.', RESULT, section='#mangystau')
     add('How is Mangystau NOT like Mars?', ['different', 'not', 'unlike', 'blueberries', 'concretions'],

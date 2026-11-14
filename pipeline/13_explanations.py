@@ -12,6 +12,11 @@ PHRASE = dict(aridity='drier', barren='fewer plants', thermal_range='a larger da
               dust='dustier air', roughness='rougher terrain', elevation='higher ground')
 
 
+def top_fmt(position, n):
+    x = position / n * 100
+    return f'{x:.1f}' if x >= 0.1 else f'{x:.3f}'
+
+
 def explain(name, vec, profile, S, position, n, cannot):
     s = {f: 1 - abs(vec[f] - profile[f]) for f in ae.FEATURES}
     match = [f for f in ae.FEATURES if s[f] >= MATCH]
@@ -26,10 +31,10 @@ def explain(name, vec, profile, S, position, n, cannot):
         no.append(f"{FEAT[f]}: percentile {vec[f]:.2f} vs target {profile[f]:.2f} ({side} extreme than the target)")
     part = '; '.join(f"{FEAT[f]} (percentile {vec[f]:.2f} vs target {profile[f]:.2f})" for f in partly)
     return dict(place=name, matches=f"Matches: {yes}." + (f" Partly: {part}." if part else '')
-                + f" Overall S = {S:.2f}, rank #{position:,} of {n:,} land cells (top {"<0.1" if position / n < 0.001 else f"{position / n * 100:.1f}"}%).",
+                + f" Overall S = {S:.2f}, rank #{position:,} of {n:,} land cells (top {top_fmt(position, n)}% of land cells).",
                 differs=('Differs: ' + '; '.join(no) + '.' if no else 'Differs: no feature is far from the target profile.')
                         + f" Earth cannot reproduce: {', '.join(cannot)}.",
-                position=position, n_cells=n, S=round(S, 3),
+                position=position, n_cells=n, top_percent=round(position / n * 100, 3), S=round(S, 3),
                 match_features=match, partly_features=partly, differ_features=differ)
 
 

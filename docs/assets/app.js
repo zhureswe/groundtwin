@@ -12,6 +12,7 @@ const IES_COLOR = ['#3a4354', '#2e6f86', '#3fa9c9', '#8beaff'];
 const NA_COLOR = '#6b7486';   // targets where the crater-floor test does not apply (mountains)
 const hasIes = (t) => t.ies != null;
 const $ = (s) => document.querySelector(s);
+const topPct = (x) => `top ${x >= 0.1 ? Number(x).toFixed(1) : Number(x).toFixed(3)}% of land cells`;
 const fmt = (x, d = 2) => (x == null || isNaN(x)) ? '–' : Number(x).toFixed(d);
 const pretty = (s) => s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 const isDemo = (k) => DATA[k] && DATA[k].demo;
@@ -47,7 +48,7 @@ function renderHome() {
   if (m) { const c = m.targets.filter(hasIes); s.push([`${c.filter((t) => t.ies >= 2).length} / ${c.length}`, 'lunar craters with ≥2 of 3 ice clues']); }
   if (v && v.mean_top_percent) s.push([`top ${fmt(v.mean_top_percent.mars_gale.science, 0)}%`,
     `average rank of known Mars analog sites for Gale (random places: ~50%, p = ${v.mean_top_percent_p.mars_gale.science})`]);
-  if (g && g.rank_vs_mars && g.rank_vs_mars.mars_gale != null) s.push([`top ${fmt(g.rank_vs_mars.mars_gale, 0)}%`, 'of Earth for Mars · Gale: where Mangystau ranks']);
+  if (g && g.rank_vs_mars && g.rank_vs_mars.mars_gale != null) s.push([`top ${fmt(g.rank_vs_mars.mars_gale, 1)}%`, "of Earth's land cells for Mars · Gale: where Mangystau ranks"]);
   $('#stats').innerHTML = s.map(([b, t]) => `<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
 }
 
@@ -245,10 +246,10 @@ function renderShowcase() {
   const expl = (x) => x ? `<details class="expl"><summary>By our numbers <span class="lbl-ai">${X.label}</span></summary><p>${x.matches}</p><p>${x.differs}</p></details>` : '';
   const chips = (fs, ok) => fs.map((f) => `<span class="chip ${ok ? 'yes' : 'no'}">${ok ? '✓' : '≠'} ${FEAT_NAME[f]}</span>`).join('');
   $('#sc-top').innerHTML = Object.entries(d.top).map(([tk, rows]) => `<div><b>${lab(tk)}</b><ol class="top10">${rows.map((r, i) =>
-    `<li><span class="sc">${fmt(r.S)}</span>${r.region || 'Unnamed cell'} · ${ll(r.lat, r.lon)}<span class="near">${chips(r.matches, true)}${chips(r.differs, false)}</span>${expl(X && X.top[tk] && X.top[tk][i])}</li>`).join('')}</ol></div>`).join('');
+    `<li><span class="sc">${fmt(r.S)}</span>${r.region || 'Unnamed cell'} · ${ll(r.lat, r.lon)}${X && X.top[tk] ? `<span class="near">rank #${X.top[tk][i].position.toLocaleString('en')} of ${X.top[tk][i].n_cells.toLocaleString('en')} · ${topPct(X.top[tk][i].top_percent)}</span>` : ''}<span class="near">${chips(r.matches, true)}${chips(r.differs, false)}</span>${expl(X && X.top[tk] && X.top[tk][i])}</li>`).join('')}</ol></div>`).join('');
   $('#sc-note').innerHTML = `${d.selection} ${d.mars_choice_reason}`;
   $('#sc-cards').innerHTML = d.cards.map((c) => `<div class="card"><span class="tag ${c.target.startsWith('moon') ? 'ice' : 'mars'}">vs ${lab(c.target).split(' (')[0]}</span>
-    <h3>${c.title}</h3>${c.rows.map((r, i) => `<p><b>${r.place}</b><br>S <b>${fmt(r.S)}</b> · cosine <b>${fmt(r.cosine)}</b> · rank <b>#${r.position.toLocaleString('en')}</b> of ${d.n_cells.toLocaleString('en')} (top ${fmt(r.top_percent, 1)}%)</p>
+    <h3>${c.title}</h3>${c.rows.map((r, i) => `<p><b>${r.place}</b><br>S <b>${fmt(r.S)}</b> · cosine <b>${fmt(r.cosine)}</b> · rank <b>#${r.position.toLocaleString('en')}</b> of ${d.n_cells.toLocaleString('en')} (${topPct(r.top_percent)})</p>
       <div class="chips">${chips(r.matches, true)}${chips(r.differs, false)}</div>${expl(X && X.cards[c.key] && X.cards[c.key][i])}`).join('')}
     <p class="small"><b>How it matches:</b> ${c.facts.join(' ')}</p>
     <p class="small"><b>How it doesn't:</b> ${c.not_like.join('; ')}.</p>
@@ -405,7 +406,7 @@ function renderMangystau() {
   const demo = g.demo ? ' <b style="color:#f6c445">DEMO</b>' : '';
   const r = g.rank_vs_mars || {};
   $('#mgs-rank').innerHTML = [['mars_gale', 'Mars · Gale crater'], ['mars_jezero', 'Mars · Jezero crater']].map(([k, lab]) =>
-    `<div class="stat"><b>${r[k] != null ? `top ${fmt(r[k], 0)}%` : '–'}</b><span>of Earth's land cells for ${lab}: where Mangystau ranks in the Analog Engine${demo}</span></div>`).join('');
+    `<div class="stat"><b>${r[k] != null ? `top ${fmt(r[k], 1)}%` : '–'}</b><span>of Earth's land cells for ${lab}: where Mangystau ranks in the Analog Engine${demo}</span></div>`).join('');
   const imgs = g.images || [];
   $('#mgs-images').innerHTML = imgs.length
     ? `<div class="figs">${imgs.map((i) => `<figure><img src="assets/img/${i.file}" alt="${i.caption}"><figcaption class="note">${i.caption}</figcaption></figure>`).join('')}</div>`
@@ -427,7 +428,7 @@ function renderReferences() {
   $('#mgs-refs').innerHTML = `<table class="cmp"><thead><tr><th>Place</th>${tks.map((tk) => `<th colspan="3">${T[tk] ? T[tk].label : tk}</th>`).join('')}</tr>
     <tr><th></th>${tks.map(() => '<th>S</th><th>Cosine</th><th>Rank on Earth</th>').join('')}</tr></thead>
     <tbody>${r.rows.map((x) => `<tr><td>${x.place}</td>${tks.map((tk) => `<td>${fmt(x[tk].S)}</td><td>${fmt(x[tk].cosine)}</td>
-      <td class="${x[tk].top_percent === best[tk] ? 'yes' : ''}">top ${fmt(x[tk].top_percent, 1)}%</td>`).join('')}</tr>`).join('')}</tbody></table>
+      <td class="${x[tk].top_percent === best[tk] ? 'yes' : ''}">${topPct(x[tk].top_percent)}</td>`).join('')}</tr>`).join('')}</tbody></table>
     <p class="note">${r.method}</p>
     <figure class="pca"><img src="${r.pca.image}" alt="PCA of Earth land cells with known analogs, Mangystau and Mars target profiles">
     <figcaption class="note">PCA of the 7 percentile features over all land cells: PC1 ${Math.round(r.pca.explained_variance[0] * 100)}% and PC2 ${Math.round(r.pca.explained_variance[1] * 100)}% of the variance. Points closer to the blue Mars profiles are more Mars-like by our features.</figcaption></figure>`;
@@ -510,12 +511,12 @@ function compareEntities() {
   if (DATA.earth_cpr) DATA.earth_cpr.sites.forEach((s) => E.push({ kind: 'Earth radar site', name: pretty(s.site), rows: {
     'Class': CLASS_NAME[s.cls], 'Median CPR (RCM)': fmt(s.median), 'Middle 50%': `${fmt(s.p25)}–${fmt(s.p75)}`, 'Share CPR > 1': `${fmt(s.frac_gt1 * 100, 1)}%`, 'Scene date': s.date } }));
   const analog = (name, x) => E.push({ kind: 'Analog place', name, rows: Object.fromEntries(['mars_gale', 'mars_jezero'].filter((tk) => x[tk])
-    .flatMap((tk) => { const l = (T[tk] ? T[tk].label : tk).split(' (')[0]; return [[`${l}: S`, fmt(x[tk].S)], [`${l}: cosine`, fmt(x[tk].cosine)], [`${l}: rank`, `top ${fmt(x[tk].top_percent, 1)}%`]]; })) });
+    .flatMap((tk) => { const l = (T[tk] ? T[tk].label : tk).split(' (')[0]; return [[`${l}: S`, fmt(x[tk].S)], [`${l}: cosine`, fmt(x[tk].cosine)], [`${l}: rank`, topPct(x[tk].top_percent)]]; })) });
   if (DATA.references) DATA.references.rows.forEach((x) => analog(x.place.replace(' (6 sites)', ''), x));
   if (DATA.showcase) DATA.showcase.cards.forEach((c) => c.rows.forEach((r) => {
     if (E.some((e) => norm(e.name.replace(/\(.*?\)/g, '')) === norm(r.place.replace(/\(.*?\)/g, '')))) return;
     const l = (T[c.target] ? T[c.target].label : c.target).split(' (')[0];
-    E.push({ kind: 'Analog place', name: r.place, rows: { [`${l}: S`]: fmt(r.S), [`${l}: cosine`]: fmt(r.cosine), [`${l}: rank`]: `top ${fmt(r.top_percent, 1)}%` } });
+    E.push({ kind: 'Analog place', name: r.place, rows: { [`${l}: S`]: fmt(r.S), [`${l}: cosine`]: fmt(r.cosine), [`${l}: rank`]: `#${r.position.toLocaleString('en')} · ${topPct(r.top_percent)}` } });
   }));
   return E;
 }

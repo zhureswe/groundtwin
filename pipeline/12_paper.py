@@ -25,6 +25,7 @@ def put(key, value, source, fmt=None):
 
 def collect():
     e, m, v, b = load('earth_cpr'), load('moon_targets'), load('validation'), load('blind_test')
+    ex = load('explanations')
     g, r, p, w, sc, ag, T = (load(k) for k in ('mangystau', 'references', 'polarimetry', 'wavelength', 'showcase', 'analog_grid', 'targets'))
     put('n_sites', len(e['sites']), 'earth_cpr.json: len(sites)')
     put('n_noscene', len(e['sites_without_usable_scene']), 'earth_cpr.json: sites_without_usable_scene')
@@ -121,13 +122,14 @@ def collect():
     put('pc2', round(r['pca']['explained_variance'][1] * 100), 'references.json: pca.explained_variance[1] x100')
     for tk in ('moon_south_pole', sc['mars_target']):
         k = 'moon' if tk == 'moon_south_pole' else 'mars'
-        put(f'top_{k}', '; '.join(f"{x['region']} ({abs(x['lat']):.2f}°{'N' if x['lat'] >= 0 else 'S'}, {abs(x['lon']):.2f}°{'E' if x['lon'] >= 0 else 'W'}, S = {x['S']:.3f})"
-                                  for x in sc['top'][tk]), f'showcase.json: top.{tk}')
+        put(f'top_{k}', '; '.join(f"{x['region']} ({abs(x['lat']):.2f}°{'N' if x['lat'] >= 0 else 'S'}, {abs(x['lon']):.2f}°{'E' if x['lon'] >= 0 else 'W'}, S = {x['S']:.3f}, "
+                                  f"rank #{e['position']:,}, top {e['top_percent']:.3f}% of land cells)"
+                                  for x, e in zip(sc['top'][tk], ex['top'][tk])), f'showcase.json: top.{tk}; explanations.json: top.{tk}[].position, top_percent')
     put('mars_target', T['targets'][sc['mars_target']]['label'], 'showcase.json: mars_target')
     cards = {c['key']: c for c in sc['cards']}
     for row in cards['moon_reference']['rows'] + cards['mars_reference']['rows']:
         k = row['place'].split(' (')[0].lower().replace(' ', '_')
-        put(f'card_{k}', f"S = {row['S']:.2f}, cosine {row['cosine']:.2f}, rank #{row['position']:,} (top {row['top_percent']}%)",
+        put(f'card_{k}', f"S = {row['S']:.2f}, cosine {row['cosine']:.2f}, rank #{row['position']:,} (top {row['top_percent']}% of land cells)",
             f"showcase.json: cards[*].rows[{row['place']}]")
 
 

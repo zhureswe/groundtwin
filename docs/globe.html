@@ -72,14 +72,14 @@ function pins(sc, ex, T) {
   for (const [tk, rows] of Object.entries(sc.top)) {
     const g = tk === 'moon_south_pole' ? 'moon' : 'mars';
     rows.forEach((r, i) => { const x = ex.top[tk][i];
-      out.push({ g, text: String(r.rank), name: r.region || 'Unnamed cell', lat: r.lat, lon: r.lon, target: label(tk), S: r.S, position: x.position, n: x.n_cells, expl: x,
+      out.push({ g, text: String(r.rank), name: r.region || 'Unnamed cell', lat: r.lat, lon: r.lon, target: label(tk), S: r.S, position: x.position, n: x.n_cells, top: x.top_percent, expl: x,
                  note: `0.5° cell centre, top ${r.rank} of 5 by formula` }); });
   }
   for (const c of sc.cards) {
     const xs = ex.cards[c.key];
     c.sites.forEach((s, i) => {
       const row = c.rows.length === c.sites.length ? c.rows[i] : c.rows[0], x = c.rows.length === c.sites.length ? xs[i] : xs[0];
-      out.push({ g: c.key, text: c.key === 'mangystau' ? 'M' : '★', name: s.name, lat: s.lat, lon: s.lon, target: label(c.target), S: row.S, position: row.position, n: sc.n_cells, expl: x,
+      out.push({ g: c.key, text: c.key === 'mangystau' ? 'M' : '★', name: s.name, lat: s.lat, lon: s.lon, target: label(c.target), S: row.S, position: row.position, n: sc.n_cells, top: row.top_percent, expl: x,
                  note: `${c.rows.length === c.sites.length ? '' : `Score for ${row.place}. `}Coordinates: ${s.coord_source}` });
     });
   }
@@ -89,7 +89,7 @@ function pins(sc, ex, T) {
 function showInfo(p, label) {
   const g = GROUPS[p.g], t = TREK[g.trek];
   document.getElementById('info-body').innerHTML = `<h2>${esc(p.name)}</h2><div class="grp">${esc(g.label)} · ${ll(p.lat, p.lon)}</div>
-    <div class="nums">vs <b>${esc(p.target)}</b><br>S = <b>${p.S.toFixed(2)}</b> · rank <b>#${p.position.toLocaleString('en')}</b> of ${p.n.toLocaleString('en')} land cells</div>
+    <div class="nums">vs <b>${esc(p.target)}</b><br>S = <b>${p.S.toFixed(2)}</b> · rank <b>#${p.position.toLocaleString('en')}</b> of ${p.n.toLocaleString('en')} land cells (top ${p.top >= 0.1 ? p.top.toFixed(1) : p.top.toFixed(3)}%)</div>
     <p>${esc(p.expl.matches)}</p><p>${esc(p.expl.differs)}</p><span class="ai">${esc(label)}</span>
     <div class="btns"><a href="${gearth(p.lat, p.lon)}" target="_blank" rel="noopener">Open in Google Earth</a><a href="${t[1]}" target="_blank" rel="noopener">Open in ${t[0]}</a></div>
     <p class="grp">${esc(p.note)}</p>`;
