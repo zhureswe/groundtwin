@@ -1,0 +1,823 @@
+{
+ "demo": false,
+ "note": "Answers prepared with AI assistance from our verified data",
+ "popular": [
+  "What is GroundTwin?",
+  "What is CPR?",
+  "What is the Ice Evidence Score?",
+  "Which lunar craters score highest?",
+  "How does the Analog Engine work?",
+  "Why Mangystau?",
+  "Which NASA data do you use?",
+  "How did you use AI?"
+ ],
+ "items": [
+  {
+   "q": "What is GroundTwin?",
+   "keywords": [
+    "what",
+    "groundtwin",
+    "about",
+    "project",
+    "idea"
+   ],
+   "a": "GroundTwin is Earth's ground truth for the Moon and Mars. Lunar radar can mistake rocks for ice; we measure the same kind of radar signal on Earth, where we know the answer, and use it to read the Moon. It also maps Earth places that resemble the Moon and Mars, and tests Mangystau in Kazakhstan as a field twin of Mars.",
+   "label": "Our method",
+   "links": [],
+   "section": "#home"
+  },
+  {
+   "q": "Do you build a radar?",
+   "keywords": [
+    "build",
+    "radar",
+    "satellite",
+    "own"
+   ],
+   "a": "No. The radars already fly: Canada's RCM satellites over Earth and the Mini-RF radar on NASA's LRO over the Moon. We download their open data, our code computes the numbers, and the website shows them.",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "CSA: RADARSAT Constellation Mission",
+     "url": "https://www.asc-csa.gc.ca/eng/satellites/radarsat/"
+    },
+    {
+     "text": "NASA: Mini-RF",
+     "url": "https://science.nasa.gov/mission/lro/mini-rf/"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "Why does a Moon base need ice?",
+   "keywords": [
+    "ice",
+    "water",
+    "base",
+    "why",
+    "fuel",
+    "oxygen"
+   ],
+   "a": "Ice is water: drinking water, oxygen to breathe and rocket fuel (hydrogen and oxygen). Shipping water from Earth is very expensive, so a base should be near ice. NASA has named 9 candidate Artemis III regions near the lunar south pole (October 2024).",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "NASA: Artemis",
+     "url": "https://www.nasa.gov/artemis/"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "Was water really found on the Moon?",
+   "keywords": [
+    "lcross",
+    "cabeus",
+    "water",
+    "found",
+    "impact"
+   ],
+   "a": "On 9 October 2009 NASA's LCROSS mission crashed a rocket stage into Cabeus crater and found water in the ejected plume.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "NASA: LCROSS",
+     "url": "https://science.nasa.gov/mission/lcross/"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "What is an analog site?",
+   "keywords": [
+    "analog",
+    "analogue",
+    "definition",
+    "training"
+   ],
+   "a": "An Earth place that resembles the Moon or Mars in some way, used to test rovers, instruments and spacesuits. No place on Earth matches in everything, so the key question is: similar in what, and how much?",
+   "label": "Our method",
+   "links": [],
+   "section": null
+  },
+  {
+   "q": "Who is GroundTwin for?",
+   "keywords": [
+    "audience",
+    "users",
+    "who",
+    "for"
+   ],
+   "a": "Landing-site teams at agencies and companies, engineers testing rovers and instruments, analog researchers, and students. It is free, open and needs no login.",
+   "label": "Our method",
+   "links": [],
+   "section": null
+  },
+  {
+   "q": "What is CPR?",
+   "keywords": [
+    "cpr",
+    "circular",
+    "polarization",
+    "ratio",
+    "twist"
+   ],
+   "a": "CPR (circular polarization ratio) = echo that kept the same \"twist\" ÷ echo whose twist flipped. Smooth ground flips the twist (low CPR); rocks and ice keep part of it (high CPR). So high CPR means rocks OR ice.",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "NASA: Mini-RF",
+     "url": "https://science.nasa.gov/mission/lro/mini-rf/"
+    }
+   ],
+   "section": "#radar"
+  },
+  {
+   "q": "Why does radar confuse ice and rocks?",
+   "keywords": [
+    "confuse",
+    "rocks",
+    "rock",
+    "ice",
+    "debate",
+    "problem"
+   ],
+   "a": "Both rough rocks and ice keep the twist of the radar wave, so both give high CPR. Spudis et al. (2013) found \"anomalous\" polar craters bright only inside; other scientists (Eke et al. 2014) showed rough slopes and rocks can also be bright. The debate is not settled.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "Spudis et al. 2013, JGR Planets (doi:10.1002/jgre.20156)",
+     "url": "https://doi.org/10.1002/jgre.20156"
+    }
+   ],
+   "section": "#radar"
+  },
+  {
+   "q": "Why RCM and Mini-RF?",
+   "keywords": [
+    "rcm",
+    "mini-rf",
+    "minirf",
+    "compact",
+    "hybrid",
+    "same"
+   ],
+   "a": "Canada's RCM and NASA's Mini-RF both use compact (hybrid) polarimetry, so they measure the same CPR. On Earth we know where glaciers, rock fields and plains are. RCM is C-band (5.55 cm); Mini-RF is S-band (12.6 cm, incidence 48°).",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "CSA: RADARSAT Constellation Mission",
+     "url": "https://www.asc-csa.gc.ca/eng/satellites/radarsat/"
+    },
+    {
+     "text": "NASA: Mini-RF",
+     "url": "https://science.nasa.gov/mission/lro/mini-rf/"
+    }
+   ],
+   "section": "#radar"
+  },
+  {
+   "q": "What CPR did you measure on Earth?",
+   "keywords": [
+    "earth",
+    "cpr",
+    "result",
+    "glacier",
+    "smooth",
+    "ruler"
+   ],
+   "a": "Median CPR by class from real RCM scenes (8 sites, CPR = RR/RL): smooth ground 0.21, rock fields 0.52, glacier ice 1.44. The order smooth < rock < ice holds.",
+   "label": "Our result",
+   "links": [
+    {
+     "text": "RCM CEOS-ARD open data (AWS registry)",
+     "url": "https://registry.opendata.aws/rcm-ceos-ard/"
+    }
+   ],
+   "section": "#radar"
+  },
+  {
+   "q": "What is the Ice Evidence Score?",
+   "keywords": [
+    "ies",
+    "score",
+    "evidence",
+    "clues",
+    "three"
+   ],
+   "a": "An evidence score from 0 to 3 for each crater: +1 if CPR inside / outside > 1.2 (Mini-RF), +1 if the floor slope is below the median of all craters (8.12°, LOLA), +1 if Tmax < 110 K (Diviner). It means \"consistent with ice\", not a probability and not proof.",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "NASA: Mini-RF",
+     "url": "https://science.nasa.gov/mission/lro/mini-rf/"
+    },
+    {
+     "text": "PDS Geosciences: LOLA",
+     "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm"
+    },
+    {
+     "text": "PDS Geosciences: Diviner",
+     "url": "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm"
+    }
+   ],
+   "section": "#radar"
+  },
+  {
+   "q": "Which lunar craters score highest?",
+   "keywords": [
+    "crater",
+    "craters",
+    "best",
+    "highest",
+    "shackleton",
+    "moon",
+    "result"
+   ],
+   "a": "5 of 10 craters have at least 2 of 3 clues: Shackleton, Haworth, Shoemaker, Cabeus, Cabeus B. Shackleton: CPR inside 0.69 vs outside 0.38, Tmax 93 K, score 2/3. Mountains (Mons Malapert, Mons Mouton) are not scored.",
+   "label": "Our result",
+   "links": [
+    {
+     "text": "NASA: Mini-RF",
+     "url": "https://science.nasa.gov/mission/lro/mini-rf/"
+    },
+    {
+     "text": "PDS Geosciences: Diviner",
+     "url": "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm"
+    },
+    {
+     "text": "PDS Geosciences: LOLA",
+     "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm"
+    }
+   ],
+   "section": "#radar"
+  },
+  {
+   "q": "Did you prove there is ice on the Moon?",
+   "keywords": [
+    "prove",
+    "proof",
+    "confirmed",
+    "probability",
+    "sure"
+   ],
+   "a": "No. We show which places are consistent with ice. Every score is an evidence score 0–3, never a probability.",
+   "label": "Our method",
+   "links": [],
+   "section": "#radar"
+  },
+  {
+   "q": "What are DOP and the m-χ method?",
+   "keywords": [
+    "dop",
+    "chi",
+    "m-chi",
+    "polarization",
+    "degree",
+    "ellipticity",
+    "alpha"
+   ],
+   "a": "m is the degree of polarization (DOP) and χ the ellipticity angle, both computed from compact-pol Stokes parameters. We do not compute the Cloude–Pottier α angle, because it needs full (4-channel) polarimetry.",
+   "label": "Our method",
+   "links": [],
+   "section": "#radar"
+  },
+  {
+   "q": "Does the CPR > 1 and DOP < 0.13 test find ice?",
+   "keywords": [
+    "criterion",
+    "dop",
+    "0.13",
+    "sinha",
+    "chandrayaan",
+    "lava"
+   ],
+   "a": "In our C-band RCM data it barely separates ice from lava: cells passing both tests — ice 1.7%, lava/rock 1.2%, smooth 0.04%. On the Moon: Shackleton floor 0.72% vs outside 0.16%; Faustini floor 0.58% vs outside 0.37%. χ separates the classes better (median smooth -41°, rock -28°, ice 9°). One radar clue is not enough. The criterion is from Sinha et al. 2026 (Chandrayaan-2 DFSAR, L-band), so the wavelength differs.",
+   "label": "Our result",
+   "links": [],
+   "section": "#radar"
+  },
+  {
+   "q": "Why do wavelengths matter?",
+   "keywords": [
+    "wavelength",
+    "band",
+    "rayleigh",
+    "c-band",
+    "s-band",
+    "roughness"
+   ],
+   "a": "Radar is most sensitive to roughness near its wavelength. Rayleigh threshold h = λ/(8 cos θ): RCM 0.8–1.39 cm (30–60°), Mini-RF 2.35 cm. So we compare the order of classes and the inside/outside contrast, not exact CPR values. No C-to-S conversion factor is claimed.",
+   "label": "Our result",
+   "links": [],
+   "section": "#method"
+  },
+  {
+   "q": "Why are Devon Island and Haughton not in the radar ruler?",
+   "keywords": [
+    "devon",
+    "haughton",
+    "penny",
+    "missing",
+    "scene"
+   ],
+   "a": "Our code found no usable open RCM scene for Devon Ice Cap, Haughton Crater, Penny Ice Cap. We calibrate on Canadian glaciers (Columbia, Clemenceau, Wapta), lava fields (Nisga'a, Edziza), dunes and plains instead.",
+   "label": "Our result",
+   "links": [
+    {
+     "text": "RCM CEOS-ARD open data (AWS registry)",
+     "url": "https://registry.opendata.aws/rcm-ceos-ard/"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "What do recent missions say about lunar ice?",
+   "keywords": [
+    "shadowcam",
+    "danuri",
+    "recent",
+    "2026",
+    "news"
+   ],
+   "a": "ShadowCam (NASA, on Korea's Danuri) found no broad surface deposits above 20–30% ice, only small 20–50 m patches above 10% (University of Hawaiʻi, 2026). Chandrayaan-2 DFSAR suggested possible subsurface ice in 4 doubly shadowed craters (Sinha et al., npj Space Exploration, 2026).",
+   "label": "Official source",
+   "links": [],
+   "section": null
+  },
+  {
+   "q": "How does the Analog Engine work?",
+   "keywords": [
+    "analog",
+    "engine",
+    "similarity",
+    "formula",
+    "score",
+    "percentile"
+   ],
+   "a": "Each of 60,215 land cells (0.5°) gets percentiles p for 7 features: dryness, no plants, day–night swing, cold, dust, rough terrain, elevation. Each target has a profile t, each mission mode has weights w: s_i = 1 − |p_i − t_i|, S = Σ w_i s_i / Σ w_i. The browser computes S live.",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "NASA GPM",
+     "url": "https://gpm.nasa.gov"
+    },
+    {
+     "text": "NASA Earthdata Search",
+     "url": "https://search.earthdata.nasa.gov"
+    }
+   ],
+   "section": "#explore"
+  },
+  {
+   "q": "How do I use the Explore Earth page?",
+   "keywords": [
+    "explore",
+    "map",
+    "use",
+    "how",
+    "click",
+    "mode"
+   ],
+   "a": "Choose a target (Moon south pole, Mars Gale or Jezero) and a mission mode. The map recolours; click any land cell to see its score, a radar chart against the target, what matches and what differs. The Top 10 list is clickable.",
+   "label": "Our method",
+   "links": [],
+   "section": "#explore"
+  },
+  {
+   "q": "What are the mission modes?",
+   "keywords": [
+    "modes",
+    "science",
+    "operations",
+    "construction",
+    "resources",
+    "weights"
+   ],
+   "a": "Science, Rover operations, Base construction, Ice & resources. Each changes the feature weights (for example roughness matters most for rovers, cold for resources). All weights are in targets.json and on the site.",
+   "label": "Our method",
+   "links": [],
+   "section": "#explore"
+  },
+  {
+   "q": "Which places are most like the Moon?",
+   "keywords": [
+    "moon",
+    "top",
+    "best",
+    "places",
+    "twin"
+   ],
+   "a": "Top 5 by formula for Moon - south pole base (Science mode): 1. Xinjiang Uygur Zizhiqu, China (S 0.93); 2. Xinjiang Uygur Zizhiqu, China (S 0.91); 3. Qinghai Sheng, China (S 0.91); 4. Govi-Altai, Mongolia (S 0.90); 5. Xinjiang Uygur Zizhiqu, China (S 0.90).",
+   "label": "Our result",
+   "links": [],
+   "section": "#explore"
+  },
+  {
+   "q": "Which places are most like Mars?",
+   "keywords": [
+    "mars",
+    "top",
+    "best",
+    "places",
+    "gale",
+    "jezero"
+   ],
+   "a": "Top 5 by formula for Mars - Gale crater (layered lake sediments) (Science mode): 1. Xinjiang Uygur Zizhiqu, China (S 0.94); 2. Illizi, Algeria (S 0.93); 3. Nei Mongol Zizhiqu, China (S 0.92); 4. Red Sea, Egypt (S 0.92); 5. Bechar, Algeria (S 0.92). Mars - Gale crater (layered lake sediments) is shown because known Mars analog sites rank better for it in our validation (Science mode: average rank top 21.3%, p = 0.001; Mars - Jezero crater: top 24.4%), and its layered lake sediments are the Mars feature that Mangystau is compared with.",
+   "label": "Our result",
+   "links": [],
+   "section": "#explore"
+  },
+  {
+   "q": "How did you validate the Analog Engine?",
+   "keywords": [
+    "validation",
+    "lift",
+    "test",
+    "check",
+    "known"
+   ],
+   "a": "With 16 known analog sites (NASA Planetary Analog Explorer, USGS). Lift = share in the top 10% ÷ 0.10. Science mode: Moon ×2.0 (p 0.4256), Gale ×0.91, Jezero ×0.0 — weak. Average rank is clearly better than random (~50%): Gale top 21.3% (p 0.001), Jezero top 24.4% (p 0.003).",
+   "label": "Our result",
+   "links": [
+    {
+     "text": "NASA Planetary Analog Explorer",
+     "url": "https://science.nasa.gov/solar-system/analog-explorer/"
+    },
+    {
+     "text": "USGS Terrestrial Analog Data Portal",
+     "url": "https://tadp.astrogeology.usgs.gov"
+    }
+   ],
+   "section": "#method"
+  },
+  {
+   "q": "What is the blind test?",
+   "keywords": [
+    "blind",
+    "leave-one-out",
+    "recognised",
+    "loo"
+   ],
+   "a": "Each known site is hidden, a profile is built from the others, and we check if the hidden site lands in the top 10%. Mars analogs: recognised 7 of 11 (chance ≈ 1.1, p = 2e-05). All analogs: 8 of 13. Caveat: several sites cluster in the US Southwest.",
+   "label": "Our result",
+   "links": [],
+   "section": "#method"
+  },
+  {
+   "q": "Where do the known analog sites come from?",
+   "keywords": [
+    "known",
+    "sites",
+    "source",
+    "usgs",
+    "nasa",
+    "catalog"
+   ],
+   "a": "NASA Planetary Analog Explorer and the USGS Terrestrial Analog Data Portal, plus reference sites (MDRS, San Rafael Swell, Devon Island, Haughton). Coordinates are from Wikipedia or the USGS API, recorded per site.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "NASA Planetary Analog Explorer",
+     "url": "https://science.nasa.gov/solar-system/analog-explorer/"
+    },
+    {
+     "text": "USGS Terrestrial Analog Data Portal",
+     "url": "https://tadp.astrogeology.usgs.gov"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "What about Cinder Lake and Meteor Crater?",
+   "keywords": [
+    "cinder",
+    "meteor",
+    "arizona",
+    "apollo",
+    "artemis",
+    "training"
+   ],
+   "a": "USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): Cinder Lake Crater Field S 0.68, top 26.8%; Meteor Crater S 0.76, top 12.3% — they were chosen for crater geology, which our 7 features do not measure.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "USGS: Terrestrial Analogs",
+     "url": "https://www.usgs.gov/science/science-explorer/planetary-science/terrestrial-analogs"
+    }
+   ],
+   "section": "#explore"
+  },
+  {
+   "q": "What about MDRS in Utah?",
+   "keywords": [
+    "mdrs",
+    "utah",
+    "san rafael",
+    "mars society"
+   ],
+   "a": "MDRS is a Mars Society station for Mars-mission training (not a NASA station); Utah is in the NASA Planetary Analog Explorer. For Mars - Gale crater (layered lake sediments): Mars Desert Research Station (Utah) S 0.77, top 14.1%; San Rafael Swell (Utah) S 0.78, top 12.7%.",
+   "label": "Our result",
+   "links": [
+    {
+     "text": "NASA Planetary Analog Explorer",
+     "url": "https://science.nasa.gov/solar-system/analog-explorer/"
+    }
+   ],
+   "section": "#explore"
+  },
+  {
+   "q": "Why Mangystau?",
+   "keywords": [
+    "mangystau",
+    "kazakhstan",
+    "why",
+    "tethys"
+   ],
+   "a": "Mangystau is the floor of the ancient Tethys Sea: layered sedimentary rocks (Bozzhyra, Sherkala), salt flats (Tuzbair), stone concretions (Torysh) and the Karagiye Depression about 132 m below sea level, in a dry land with almost no plants. We found no scientific study of it as a Mars analog — only travel writing.",
+   "label": "Official source",
+   "links": [],
+   "section": "#mangystau"
+  },
+  {
+   "q": "How Mars-like is Mangystau by your numbers?",
+   "keywords": [
+    "mangystau",
+    "rank",
+    "score",
+    "result",
+    "top"
+   ],
+   "a": "Mangystau ranks in the top 9.5% of Earth's land cells for Gale and top 8.3% for Jezero (Science mode). Against Gale: S 0.822, cosine 0.97. It ranks above the Utah and Devon references in our table.",
+   "label": "Our result",
+   "links": [],
+   "section": "#mangystau"
+  },
+  {
+   "q": "How is Mangystau NOT like Mars?",
+   "keywords": [
+    "different",
+    "not",
+    "unlike",
+    "blueberries",
+    "concretions"
+   ],
+   "a": "Torysh concretions are metres across and sandstone; Opportunity's \"blueberries\" are millimetres and hematite. Tethys was a sea; Gale and Jezero held lakes. Earth has air, warmth, occasional rain and life, and the ages differ.",
+   "label": "Our method",
+   "links": [],
+   "section": "#mangystau"
+  },
+  {
+   "q": "What data did you use for Mangystau?",
+   "keywords": [
+    "mangystau",
+    "data",
+    "dem",
+    "sentinel",
+    "salt"
+   ],
+   "a": "Copernicus DEM (elevation, slopes), NASA MODIS (day–night temperature, NDVI), NASA GPM (rain), Sentinel-2 (true colour and an approximate SWIR salt index). Region averages: 184 mm rain per year, max NDVI 0.18.",
+   "label": "Our result",
+   "links": [
+    {
+     "text": "Copernicus DEM (Copernicus Data Space)",
+     "url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM"
+    },
+    {
+     "text": "ESA: Sentinel-2",
+     "url": "https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-2/"
+    },
+    {
+     "text": "NASA GPM",
+     "url": "https://gpm.nasa.gov"
+    }
+   ],
+   "section": "#mangystau"
+  },
+  {
+   "q": "Which NASA data do you use?",
+   "keywords": [
+    "nasa",
+    "data",
+    "datasets",
+    "lro",
+    "modis"
+   ],
+   "a": "LRO Mini-RF (lunar radar), LRO Diviner (temperature), LRO LOLA (topography), MODIS (temperature, vegetation, dust), GPM IMERG (rain), and the NASA GIBS Blue Marble basemap.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "NASA: Lunar Reconnaissance Orbiter",
+     "url": "https://science.nasa.gov/mission/lro/"
+    },
+    {
+     "text": "PDS Geosciences: LRO data",
+     "url": "https://pds-geosciences.wustl.edu/missions/lro/"
+    },
+    {
+     "text": "NASA GPM",
+     "url": "https://gpm.nasa.gov"
+    },
+    {
+     "text": "NASA GIBS",
+     "url": "https://gibs.earthdata.nasa.gov"
+    }
+   ],
+   "section": "#method"
+  },
+  {
+   "q": "Which CSA and ESA data do you use?",
+   "keywords": [
+    "csa",
+    "esa",
+    "canada",
+    "copernicus",
+    "rcm",
+    "sentinel"
+   ],
+   "a": "CSA: RADARSAT Constellation Mission compact-pol images (open CEOS-ARD). ESA Copernicus: Sentinel-2 imagery and Copernicus DEM. Also USGS GMTED2010 elevation.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "CSA: RADARSAT Constellation Mission",
+     "url": "https://www.asc-csa.gc.ca/eng/satellites/radarsat/"
+    },
+    {
+     "text": "RCM CEOS-ARD open data (AWS registry)",
+     "url": "https://registry.opendata.aws/rcm-ceos-ard/"
+    },
+    {
+     "text": "ESA: Sentinel-2",
+     "url": "https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-2/"
+    },
+    {
+     "text": "Copernicus DEM (Copernicus Data Space)",
+     "url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM"
+    }
+   ],
+   "section": "#method"
+  },
+  {
+   "q": "Where do crater coordinates come from?",
+   "keywords": [
+    "coordinates",
+    "iau",
+    "gazetteer",
+    "crater"
+   ],
+   "a": "From the IAU Gazetteer of Planetary Nomenclature (USGS). Earth site coordinates come from official or recorded sources (CGNDB, Wikipedia, OpenStreetMap, USGS), listed with each site.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "IAU / USGS Gazetteer of Planetary Nomenclature",
+     "url": "https://planetarynames.wr.usgs.gov"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "Can I explore the raw data myself?",
+   "keywords": [
+    "raw",
+    "download",
+    "earthdata",
+    "worldview"
+   ],
+   "a": "Yes: NASA Earthdata Search and Worldview give the Earth data; PDS Geosciences gives the LRO data; the RCM archive is open on AWS.",
+   "label": "Official source",
+   "links": [
+    {
+     "text": "NASA Earthdata Search",
+     "url": "https://search.earthdata.nasa.gov"
+    },
+    {
+     "text": "NASA Worldview",
+     "url": "https://worldview.earthdata.nasa.gov"
+    },
+    {
+     "text": "PDS Geosciences: LRO data",
+     "url": "https://pds-geosciences.wustl.edu/missions/lro/"
+    },
+    {
+     "text": "RCM CEOS-ARD open data (AWS registry)",
+     "url": "https://registry.opendata.aws/rcm-ceos-ard/"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "What can Earth never reproduce?",
+   "keywords": [
+    "limits",
+    "limitations",
+    "gravity",
+    "vacuum",
+    "radiation",
+    "cannot"
+   ],
+   "a": "Gravity six times lower (Moon) or almost three times lower (Mars), vacuum or very thin air, no protection from space radiation, and sharp lunar dust. Also: different radar wavelengths, cleaner Earth ice, a coarse 0.5° grid and target profiles chosen by the team.",
+   "label": "Our method",
+   "links": [],
+   "section": "#method"
+  },
+  {
+   "q": "What is next for GroundTwin?",
+   "keywords": [
+    "future",
+    "next",
+    "roadmap",
+    "nisar",
+    "plans"
+   ],
+   "a": "More reference sites and craters, an S-band Earth reference from NISAR (NASA and ISRO, wavelength close to Mini-RF), a paper with a DOI, and a Kazakh and Russian version for schools.",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "NASA: NISAR",
+     "url": "https://science.nasa.gov/mission/nisar/"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "Who made GroundTwin?",
+   "keywords": [
+    "team",
+    "who",
+    "code influence",
+    "authors",
+    "members"
+   ],
+   "a": "Team Code Influence from Kazakhstan, for the NASA Space Apps Challenge 2026. The code is open on GitHub (zhureswe/groundtwin).",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "GroundTwin code on GitHub",
+     "url": "https://github.com/zhureswe/groundtwin"
+    }
+   ],
+   "section": "#about"
+  },
+  {
+   "q": "How did you use AI?",
+   "keywords": [
+    "ai",
+    "claude",
+    "artificial",
+    "intelligence",
+    "chatgpt"
+   ],
+   "a": "We used Claude (Anthropic) to help write Python and HTML/JavaScript code, debug, and edit English text. The concept, the choice of sites and data, all checks and interpretation, and the design are our own. No AI-generated images or videos are used. This help box is not a live AI: it searches prepared answers.",
+   "label": "Our method",
+   "links": [],
+   "section": "#about"
+  },
+  {
+   "q": "Is this an AI model that predicts ice?",
+   "keywords": [
+    "model",
+    "trained",
+    "machine learning",
+    "predict",
+    "neural"
+   ],
+   "a": "No. GroundTwin uses a transparent similarity formula and an evidence score, both checked against known sites. Nothing is a trained AI model.",
+   "label": "Our method",
+   "links": [],
+   "section": "#method"
+  },
+  {
+   "q": "Is the code open? How do I run it?",
+   "keywords": [
+    "code",
+    "open",
+    "github",
+    "run",
+    "license",
+    "pipeline"
+   ],
+   "a": "Yes, MIT licence. Python scripts pipeline/01–11 recompute every number; the static site in /docs reads only their JSON output.",
+   "label": "Our method",
+   "links": [
+    {
+     "text": "GroundTwin code on GitHub",
+     "url": "https://github.com/zhureswe/groundtwin"
+    }
+   ],
+   "section": null
+  },
+  {
+   "q": "Is GroundTwin endorsed by NASA?",
+   "keywords": [
+    "endorsed",
+    "official",
+    "nasa",
+    "affiliated"
+   ],
+   "a": "No. GroundTwin uses open NASA, CSA, ESA and USGS data but is not endorsed by NASA or any space agency.",
+   "label": "Our method",
+   "links": [],
+   "section": "#about"
+  }
+ ]
+}

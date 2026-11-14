@@ -248,6 +248,14 @@
 </section>
 </main>
 
+<button class="ask-btn" id="ask-btn" aria-expanded="false" aria-controls="ask-panel">Ask GroundTwin</button>
+<div class="ask-panel" id="ask-panel" hidden role="dialog" aria-label="Ask GroundTwin">
+  <div class="ask-head"><b>Ask GroundTwin</b><button id="ask-close" aria-label="Close">×</button></div>
+  <div class="ask-log" id="ask-log" aria-live="polite"></div>
+  <form class="ask-form" id="ask-form"><input id="ask-q" placeholder="Ask about the project, data, method…" autocomplete="off"><button>Ask</button></form>
+  <div class="ask-foot" id="ask-foot">Not a live AI: it searches prepared answers.</div>
+</div>
+
 <footer class="foot">GroundTwin · Earth's ground truth for the Moon and Mars · Open source (MIT)</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

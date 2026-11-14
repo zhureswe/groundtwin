@@ -460,7 +460,54 @@ function fillLimits() {
   if (v && T) set('lift', `Science-mode Lift: ${Object.keys(v.lift).map((t) => `${T.targets[t].label.split(' (')[0]} ×${fmt(v.lift[t].science, 2)} (p ${v.p_values[t].science})`).join(', ')} — only the average-rank test is clearly better than chance for Mars.`);
 }
 
+/* ---------------- Ask GroundTwin (prepared answers, keyword search, no live AI) ---------------- */
+const STOP = new Set('a an the is are was were do does did i you your we our of to in on for and or what how why which who where when it this that with can about there by be me tell'.split(' '));
+const LABEL_CLASS = { 'Official source': 'official', 'Our result': 'result', 'Our method': 'method' };
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function askSearch(text) {
+  const qn = text.toLowerCase(), toks = qn.split(/[^a-z0-9α-ωχ.\-]+/).filter((t) => t.length > 1 && !STOP.has(t));
+  return DATA.faq.items.map((it) => {
+    const kw = it.keywords, ql = it.q.toLowerCase();
+    let s = kw.filter((k) => k.includes(' ') && qn.includes(k)).length * 3;
+    toks.forEach((t) => {
+      if (kw.some((k) => k === t || (t.length > 3 && (k.startsWith(t) || t.startsWith(k))))) s += 2;
+      else if (ql.includes(t)) s += 1;
+    });
+    return [s, it];
+  }).filter(([s]) => s >= 2).sort((a, b) => b[0] - a[0]);
+}
+
+function askSay(html, who) {
+  const d = document.createElement('div'); d.className = `ask-msg ${who}`; d.innerHTML = html;
+  $('#ask-log').appendChild(d); $('#ask-log').scrollTop = 1e9; return d;
+}
+const askButtons = (qs) => `<div class="ask-sugg">${qs.map((q) => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`;
+
+function askAnswer(text) {
+  askSay(esc(text), 'me');
+  const hits = askSearch(text);
+  if (!hits.length) { askSay(`<b>I don't know yet.</b> Try one of the popular questions:${askButtons(DATA.faq.popular)}`, 'bot'); return; }
+  const it = hits[0][1], more = hits.slice(1, 4).map(([, x]) => x.q);
+  askSay(`<span class="lbl ${LABEL_CLASS[it.label]}">${it.label}</span><br><b>${esc(it.q)}</b><br>${esc(it.a)}
+    ${it.links.length ? `<ul>${it.links.map((l) => `<li><a href="${l.url}" target="_blank" rel="noopener">${esc(l.text)}</a></li>`).join('')}</ul>` : ''}
+    ${it.section ? `<div class="small"><a href="${it.section}">Open this part of the site →</a></div>` : ''}
+    ${more.length ? `<div class="small muted" style="margin-top:6px">Related:</div>${askButtons(more)}` : ''}`, 'bot');
+}
+
+function initAsk() {
+  const f = DATA.faq; if (!f) { $('#ask-btn').hidden = true; return; }
+  const panel = $('#ask-panel'), btn = $('#ask-btn');
+  const toggle = (open) => { panel.hidden = !open; btn.setAttribute('aria-expanded', open); if (open) $('#ask-q').focus(); };
+  btn.addEventListener('click', () => toggle(panel.hidden));
+  $('#ask-close').addEventListener('click', () => toggle(false));
+  $('#ask-foot').textContent = `Not a live AI: it searches ${f.items.length} prepared answers. ${f.note}.`;
+  askSay(`Hi! Ask me about GroundTwin, its data, method or results. Popular questions:${askButtons(f.popular)}`, 'bot');
+  $('#ask-log').addEventListener('click', (ev) => { const b = ev.target.closest('button[data-q]'); if (b) askAnswer(b.dataset.q); });
+  $('#ask-form').addEventListener('submit', (ev) => { ev.preventDefault(); const q = $('#ask-q').value.trim(); if (q) { askAnswer(q); $('#ask-q').value = ''; } });
+}
+
 /* ---------------- boot ---------------- */
 $('#menu').addEventListener('click', () => $('#navlinks').classList.toggle('open'));
 window.addEventListener('hashchange', () => show(location.hash.slice(1) || 'home'));
-loadAll().then(() => show(location.hash.slice(1) || 'home'));
+loadAll().then(() => { initAsk(); show(location.hash.slice(1) || 'home'); });
