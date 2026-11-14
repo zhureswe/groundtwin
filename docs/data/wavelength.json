@@ -1,0 +1,68 @@
+{
+ "demo": false,
+ "formula": "h = lambda / (8 cos theta)",
+ "rcm": {
+  "wavelength_cm": 5.55,
+  "sites": [
+   {
+    "site": "columbia_icefield",
+    "cls": "ice",
+    "inc_mean_deg": 25.4,
+    "h_cm": 0.77
+   },
+   {
+    "site": "nisgaa_lava_bed",
+    "cls": "rough_rock",
+    "inc_mean_deg": 19.1,
+    "h_cm": 0.73
+   },
+   {
+    "site": "edziza_lava_field",
+    "cls": "rough_rock",
+    "inc_mean_deg": 29.9,
+    "h_cm": 0.8
+   },
+   {
+    "site": "athabasca_dunes",
+    "cls": "smooth",
+    "inc_mean_deg": 43.0,
+    "h_cm": 0.95
+   },
+   {
+    "site": "great_sand_hills",
+    "cls": "smooth",
+    "inc_mean_deg": 43.0,
+    "h_cm": 0.95
+   },
+   {
+    "site": "regina_plain",
+    "cls": "smooth",
+    "inc_mean_deg": 28.8,
+    "h_cm": 0.79
+   },
+   {
+    "site": "wapta_icefield",
+    "cls": "ice",
+    "inc_mean_deg": 38.9,
+    "h_cm": 0.89
+   },
+   {
+    "site": "clemenceau_icefield",
+    "cls": "ice",
+    "inc_mean_deg": 48.6,
+    "h_cm": 1.05
+   }
+  ],
+  "h_cm_at_filter_limits": {
+   "30": 0.8,
+   "60": 1.39
+  }
+ },
+ "minirf": {
+  "wavelength_cm": 12.6,
+  "incidence_deg": 48.0,
+  "h_cm": 2.35
+ },
+ "interpretation": "Surfaces with height variations below h look smooth to the radar. Mini-RF needs larger roughness elements than RCM to look rough, so absolute CPR values are not compared across the two radars: we compare the order of classes and the inside/outside contrast. This is an approximate calibration; no conversion factor between C- and S-band CPR is claimed. A future step is an S-band Earth reference, e.g. from NISAR.",
+ "note": "inc_mean_deg = mean local incidence angle over the site box before the 30-60 deg filter (from earth_cpr.json)."
+}

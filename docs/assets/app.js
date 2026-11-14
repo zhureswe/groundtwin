@@ -3,7 +3,7 @@
 'use strict';
 
 const DATA = {};
-const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry'];
+const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test', 'polarimetry', 'wavelength'];
 const CLASS_COLOR = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
 const CLASS_NAME = { smooth: 'smooth ground', rough_rock: 'rock field', ice: 'glacier ice' };
 const FEAT_NAME = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold',
@@ -405,6 +405,16 @@ function renderMethod() {
   if (b) {
     const g = (k, lab) => { const x = b.groups[k]; return `<b>${lab}: recognised ${x.recognised} of ${x.total}</b> (chance ≈ ${x.expected_by_chance}, p = ${x.p_value_binomial}); median rank top ${fmt(x.median_top_percent, 1)}%.`; };
     $('#method-blind').innerHTML = `<span class="small">${g('mars', 'Mars analogs')}<br>${g('all', 'All analogs')}<br>${b.method} Caveat: several known sites cluster in the US Southwest, which makes them easier to recognise from each other.</span>`;
+  }
+  const w = DATA.wavelength;
+  if (w) {
+    const lim = Object.entries(w.rcm.h_cm_at_filter_limits);
+    $('#method-wave').innerHTML = `<p>Rayleigh smoothness threshold: surfaces with height variations below <i>h</i> look smooth to the radar.</p>
+      <div class="table-wrap"><table class="cmp"><thead><tr><th>Radar</th><th>λ</th><th>Incidence θ</th><th>h</th></tr></thead><tbody>
+      <tr><td>RCM (Earth), pixels used</td><td>${w.rcm.wavelength_cm} cm</td><td>${lim[0][0]}–${lim[1][0]}°</td><td>${fmt(lim[0][1])}–${fmt(lim[1][1])} cm</td></tr>
+      ${w.rcm.sites.map((s) => `<tr><td class="small">RCM · ${pretty(s.site)} (scene mean)</td><td>${w.rcm.wavelength_cm} cm</td><td>${fmt(s.inc_mean_deg, 1)}°</td><td>${fmt(s.h_cm)} cm</td></tr>`).join('')}
+      <tr><td>Mini-RF (Moon)</td><td>${w.minirf.wavelength_cm} cm</td><td>${w.minirf.incidence_deg}°</td><td><b>${fmt(w.minirf.h_cm)} cm</b></td></tr></tbody></table></div>
+      <p class="note">${w.interpretation} ${w.note}</p>`;
   }
 }
 
