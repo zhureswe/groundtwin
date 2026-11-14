@@ -206,18 +206,22 @@
         <tr><td>GPM IMERG</td><td>NASA / JAXA</td><td>Aridity</td></tr>
         <tr><td>Copernicus DEM GLO-30</td><td>ESA</td><td>Mangystau elevation, slopes, Karagiye depth</td></tr>
         <tr><td>Copernicus Sentinel-2</td><td>ESA</td><td>Mangystau true-colour imagery, approximate salt index</td></tr>
-        <tr><td>USGS Known Terrestrial Analog Sites</td><td>USGS</td><td>Validation</td></tr>
+        <tr><td>GMTED2010 elevation</td><td>USGS</td><td>Analog Engine roughness and elevation</td></tr>
+        <tr><td>NASA Planetary Analog Explorer; USGS Terrestrial Analog Data Portal</td><td>NASA / USGS</td><td>Known analog sites for validation</td></tr>
       </tbody>
     </table></div>
   </div>
   <div class="card limits">
-    <h3>Honest limits</h3>
-    <ul>
-      <li>Earth cannot reproduce low gravity, vacuum, the thin Martian air or space radiation.</li>
-      <li>RCM (C-band, ~5.5 cm) and Mini-RF (S-band, 12.6 cm) use different wavelengths: we compare the <b>order</b> of classes and the inside/outside contrast, not exact numbers.</li>
-      <li>Earth ice is cleaner than lunar ice mixed with regolith; moisture changes radar on Earth, so we use dry winter scenes.</li>
-      <li>The global grid is coarse: GroundTwin is a screening tool, not a replacement for field work.</li>
-      <li>Target profiles and weights are our choices — all of them are visible and editable.</li>
+    <h3>Limitations</h3>
+    <ul id="limits">
+      <li><b>What Earth cannot do:</b> gravity six times lower (Moon) or almost three times lower (Mars), vacuum or very thin air, no protection from space radiation, and sharp, never-weathered lunar dust.</li>
+      <li><b>Different wavelengths.</b> RCM is C-band (5.405 GHz, ≈ 5.5 cm), Mini-RF is S-band (2380 MHz, 12.6 cm). Radar is most sensitive to roughness near its wavelength, and a longer wave goes deeper into the ground. So we compare the <b>order</b> of classes and the inside/outside contrast, not exact CPR values. Rayleigh threshold: <span data-k="rayleigh"></span>. This is a first, approximate calibration; no C-to-S conversion factor is claimed. NISAR's S-band radar (NASA and ISRO) could refine it in the future.</li>
+      <li><b>Earth ice is not lunar ice.</b> Glacier ice is cleaner than ice mixed into lunar regolith, and moisture changes the radar echo on Earth — we prefer dry winter scenes.</li>
+      <li><b>Missing Earth references.</b> No open RCM scene was usable for <span data-k="noscene"></span>; we calibrate on Canadian glaciers, lava fields, dunes and plains instead.</li>
+      <li><b>One radar clue is not enough.</b> The CPR &gt; 1 and DOP &lt; 0.13 criterion was developed for L-band; in our C-band data it barely separates ice from lava (Radar Twin page). The Ice Evidence Score means "consistent with ice", never "ice confirmed".</li>
+      <li><b>Coarse grid.</b> The Analog Engine uses 0.5° cells (tens of km): it is a screening tool, not a replacement for field work. <span data-k="imputed"></span></li>
+      <li><b>Our choices.</b> Target profiles and mission weights are set by the team; all of them are visible in <code>targets.json</code> and editable.</li>
+      <li><b>Validation is weak in places.</b> <span data-k="lift"></span> Several known Mars analogs cluster in the US Southwest, which makes the blind test easier.</li>
     </ul>
   </div>
 </section>
@@ -239,7 +243,7 @@
   </div>
   <div class="card">
     <h3>Credits</h3>
-    <p class="small">RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT is an official mark of the Canadian Space Agency. Lunar data: NASA Lunar Reconnaissance Orbiter (Mini-RF, Diviner, LOLA) via the Planetary Data System. Earth data: NASA MODIS, GPM; ESA Copernicus (Sentinel-2, Copernicus DEM). Basemap: NASA Blue Marble via NASA EOSDIS GIBS. Mangystau site coordinates: Wikipedia, © OpenStreetMap contributors. Libraries: Leaflet, Chart.js, KaTeX. GroundTwin is not endorsed by NASA or any space agency.</p>
+    <p class="small">RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT is an official mark of the Canadian Space Agency. Lunar data: NASA Lunar Reconnaissance Orbiter (Mini-RF, Diviner, LOLA) via the Planetary Data System. Earth data: NASA MODIS, GPM; ESA Copernicus (Sentinel-2, Copernicus DEM). Basemap: NASA Blue Marble via NASA EOSDIS GIBS. Site coordinates: Wikipedia, © OpenStreetMap contributors, USGS. Region names: FAO GAUL 2015. Libraries: Leaflet, Chart.js, KaTeX. GroundTwin is not endorsed by NASA or any space agency.</p>
   </div>
 </section>
 </main>

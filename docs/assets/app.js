@@ -436,6 +436,7 @@ function renderMethod() {
     const g = (k, lab) => { const x = b.groups[k]; return `<b>${lab}: recognised ${x.recognised} of ${x.total}</b> (chance ≈ ${x.expected_by_chance}, p = ${x.p_value_binomial}); median rank top ${fmt(x.median_top_percent, 1)}%.`; };
     $('#method-blind').innerHTML = `<span class="small">${g('mars', 'Mars analogs')}<br>${g('all', 'All analogs')}<br>${b.method} Caveat: several known sites cluster in the US Southwest, which makes them easier to recognise from each other.</span>`;
   }
+  fillLimits();
   const w = DATA.wavelength;
   if (w) {
     const lim = Object.entries(w.rcm.h_cm_at_filter_limits);
@@ -446,6 +447,17 @@ function renderMethod() {
       <tr><td>Mini-RF (Moon)</td><td>${w.minirf.wavelength_cm} cm</td><td>${w.minirf.incidence_deg}°</td><td><b>${fmt(w.minirf.h_cm)} cm</b></td></tr></tbody></table></div>
       <p class="note">${w.interpretation} ${w.note}</p>`;
   }
+}
+
+function fillLimits() {
+  const w = DATA.wavelength, e = DATA.earth_cpr, g = DATA.analog_grid, v = DATA.validation, T = DATA.targets;
+  const set = (k, html) => { const el = document.querySelector(`#limits [data-k="${k}"]`); if (el) el.innerHTML = html; };
+  if (w) { const lim = Object.entries(w.rcm.h_cm_at_filter_limits);
+    set('rayleigh', `h = ${fmt(lim[0][1])}–${fmt(lim[1][1])} cm for RCM at ${lim[0][0]}–${lim[1][0]}° and ${fmt(w.minirf.h_cm)} cm for Mini-RF at ${w.minirf.incidence_deg}°`); }
+  if (e && e.sites_without_usable_scene) set('noscene', e.sites_without_usable_scene.map(pretty).join(', '));
+  if (g && g.imputed_missing_to_0_5) { const m = Object.entries(g.imputed_missing_to_0_5).filter(([, n]) => n > 0);
+    if (m.length) set('imputed', `Missing values were set to a neutral 0.5: ${m.map(([f, n]) => `${FEAT_NAME[f].toLowerCase()} in ${n.toLocaleString('en')} of ${g.cells.length.toLocaleString('en')} cells`).join(', ')}.`); }
+  if (v && T) set('lift', `Science-mode Lift: ${Object.keys(v.lift).map((t) => `${T.targets[t].label.split(' (')[0]} ×${fmt(v.lift[t].science, 2)} (p ${v.p_values[t].science})`).join(', ')} — only the average-rank test is clearly better than chance for Mars.`);
 }
 
 /* ---------------- boot ---------------- */
