@@ -3,7 +3,7 @@
 'use strict';
 
 const DATA = {};
-const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references'];
+const FILES = ['earth_cpr', 'moon_targets', 'analog_grid', 'targets', 'validation', 'mangystau', 'references', 'blind_test'];
 const CLASS_COLOR = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
 const CLASS_NAME = { smooth: 'smooth ground', rough_rock: 'rock field', ice: 'glacier ice' };
 const FEAT_NAME = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold',
@@ -384,6 +384,11 @@ function renderMethod() {
     const rows = Object.entries(v.lift).map(([t, o]) => `<b>${DATA.targets ? DATA.targets.targets[t].label : t}</b>: ` +
       Object.entries(o).map(([m, x]) => `${m} Lift ×${fmt(x, 2)}${P[t] ? ` (p ${P[t][m]})` : ''}${M[t] ? `, avg top ${fmt(M[t][m], 1)}% (p ${MP[t][m]})` : ''}`).join('; '));
     $('#method-lift').innerHTML = `<span class="small">${rows.join('<br>')}${v.demo ? '<br><b style="color:#f6c445">DEMO</b>' : ''}</span>`;
+  }
+  const b = DATA.blind_test;
+  if (b) {
+    const g = (k, lab) => { const x = b.groups[k]; return `<b>${lab}: recognised ${x.recognised} of ${x.total}</b> (chance ≈ ${x.expected_by_chance}, p = ${x.p_value_binomial}); median rank top ${fmt(x.median_top_percent, 1)}%.`; };
+    $('#method-blind').innerHTML = `<span class="small">${g('mars', 'Mars analogs')}<br>${g('all', 'All analogs')}<br>${b.method} Caveat: several known sites cluster in the US Southwest, which makes them easier to recognise from each other.</span>`;
   }
 }
 
