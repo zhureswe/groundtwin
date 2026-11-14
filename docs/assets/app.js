@@ -59,7 +59,18 @@ function renderRadar() {
   drawPolar(m);
   const best = [...m.targets].sort((x, y) => (y.ies ?? -1) - (x.ies ?? -1) || (y.cpr_in / y.cpr_out) - (x.cpr_in / x.cpr_out))[0];
   selectCrater(best.name);
+  drawTargetsTable(m);
   drawPolCheck();
+}
+
+function drawTargetsTable(m) {
+  const yn = (ok) => ok == null ? '–' : ok ? '✓' : '✕';
+  $('#targets-table').innerHTML = `<table class="cmp"><thead><tr><th>Target</th><th>CPR in / out</th><th>Floor slope</th><th>T<sub>max</sub> (median)</th>
+    <th>Floor colder than ${m.cold_threshold_k} K</th><th>IES</th></tr></thead><tbody>${m.targets.map((t) => `<tr><td>${t.name}</td>
+    <td>${fmt(t.cpr_in)} / ${fmt(t.cpr_out)} ${yn(t.clues && t.clues.radar)}</td><td>${fmt(t.slope_deg, 1)}° ${yn(t.clues && t.clues.smooth)}</td>
+    <td>${Math.round(t.tmax_k)} K ${yn(t.clues && t.clues.cold)}</td><td>${t.frac_floor_below_110k != null ? fmt(t.frac_floor_below_110k * 100, 0) + '%' : '–'}</td>
+    <td><b>${hasIes(t) ? t.ies + '/3' : 'n/a'}</b></td></tr>`).join('')}</tbody></table>
+    <p class="note">T<sub>max</sub>: ${m.tmax_definition || ''}. The cold clue uses the median T<sub>max</sub> (rule unchanged); the cold-floor share is shown alongside, not scored.</p>`;
 }
 
 function drawPolCheck() {
@@ -146,7 +157,7 @@ function selectCrater(name) {
     <div class="ies"><span class="score" style="color:${scored ? ['#93a0b5', '#5fb7cf', '#4fd1e8', '#8beaff'][t.ies] : NA_COLOR}">${scored ? t.ies + '/3' : 'n/a'}</span><span class="verdict">${verdict}</span></div>
     ${clue(c.radar, 'Radar clue — Mini-RF', `CPR inside ${fmt(t.cpr_in)} vs outside ${fmt(t.cpr_out)} (×${fmt(ratio)}; needs > ×${m.ratio_threshold}). Rocks would be bright outside too.`)}
     ${clue(c.smooth, 'Smooth floor — LOLA', `Median slope ${fmt(t.slope_deg, 1)}° (threshold ${fmt(m.slope_threshold_deg, 1)}°). Smooth ground makes rocks a less likely cause.`)}
-    ${clue(c.cold, 'Cold trap — Diviner', `Max temperature ${Math.round(t.tmax_k)} K (water ice stays stable below ${m.cold_threshold_k} K).`)}
+    ${clue(c.cold, 'Cold trap — Diviner', `Median max temperature of the floor ${Math.round(t.tmax_k)} K (water ice stays stable below ${m.cold_threshold_k} K)${t.frac_floor_below_110k != null ? `; ${fmt(t.frac_floor_below_110k * 100, 0)}% of the floor stays colder than ${m.cold_threshold_k} K` : ''}.`)}
     ${tin ? `<div class="twin">The crater floor echoes like <b>${pretty(tin.site)}</b> (${CLASS_NAME[tin.cls]}).<br>
       Outside the rim it echoes like <b>${pretty(tout.site)}</b> (${CLASS_NAME[tout.cls]}).<br><span class="small">${twinStory(t, tin, tout)}</span></div>` : ''}
     <p class="note">Source: ${t.source}. "Consistent with ice" is not proof of ice.</p>`;
@@ -454,6 +465,8 @@ function fillLimits() {
   const set = (k, html) => { const el = document.querySelector(`#limits [data-k="${k}"]`); if (el) el.innerHTML = html; };
   if (w) { const lim = Object.entries(w.rcm.h_cm_at_filter_limits);
     set('rayleigh', `h = ${fmt(lim[0][1])}–${fmt(lim[1][1])} cm for RCM at ${lim[0][0]}–${lim[1][0]}° and ${fmt(w.minirf.h_cm)} cm for Mini-RF at ${w.minirf.incidence_deg}°`); }
+  const cab = DATA.moon_targets && DATA.moon_targets.targets.find((t) => t.name === 'Cabeus');
+  if (cab) set('cabeus', `Cabeus has a median T<sub>max</sub> of ${Math.round(cab.tmax_k)} K, so it fails the cold clue, yet ${fmt(cab.frac_floor_below_110k * 100, 0)}% of its floor stays colder than ${DATA.moon_targets.cold_threshold_k} K.`);
   if (e && e.sites_without_usable_scene) set('noscene', e.sites_without_usable_scene.map(pretty).join(', '));
   if (g && g.imputed_missing_to_0_5) { const m = Object.entries(g.imputed_missing_to_0_5).filter(([, n]) => n > 0);
     if (m.length) set('imputed', `Missing values were set to a neutral 0.5: ${m.map(([f, n]) => `${FEAT_NAME[f].toLowerCase()} in ${n.toLocaleString('en')} of ${g.cells.length.toLocaleString('en')} cells`).join(', ')}.`); }
@@ -484,8 +497,59 @@ function askSay(html, who) {
 }
 const askButtons = (qs) => `<div class="ask-sugg">${qs.map((q) => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>`;
 
+/* compare mode: "compare A and B", "A vs B" — places of the same kind, numbers from our JSON */
+function compareEntities() {
+  const E = [], T = DATA.targets ? DATA.targets.targets : {};
+  const m = DATA.moon_targets;
+  if (m) m.targets.forEach((t) => E.push({ kind: 'Lunar target', name: t.name, rows: {
+    'CPR inside / outside (Mini-RF)': `${fmt(t.cpr_in)} / ${fmt(t.cpr_out)}`, 'Contrast in/out': `×${fmt(t.cpr_in / t.cpr_out)}`,
+    'Floor slope (LOLA)': `${fmt(t.slope_deg, 1)}°`, 'Median Tmax (Diviner)': `${Math.round(t.tmax_k)} K`,
+    [`Floor colder than ${m.cold_threshold_k} K`]: t.frac_floor_below_110k != null ? `${fmt(t.frac_floor_below_110k * 100, 0)}%` : '–',
+    'Ice Evidence Score': hasIes(t) ? `${t.ies}/3` : 'n/a' } }));
+  if (DATA.earth_cpr) DATA.earth_cpr.sites.forEach((s) => E.push({ kind: 'Earth radar site', name: pretty(s.site), rows: {
+    'Class': CLASS_NAME[s.cls], 'Median CPR (RCM)': fmt(s.median), 'Middle 50%': `${fmt(s.p25)}–${fmt(s.p75)}`, 'Share CPR > 1': `${fmt(s.frac_gt1 * 100, 1)}%`, 'Scene date': s.date } }));
+  const analog = (name, x) => E.push({ kind: 'Analog place', name, rows: Object.fromEntries(['mars_gale', 'mars_jezero'].filter((tk) => x[tk])
+    .flatMap((tk) => { const l = (T[tk] ? T[tk].label : tk).split(' (')[0]; return [[`${l}: S`, fmt(x[tk].S)], [`${l}: cosine`, fmt(x[tk].cosine)], [`${l}: rank`, `top ${fmt(x[tk].top_percent, 1)}%`]]; })) });
+  if (DATA.references) DATA.references.rows.forEach((x) => analog(x.place.replace(' (6 sites)', ''), x));
+  if (DATA.showcase) DATA.showcase.cards.forEach((c) => c.rows.forEach((r) => {
+    if (E.some((e) => norm(e.name.replace(/\(.*?\)/g, '')) === norm(r.place.replace(/\(.*?\)/g, '')))) return;
+    const l = (T[c.target] ? T[c.target].label : c.target).split(' (')[0];
+    E.push({ kind: 'Analog place', name: r.place, rows: { [`${l}: S`]: fmt(r.S), [`${l}: cosine`]: fmt(r.cosine), [`${l}: rank`]: `top ${fmt(r.top_percent, 1)}%` } });
+  }));
+  return E;
+}
+
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+function findEntities(text, E) {
+  const q = ` ${norm(text)} `;
+  const key = (e) => norm(e.name.replace(/\(.*?\)/g, ''));
+  const hits = [];
+  const names = (e) => { const w = key(e).split(' '); return w.length >= 3 ? [key(e), w.map((x) => x[0]).join('')] : [key(e)]; };   // + acronym, e.g. MDRS
+  E.forEach((e) => names(e).forEach((n) => { const k = ` ${n} `; for (let i = q.indexOf(k); i >= 0; i = q.indexOf(k, i + 1)) hits.push([i, i + k.length, e]); }));
+  const inside = ([s, f, e]) => hits.some(([s2, f2, o]) => o !== e && s2 <= s && f <= f2 && f2 - s2 > f - s);   // "Cabeus B" covers "Cabeus" only where it occurs
+  const seen = new Set();
+  return hits.filter((h) => !inside(h)).sort((a, b) => a[0] - b[0]).map((h) => h[2]).filter((e) => !seen.has(e) && seen.add(e));
+}
+
+function askCompare(text) {
+  if (!/\bcompare\b|\bvs\.?\b|\bversus\b|difference between/i.test(text)) return false;
+  const E = compareEntities(), found = findEntities(text, E).slice(0, 2);
+  const kinds = [...new Set(E.map((e) => e.kind))];
+  const examples = kinds.map((k) => `<b>${k}s:</b> ${E.filter((e) => e.kind === k).map((e) => e.name).join(', ')}`).join('<br>');
+  if (found.length < 2) { askSay(`<span class="lbl result">Our result</span><br>To compare, name two places of the same kind, e.g. "compare Shackleton and Faustini" or "Mangystau vs San Rafael Swell".<br><span class="small">${examples}</span>`, 'bot'); return true; }
+  const [a, b] = found;
+  if (a.kind !== b.kind) { askSay(`<span class="lbl result">Our result</span><br>${esc(a.name)} is ${/^[aeiou]/i.test(a.kind) ? 'an' : 'a'} ${a.kind.toLowerCase()} and ${esc(b.name)} is ${/^[aeiou]/i.test(b.kind) ? 'an' : 'a'} ${b.kind.toLowerCase()} — they are measured differently, so I can't put them side by side. Try two places of the same kind.<br><span class="small">${examples}</span>`, 'bot'); return true; }
+  const keys = [...new Set([...Object.keys(a.rows), ...Object.keys(b.rows)])];
+  askSay(`<span class="lbl result">Our result</span><br><b>${esc(a.name)} vs ${esc(b.name)}</b> <span class="small muted">(${a.kind.toLowerCase()})</span>
+    <table class="cmp small"><thead><tr><th></th><th>${esc(a.name)}</th><th>${esc(b.name)}</th></tr></thead><tbody>${keys.map((k) =>
+    `<tr><td>${k}</td><td>${a.rows[k] ?? '–'}</td><td>${b.rows[k] ?? '–'}</td></tr>`).join('')}</tbody></table>
+    <div class="small muted">Numbers from our data files (moon_targets, earth_cpr, references, showcase).</div>`, 'bot');
+  return true;
+}
+
 function askAnswer(text) {
   askSay(esc(text), 'me');
+  if (askCompare(text)) return;
   const hits = askSearch(text);
   if (!hits.length) { askSay(`<b>I don't know yet.</b> Try one of the popular questions:${askButtons(DATA.faq.popular)}`, 'bot'); return; }
   const it = hits[0][1], more = hits.slice(1, 4).map(([, x]) => x.q);

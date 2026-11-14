@@ -45,6 +45,7 @@ def build():
     C, PC = e['classes'], p['earth']['classes']
     craters = [t for t in m['targets'] if t['ies'] is not None]
     sh = next(t for t in m['targets'] if t['name'] == 'Shackleton')
+    cab = next(t for t in m['targets'] if t['name'] == 'Cabeus')
     lab = lambda tk: T['targets'][tk]['label']
     mgs_ref = next(x for x in r['rows'] if x['place'].startswith('Mangystau'))
     top_line = lambda tk: '; '.join(f"{x['rank']}. {x['region']} (S {x['S']:.2f})" for x in sc['top'][tk])
@@ -102,7 +103,8 @@ def build():
         f"{sum(t['ies'] >= 2 for t in craters)} of {len(craters)} craters have at least 2 of 3 clues: "
         + ', '.join(t['name'] for t in craters if t['ies'] >= 2)
         + f". Shackleton: CPR inside {sh['cpr_in']:.2f} vs outside {sh['cpr_out']:.2f}, Tmax {sh['tmax_k']:.0f} K, score {sh['ies']}/3. "
-        'Mountains (Mons Malapert, Mons Mouton) are not scored.', RESULT, ['minirf', 'diviner', 'lola'], '#radar')
+        + f"Cabeus fails the cold clue (median Tmax {cab['tmax_k']:.0f} K) although {cab['frac_floor_below_110k'] * 100:.0f}% of its floor stays below "
+        f"{m['cold_threshold_k']} K; LCROSS found water there. Mountains (Mons Malapert, Mons Mouton) are not scored.", RESULT, ['minirf', 'diviner', 'lola', 'lcross'], '#radar')
     add('Did you prove there is ice on the Moon?', ['prove', 'proof', 'confirmed', 'probability', 'sure'],
         'No. We show which places are consistent with ice. Every score is an evidence score 0–3, never a probability.', METHOD, section='#radar')
     add('What are DOP and the m-χ method?', ['dop', 'chi', 'm-chi', 'polarization', 'degree', 'ellipticity', 'alpha'],
@@ -222,6 +224,10 @@ def build():
     add('Is the code open? How do I run it?', ['code', 'open', 'github', 'run', 'license', 'pipeline'],
         'Yes, MIT licence. Python scripts pipeline/01–11 recompute every number; the static site in /docs reads only their JSON output.',
         METHOD, ['github'])
+    add('How do I compare two places?', ['compare', 'comparison', 'versus', 'side by side', 'two places'],
+        'Type "compare A and B" or "A vs B" with two places of the same kind: two lunar targets (e.g. Shackleton and Faustini), two '
+        'Earth radar sites (e.g. Columbia Icefield and Edziza Lava Field) or two analog places (e.g. Mangystau and San Rafael Swell). '
+        'The table uses numbers from our data files.', METHOD)
     add('Is GroundTwin endorsed by NASA?', ['endorsed', 'official', 'nasa', 'affiliated'],
         'No. GroundTwin uses open NASA, CSA, ESA and USGS data but is not endorsed by NASA or any space agency.', METHOD, section='#about')
     return q
@@ -230,7 +236,7 @@ def build():
 def main():
     q = build()
     popular = ['What is GroundTwin?', 'What is CPR?', 'What is the Ice Evidence Score?', 'Which lunar craters score highest?',
-               'How does the Analog Engine work?', 'Why Mangystau?', 'Which NASA data do you use?', 'How did you use AI?']
+               'How does the Analog Engine work?', 'Why Mangystau?', 'How do I compare two places?', 'Which NASA data do you use?', 'How did you use AI?']
     assert all(p in {x['q'] for x in q} for p in popular)
     out = dict(demo=False, note='Answers prepared with AI assistance from our verified data', popular=popular, items=q)
     (SITE_DATA / 'faq.json').write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding='utf-8')

@@ -37,11 +37,15 @@ def moon():
         targets.append(dict(
             name=t['target'], kind=kind(t), lat=t['lat'], lon=t['lon'],
             cpr_in=t['cpr_in'], cpr_out=t['cpr_out'], tmax_k=t['tmax_in_k'], slope_deg=t['slope_in_deg'],
+            frac_floor_below_110k=t['frac_floor_tmax_below_110k'], n_diviner_floor=t['n_diviner_floor'],
             clues=dict(radar=bool(t['ies_cpr']), smooth=bool(t['ies_smooth']), cold=bool(t['ies_cold'])) if scored else None,
             ies=int(t['ies']) if scored else None, source=src))
     dump('moon_targets.json', dict(demo=False, band='Mini-RF S-band (12.6 cm)', ratio_threshold=1.2,
                                    cold_threshold_k=110, slope_threshold_deg=m['slope_reference_deg'],
-                                   coordinates=m['sources']['targets'], targets=targets))
+                                   coordinates=m['sources']['targets'],
+                                   tmax_definition='median of the Diviner annual maximum temperature over the floor zone (r < 0.8 R); '
+                                                   '"floor colder than 110 K" = share of those floor samples whose annual maximum stays below 110 K',
+                                   targets=targets))
 
 
 if __name__ == '__main__':

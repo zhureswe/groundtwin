@@ -82,7 +82,13 @@ The order smooth < rock < ice holds; the three icefields have median CPR $site_c
 
 ### 5.2 Lunar craters
 
-$n_ies2 of $n_craters craters have IES ≥ 2: $ies2_names. Shackleton has CPR $shackleton_in inside vs $shackleton_out outside (ratio $shackleton_ratio), T<sub>max</sub> $shackleton_tmax K and IES $shackleton_ies. Cabeus has a radar contrast of $cabeus_ratio but T<sub>max</sub> $cabeus_tmax K in the Diviner product, so it fails the cold clue. All lunar floor CPR values ($moon_cpr_min–$moon_cpr_max) are below the median of Earth glacier ice; they overlap the Earth smooth-ground and rock-field ranges, which is why the inside/outside contrast and the other clues matter more than the absolute value.
+$n_ies2 of $n_craters craters have IES ≥ 2: $ies2_names. Shackleton has CPR $shackleton_in inside vs $shackleton_out outside (ratio $shackleton_ratio), T<sub>max</sub> $shackleton_tmax K and IES $shackleton_ies. Cabeus has a radar contrast of $cabeus_ratio but a median T<sub>max</sub> of $cabeus_tmax K, so it fails the cold clue, although $cabeus_cold% of its floor stays below 110 K and LCROSS found water there (Section 6). The scoring rule was fixed before the results and was not changed. All lunar floor CPR values ($moon_cpr_min–$moon_cpr_max) are below the median of Earth glacier ice; they overlap the Earth smooth-ground and rock-field ranges, which is why the inside/outside contrast and the other clues matter more than the absolute value.
+
+| Target | CPR in / out | Floor slope | T<sub>max</sub> (median) | Floor < 110 K | IES |
+|---|---|---|---|---|---|
+$crater_table
+
+T<sub>max</sub> is the median of the Diviner annual maximum temperature over the floor zone (r < 0.8 R); "Floor < 110 K" is the share of those floor samples whose annual maximum stays below 110 K (shown, not scored).
 
 ![Mini-RF crater CPR against the Earth classes](../data/moon_vs_earth_cpr.png)
 
@@ -115,6 +121,7 @@ Mangystau is closer to both Mars profiles than the Utah and Devon references by 
 - Earth cannot reproduce lunar or Martian gravity, vacuum or the thin Martian air, space radiation, or sharp, unweathered lunar regolith.
 - RCM (C-band) and Mini-RF (S-band) have different wavelengths and penetration depths; we compare order and contrast only, and the calibration is approximate.
 - Earth glacier ice is cleaner than ice mixed into lunar regolith, and moisture changes the radar echo; we use dry winter scenes.
+- The cold clue uses the median annual maximum temperature over the whole floor zone, which can include sunlit slopes: Cabeus has a median T<sub>max</sub> of $cabeus_tmax K, yet $cabeus_cold% of its floor stays below 110 K, and LCROSS (2009) found water in Cabeus. A cold-floor share may be a better clue in future work.
 - Three planned Arctic references had no usable open RCM scene.
 - The 0.5° grid is coarse; GroundTwin is a screening tool, not a replacement for field work. Some dust values are imputed.
 - Target profiles and mode weights are our choices; they are published and editable.

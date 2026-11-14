@@ -8,6 +8,7 @@
   "Which lunar craters score highest?",
   "How does the Analog Engine work?",
   "Why Mangystau?",
+  "How do I compare two places?",
   "Which NASA data do you use?",
   "How did you use AI?"
  ],
@@ -234,7 +235,7 @@
     "moon",
     "result"
    ],
-   "a": "5 of 10 craters have at least 2 of 3 clues: Shackleton, Haworth, Shoemaker, Cabeus, Cabeus B. Shackleton: CPR inside 0.69 vs outside 0.38, Tmax 93 K, score 2/3. Mountains (Mons Malapert, Mons Mouton) are not scored.",
+   "a": "5 of 10 craters have at least 2 of 3 clues: Shackleton, Haworth, Shoemaker, Cabeus, Cabeus B. Shackleton: CPR inside 0.69 vs outside 0.38, Tmax 93 K, score 2/3. Cabeus fails the cold clue (median Tmax 225 K) although 17% of its floor stays below 110 K; LCROSS found water there. Mountains (Mons Malapert, Mons Mouton) are not scored.",
    "label": "Our result",
    "links": [
     {
@@ -248,6 +249,10 @@
     {
      "text": "PDS Geosciences: LOLA",
      "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm"
+    },
+    {
+     "text": "NASA: LCROSS",
+     "url": "https://science.nasa.gov/mission/lcross/"
     }
    ],
    "section": "#radar"
@@ -804,6 +809,20 @@
      "url": "https://github.com/zhureswe/groundtwin"
     }
    ],
+   "section": null
+  },
+  {
+   "q": "How do I compare two places?",
+   "keywords": [
+    "compare",
+    "comparison",
+    "versus",
+    "side by side",
+    "two places"
+   ],
+   "a": "Type \"compare A and B\" or \"A vs B\" with two places of the same kind: two lunar targets (e.g. Shackleton and Faustini), two Earth radar sites (e.g. Columbia Icefield and Edziza Lava Field) or two analog places (e.g. Mangystau and San Rafael Swell). The table uses numbers from our data files.",
+   "label": "Our method",
+   "links": [],
    "section": null
   },
   {

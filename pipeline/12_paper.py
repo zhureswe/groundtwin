@@ -56,6 +56,11 @@ def collect():
         put(f'{k}_ratio', t['cpr_in'] / t['cpr_out'], f'moon_targets.json: {name}.cpr_in / cpr_out', '.2f')
         put(f'{k}_tmax', t['tmax_k'], f'moon_targets.json: {name}.tmax_k', '.0f'); put(f'{k}_ies', t['ies'], f'moon_targets.json: {name}.ies')
 
+    rows = [f"| {x['name']} | {x['cpr_in']:.2f} / {x['cpr_out']:.2f} | {x['slope_deg']:.1f}° | {x['tmax_k']:.0f} K "
+            f"| {x['frac_floor_below_110k'] * 100:.0f}% | {x['ies'] if x['ies'] is not None else 'n/a'} |" for x in m['targets']]
+    put('crater_table', chr(10).join(rows), 'moon_targets.json: targets[*] (cpr_in, cpr_out, slope_deg, tmax_k, frac_floor_below_110k, ies)')
+    cab = next(x for x in m['targets'] if x['name'] == 'Cabeus')
+    put('cabeus_cold', cab['frac_floor_below_110k'] * 100, 'moon_targets.json: Cabeus.frac_floor_below_110k x100', '.0f')
     PC = p['earth']['classes']
     for c in ('smooth', 'rough_rock', 'ice'):
         put(f'pol_{c}', PC[c]['frac_criterion'] * 100, f'polarimetry.json: earth.classes.{c}.frac_criterion x100', '.2f')

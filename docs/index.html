@@ -92,6 +92,10 @@
     <div class="card" id="crater-card"></div>
   </div>
   <div class="card">
+    <div class="card-h"><h3>All lunar targets</h3><span class="muted small">Mini-RF · LOLA · Diviner</span></div>
+    <div class="table-wrap" id="targets-table"></div>
+  </div>
+  <div class="card">
     <div class="card-h"><h3>The Earth ruler</h3><span class="muted small">Canadian RCM radar over places where we know the ground truth</span></div>
     <svg id="ruler" role="img" aria-label="CPR of Earth reference sites with the selected lunar crater"></svg>
     <p class="note" id="ruler-note"></p>
@@ -217,6 +221,7 @@
       <li><b>What Earth cannot do:</b> gravity six times lower (Moon) or almost three times lower (Mars), vacuum or very thin air, no protection from space radiation, and sharp, never-weathered lunar dust.</li>
       <li><b>Different wavelengths.</b> RCM is C-band (5.405 GHz, ≈ 5.5 cm), Mini-RF is S-band (2380 MHz, 12.6 cm). Radar is most sensitive to roughness near its wavelength, and a longer wave goes deeper into the ground. So we compare the <b>order</b> of classes and the inside/outside contrast, not exact CPR values. Rayleigh threshold: <span data-k="rayleigh"></span>. This is a first, approximate calibration; no C-to-S conversion factor is claimed. NISAR's S-band radar (NASA and ISRO) could refine it in the future.</li>
       <li><b>Earth ice is not lunar ice.</b> Glacier ice is cleaner than ice mixed into lunar regolith, and moisture changes the radar echo on Earth — we prefer dry winter scenes.</li>
+      <li><b>Temperature over the whole floor zone.</b> The cold clue uses the median Diviner annual maximum temperature over the floor zone (r &lt; 0.8 R), which can include sunlit slopes. <span data-k="cabeus"></span> NASA's LCROSS impact (2009) found water in Cabeus. We did not change the scoring rule after seeing this.</li>
       <li><b>Missing Earth references.</b> No open RCM scene was usable for <span data-k="noscene"></span>; we calibrate on Canadian glaciers, lava fields, dunes and plains instead.</li>
       <li><b>One radar clue is not enough.</b> The CPR &gt; 1 and DOP &lt; 0.13 criterion was developed for L-band; in our C-band data it barely separates ice from lava (Radar Twin page). The Ice Evidence Score means "consistent with ice", never "ice confirmed".</li>
       <li><b>Coarse grid.</b> The Analog Engine uses 0.5° cells (tens of km): it is a screening tool, not a replacement for field work. <span data-k="imputed"></span></li>
@@ -232,7 +237,7 @@
   <div class="grid2">
     <div class="card">
       <h3>Team Code Influence</h3>
-      <p>[Team member names] · Kazakhstan</p>
+      <p>Kazakhstan · GitHub: <a href="https://github.com/zhureswe">zhureswe</a></p>
       <p>Challenge: <b>[exact challenge title]</b> · NASA Space Apps Challenge 2026.</p>
       <p><a href="https://github.com/zhureswe/groundtwin">Code on GitHub</a> · <a href="paper/groundtwin_paper.pdf">Research paper (PDF)</a></p>
     </div>
