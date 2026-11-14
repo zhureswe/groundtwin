@@ -90,10 +90,10 @@
  },
  "region_def": "land pixels (JRC surface-water occurrence < 50%) in the bounding box of the six sites + 0.3 deg: [51.26, 42.62, 54.72, 44.66]",
  "rank_vs_mars": {
-  "mars_gale": null,
-  "mars_jezero": null
+  "mars_gale": 9.5,
+  "mars_jezero": 8.3
  },
- "rank_note": "filled by pipeline/04_analog_engine.py",
+ "rank_note": "Median over the 0.5-deg cells containing the six sites, Science mode: \"top X%\" of Earth land cells. All modes: docs/data/analog_top.json -> mangystau.rank",
  "images": [
   {
    "file": "mangystau_torysh.png",

@@ -45,7 +45,8 @@ function renderHome() {
   const e = DATA.earth_cpr, m = DATA.moon_targets, v = DATA.validation, g = DATA.mangystau;
   if (e) s.push([e.sites.length, 'Earth radar reference sites']);
   if (m) { const c = m.targets.filter(hasIes); s.push([`${c.filter((t) => t.ies >= 2).length} / ${c.length}`, 'lunar craters with ≥2 of 3 ice clues']); }
-  if (v) { const best = Math.max(...Object.values(v.lift).flatMap((o) => Object.values(o))); s.push([`×${fmt(best, 1)}`, 'better than chance at finding known analogs']); }
+  if (v && v.mean_top_percent) s.push([`top ${fmt(v.mean_top_percent.mars_gale.science, 0)}%`,
+    `average rank of known Mars analog sites for Gale (random places: ~50%, p = ${v.mean_top_percent_p.mars_gale.science})`]);
   if (g && g.rank_vs_mars && g.rank_vs_mars.mars_gale != null) s.push([`top ${fmt(g.rank_vs_mars.mars_gale, 0)}%`, 'of Earth for Mars · Gale: where Mangystau ranks']);
   $('#stats').innerHTML = s.map(([b, t]) => `<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
 }
@@ -182,9 +183,9 @@ function renderExplore() {
   });
   $('#known').addEventListener('change', drawKnown);
 
-  const map = L.map('map', { worldCopyJump: false, minZoom: 1, maxZoom: 9, zoomSnap: 0.5, maxBounds: [[-85, -200], [85, 200]] }).setView([25, 20], 1.5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    { attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+  const map = L.map('map', { worldCopyJump: false, minZoom: 1, maxZoom: 8, zoomSnap: 0.5, maxBounds: [[-85, -200], [85, 200]] }).setView([25, 20], 1.5);
+  L.tileLayer('https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg',
+    { attribution: 'Blue Marble imagery: NASA EOSDIS GIBS', maxNativeZoom: 8, maxZoom: 8, opacity: 0.55 }).addTo(map);
   MAP.map = map;
   g.cells.forEach((c, i) => { MAP.idx[cellKey(c[0], c[1])] = i; });
   map.on('click', (ev) => {
@@ -220,8 +221,11 @@ function recompute() {
   drawTop10();
   drawKnown();
   const v = DATA.validation;
-  const lift = v && v.lift[MAP.target] && v.lift[MAP.target][MAP.mode];
-  $('#lift-note').innerHTML = lift ? `Validation: known analog sites land in the top ${Math.round(v.top_fraction * 100)}% of this map <b>×${fmt(lift, 1)}</b> more often than chance${v.p_value != null ? ` (p = ${v.p_value})` : ''}.${v.demo ? ' <b style="color:#f6c445">DEMO</b>' : ''}` : '';
+  const lift = v && v.lift[MAP.target] ? v.lift[MAP.target][MAP.mode] : null;
+  const pv = (o) => (o && o[MAP.target] ? ` (p = ${o[MAP.target][MAP.mode]})` : '');
+  const mr = v && v.mean_top_percent ? v.mean_top_percent[MAP.target][MAP.mode] : null;
+  $('#lift-note').innerHTML = lift != null ? `Validation (${v.unique_cells_per_target ? v.unique_cells_per_target[MAP.target] + ' known-site cells' : 'known sites'}): Lift in the top ${Math.round(v.top_fraction * 100)}% = <b>×${fmt(lift, 2)}</b>${pv(v.p_values)}` +
+    `${mr != null ? `; average rank top <b>${fmt(mr, 1)}%</b> (random ≈ 50%)${pv(v.mean_top_percent_p)}` : ''}.${v.demo ? ' <b style="color:#f6c445">DEMO</b>' : ''}` : '';
   if (MAP.sel != null) selectCell(MAP.sel, false);
 }
 
@@ -361,7 +365,9 @@ function renderMethod() {
   document.querySelectorAll('.tex').forEach((el) => { try { katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false }); } catch (e) { el.textContent = el.dataset.tex; } });
   const v = DATA.validation;
   if (v) {
-    const rows = Object.entries(v.lift).map(([t, o]) => `${DATA.targets ? DATA.targets.targets[t].label : t}: ${Object.entries(o).map(([m, x]) => `${m} ×${fmt(x, 1)}`).join(', ')}`);
+    const P = v.p_values || {}, M = v.mean_top_percent || {}, MP = v.mean_top_percent_p || {};
+    const rows = Object.entries(v.lift).map(([t, o]) => `<b>${DATA.targets ? DATA.targets.targets[t].label : t}</b>: ` +
+      Object.entries(o).map(([m, x]) => `${m} Lift ×${fmt(x, 2)}${P[t] ? ` (p ${P[t][m]})` : ''}${M[t] ? `, avg top ${fmt(M[t][m], 1)}% (p ${MP[t][m]})` : ''}`).join('; '));
     $('#method-lift').innerHTML = `<span class="small">${rows.join('<br>')}${v.demo ? '<br><b style="color:#f6c445">DEMO</b>' : ''}</span>`;
   }
 }

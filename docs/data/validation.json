@@ -1,1 +1,309 @@
-{"demo":true,"top_fraction":0.1,"lift":{"moon_south_pole":{"science":3.1,"operations":2.2,"construction":2.4,"resources":2.0},"mars_jezero":{"science":3.6,"operations":2.5,"construction":2.1,"resources":1.7},"mars_gale":{"science":3.4,"operations":2.7,"construction":2.3,"resources":1.8}},"p_value":0.003,"known_sites":[{"name":"Atacama Desert","lat":-24.5,"lon":-69.25},{"name":"Death Valley","lat":36.5,"lon":-117.0},{"name":"Haughton crater","lat":75.38,"lon":-89.68},{"name":"Mauna Kea","lat":19.82,"lon":-155.47},{"name":"Rio Tinto","lat":37.7,"lon":-6.6},{"name":"Mars Desert Research Station, Utah","lat":38.41,"lon":-110.79},{"name":"Mojave Desert","lat":35.0,"lon":-116.0},{"name":"Danakil Depression","lat":14.2,"lon":40.3},{"name":"Pilbara","lat":-21.0,"lon":119.0},{"name":"Svalbard","lat":78.2,"lon":16.0}]}
+{
+ "demo": false,
+ "top_fraction": 0.1,
+ "lift": {
+  "moon_south_pole": {
+   "science": 2.0,
+   "operations": 2.0,
+   "construction": 2.0,
+   "resources": 2.0
+  },
+  "mars_jezero": {
+   "science": 0.0,
+   "operations": 0.0,
+   "construction": 0.0,
+   "resources": 0.0
+  },
+  "mars_gale": {
+   "science": 0.91,
+   "operations": 0.91,
+   "construction": 2.73,
+   "resources": 2.73
+  }
+ },
+ "p_values": {
+  "moon_south_pole": {
+   "science": 0.4256,
+   "operations": 0.4026,
+   "construction": 0.4196,
+   "resources": 0.4156
+  },
+  "mars_jezero": {
+   "science": 1.0,
+   "operations": 1.0,
+   "construction": 1.0,
+   "resources": 1.0
+  },
+  "mars_gale": {
+   "science": 0.6753,
+   "operations": 0.6813,
+   "construction": 0.0979,
+   "resources": 0.0779
+  }
+ },
+ "p_value": 0.0979,
+ "p_value_note": "p_value = for the highest Lift (mars_gale / construction); all in p_values",
+ "mean_top_percent": {
+  "moon_south_pole": {
+   "science": 33.7,
+   "operations": 24.8,
+   "construction": 30.5,
+   "resources": 38.3
+  },
+  "mars_jezero": {
+   "science": 24.4,
+   "operations": 47.2,
+   "construction": 33.7,
+   "resources": 25.9
+  },
+  "mars_gale": {
+   "science": 21.3,
+   "operations": 27.3,
+   "construction": 22.7,
+   "resources": 20.8
+  }
+ },
+ "mean_top_percent_p": {
+  "moon_south_pole": {
+   "science": 0.1089,
+   "operations": 0.029,
+   "construction": 0.046,
+   "resources": 0.1778
+  },
+  "mars_jezero": {
+   "science": 0.003,
+   "operations": 0.3766,
+   "construction": 0.028,
+   "resources": 0.004
+  },
+  "mars_gale": {
+   "science": 0.001,
+   "operations": 0.004,
+   "construction": 0.002,
+   "resources": 0.001
+  }
+ },
+ "mean_top_percent_note": "Mean \"top X%\" of the known-site cells (random cells average about 50%); p = share of random sets with a mean as good or better.",
+ "n_random": 1000,
+ "unique_cells_per_target": {
+  "moon_south_pole": 5,
+  "mars_jezero": 11,
+  "mars_gale": 11
+ },
+ "known_sites": [
+  {
+   "name": "Medicine Lake Volcano (lava caves)",
+   "body": "moon",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 41.61095603,
+   "lon": -121.55363546,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Medicine_Lake_Volcano",
+   "top_percent_science": {
+    "moon_south_pole": 30.3,
+    "mars_jezero": 38.2,
+    "mars_gale": 33.6
+   }
+  },
+  {
+   "name": "Kilauea (basalt landscapes)",
+   "body": "moon",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 19.42109747,
+   "lon": -155.28676243,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/K%C4%ABlauea",
+   "top_percent_science": {
+    "moon_south_pole": 51.6,
+    "mars_jezero": 56.7,
+    "mars_gale": 56.0
+   }
+  },
+  {
+   "name": "Askja (subsurface ice)",
+   "body": "moon",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 65.033,
+   "lon": -16.783,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Askja",
+   "top_percent_science": {
+    "moon_south_pole": 39.4,
+    "mars_jezero": 43.8,
+    "mars_gale": 42.8
+   }
+  },
+  {
+   "name": "Askja / Vikursundar (land ripples)",
+   "body": "mars",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 65.033,
+   "lon": -16.783,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Askja",
+   "top_percent_science": {
+    "moon_south_pole": 39.4,
+    "mars_jezero": 43.8,
+    "mars_gale": 42.8
+   }
+  },
+  {
+   "name": "Atacama Desert",
+   "body": "mars",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": -24.5,
+   "lon": -69.25,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Atacama_Desert",
+   "top_percent_science": {
+    "moon_south_pole": 0.5,
+    "mars_jezero": 10.6,
+    "mars_gale": 7.8
+   }
+  },
+  {
+   "name": "Death Valley",
+   "body": "mars",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 36.24694444,
+   "lon": -116.81694444,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Death_Valley",
+   "top_percent_science": {
+    "moon_south_pole": 3.8,
+    "mars_jezero": 16.4,
+    "mars_gale": 11.9
+   }
+  },
+  {
+   "name": "Lake Salda",
+   "body": "mars",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 37.55,
+   "lon": 29.68333333,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Lake_Salda",
+   "top_percent_science": {
+    "moon_south_pole": 30.1,
+    "mars_jezero": 34.5,
+    "mars_gale": 27.7
+   }
+  },
+  {
+   "name": "Verde Valley",
+   "body": "mars",
+   "listed_by": "NASA Planetary Analog Explorer (https://science.nasa.gov/solar-system/analog-explorer/)",
+   "lat": 34.75305556,
+   "lon": -112.02194444,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Verde_Valley",
+   "top_percent_science": {
+    "moon_south_pole": 23.3,
+    "mars_jezero": 37.0,
+    "mars_gale": 29.9
+   }
+  },
+  {
+   "name": "Pisgah Lava Flow",
+   "body": "any",
+   "listed_by": "USGS Terrestrial Analog Data Portal (https://tadp.astrogeology.usgs.gov), terrestrial-analog-sites API",
+   "lat": 34.7412,
+   "lon": -116.374,
+   "coord_source": "USGS TADP API",
+   "top_percent_science": {
+    "moon_south_pole": 2.6,
+    "mars_jezero": 14.3,
+    "mars_gale": 10.7
+   }
+  },
+  {
+   "name": "Holuhraun Lava Flow",
+   "body": "any",
+   "listed_by": "USGS Terrestrial Analog Data Portal (https://tadp.astrogeology.usgs.gov), terrestrial-analog-sites API",
+   "lat": 64.9282,
+   "lon": -16.5217,
+   "coord_source": "USGS TADP API",
+   "top_percent_science": {
+    "moon_south_pole": 44.6,
+    "mars_jezero": 44.5,
+    "mars_gale": 48.5
+   }
+  },
+  {
+   "name": "Oskjuvatn",
+   "body": "any",
+   "listed_by": "USGS Terrestrial Analog Data Portal (https://tadp.astrogeology.usgs.gov), terrestrial-analog-sites API",
+   "lat": 65.01,
+   "lon": -16.71,
+   "coord_source": "USGS TADP API",
+   "top_percent_science": {
+    "moon_south_pole": 39.4,
+    "mars_jezero": 43.8,
+    "mars_gale": 42.8
+   }
+  },
+  {
+   "name": "Baugur",
+   "body": "any",
+   "listed_by": "USGS Terrestrial Analog Data Portal (https://tadp.astrogeology.usgs.gov), terrestrial-analog-sites API",
+   "lat": 64.85942,
+   "lon": -16.85907,
+   "coord_source": "USGS TADP API",
+   "top_percent_science": {
+    "moon_south_pole": 44.6,
+    "mars_jezero": 44.5,
+    "mars_gale": 48.5
+   }
+  },
+  {
+   "name": "Mars Desert Research Station (Utah)",
+   "body": "mars",
+   "listed_by": "GroundTwin reference site (team plan)",
+   "lat": 38.40645833,
+   "lon": -110.79190278,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Mars_Desert_Research_Station",
+   "top_percent_science": {
+    "moon_south_pole": 7.1,
+    "mars_jezero": 20.6,
+    "mars_gale": 14.1
+   }
+  },
+  {
+   "name": "San Rafael Swell (Utah)",
+   "body": "mars",
+   "listed_by": "GroundTwin reference site (team plan)",
+   "lat": 38.813,
+   "lon": -110.855,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/San_Rafael_Swell",
+   "top_percent_science": {
+    "moon_south_pole": 4.5,
+    "mars_jezero": 17.9,
+    "mars_gale": 12.7
+   }
+  },
+  {
+   "name": "Devon Island",
+   "body": "mars",
+   "listed_by": "GroundTwin reference site (team plan)",
+   "lat": 75.25,
+   "lon": -88.0,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Devon_Island",
+   "top_percent_science": {
+    "moon_south_pole": 16.9,
+    "mars_jezero": 13.7,
+    "mars_gale": 16.0
+   }
+  },
+  {
+   "name": "Haughton impact crater",
+   "body": "mars",
+   "listed_by": "GroundTwin reference site (team plan)",
+   "lat": 75.38333333,
+   "lon": -89.66666667,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Haughton_impact_crater",
+   "top_percent_science": {
+    "moon_south_pole": 15.3,
+    "mars_jezero": 14.7,
+    "mars_gale": 12.1
+   }
+  }
+ ],
+ "excluded": [
+  "Gulkana Glacier (NASA Analog Explorer; analog of Enceladus, not Moon/Mars)",
+  "Aden Crater (NASA Analog Explorer; analog of Venus, not Moon/Mars)",
+  "Pilot Valley, Utah (NASA Analog Explorer, Mars): no coordinates found in Wikipedia or OpenStreetMap"
+ ],
+ "method": "Lift = share of known-site cells in the top 10% of land cells / 0.10. Moon targets use Moon analogs, Mars targets use Mars analogs; USGS sites without a target body count for both. Sites sharing a 0.5-deg cell count once. p = share of 1000 random sets of the same number of land cells with Lift >= observed."
+}
