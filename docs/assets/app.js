@@ -191,7 +191,7 @@ function drawRuler() {
   if (e.demo) h += `<text x="${L - 12}" y="${top - 24}" text-anchor="end" style="fill:#f6c445;font-weight:600">DEMO DATA</text>`;
   svg.setAttribute('viewBox', `0 0 ${W + 10} ${H + 6}`);
   svg.innerHTML = h;
-  $('#ruler-note').innerHTML = `Bars: middle 50% of 100-m cells; dot: median. ${Object.entries(CLASS_COLOR).map(([k, c]) => `<span class="dot" style="background:${c}"></span>${CLASS_NAME[k]}`).join(' ')}.
+  $('#ruler-note').innerHTML = `Bars: middle 50% of ${e.look}×${e.look}-pixel blocks; dot: median. ${Object.entries(CLASS_COLOR).map(([k, c]) => `<span class="dot" style="background:${c}"></span>${CLASS_NAME[k]}`).join(' ')}.
     White lines: the selected lunar crater (Mini-RF). Wavelengths differ (RCM C-band ≈ 5.5 cm, Mini-RF S-band 12.6 cm), so read the <b>order</b>, not exact values. ${e.convention ? 'Channel convention: ' + e.convention + '.' : ''}`;
 }
 
