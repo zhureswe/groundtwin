@@ -36,7 +36,7 @@ CPR_RATIO_MIN = 1.2             # IES: CPR_in / CPR_out threshold
 TMAX_MAX = 110.0                # IES: K, water-ice cold-trap temperature
 
 # Mini-RF strip: last 1280 lines of the 128 ppd simple-cylindrical mosaic (lat -80..-90)
-PPD, NCOL, NROW, MISSING = 128, 46080, 1280, -1e300
+PPD, NCOL, NROW = 128, 46080, 1280
 # LOLA polar stereographic grid (dsmap_polar.cat)
 N_LOLA, SCALE_LOLA = 7600, 0.08  # pixels, km/pixel
 LON_SIGN = -1                    # verified against crater floors, see check_lola_orientation()
@@ -82,7 +82,7 @@ def load_lola():
 
 def load_minirf():
     a = np.fromfile(MINIRF, dtype='<f4').reshape(NROW, NCOL)
-    return np.where((a > MISSING) & (a >= 0) & (a < 10), a, np.nan)
+    return np.where((a >= 0) & (a < 10), a, np.nan)  # missing constant is -3.4e38
 
 
 def load_diviner():
@@ -157,7 +157,8 @@ def measure(t, dem, cpr, div):
                 slope_in_deg=med(s[inside]), slope_out_deg=med(s[ring]),
                 tmax_in_k=med(tmax), tavg_in_k=med(div['temp_avg'][din]),
                 frac_floor_tmax_below_110k=float((tmax < TMAX_MAX).mean()) if tmax.size else None,
-                frac_floor_ice_stable_upper_3m=float((ice >= 0).mean()) if ice.size else None,
+                frac_floor_ice_stable_upper_3m=float(((ice >= 0) & (ice <= 2.8738)).mean()) if ice.size else None,
+                frac_floor_ice_depth_code_minus1=float((ice == -1).mean()) if ice.size else None,
                 n_diviner_floor=int(din.sum()))
 
 
@@ -228,6 +229,10 @@ def main():
                     interpretation='IES = compatible with ice, not proof of ice',
                     lola_orientation_check_km=orientation, lon_sign=LON_SIGN),
         slope_reference_deg=slope_ref,
+        diviner_ice_depth_note=('ice_depth: 0 = stable at surface, 0-2.8738 m = depth of stability, -999 = deeper '
+                                'than 2.87 m (per dlre_prp.fmt). The value -1 also occurs (mostly in the coldest cells) '
+                                'but is not documented; it is reported separately and not interpreted. Observation: '
+                                'its floor fraction closely tracks the fraction with Tmax < 110 K.'),
         artemis_regions_note='Artemis III region centres are not IAU features; values are for the named IAU anchor.',
         targets=json.loads(df.to_json(orient='records')),
     )
