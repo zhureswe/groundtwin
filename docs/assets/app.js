@@ -543,8 +543,8 @@ function askCompare(text) {
   if (a.kind !== b.kind) { askSay(`<span class="lbl result">Our result</span><br>${esc(a.name)} is ${/^[aeiou]/i.test(a.kind) ? 'an' : 'a'} ${a.kind.toLowerCase()} and ${esc(b.name)} is ${/^[aeiou]/i.test(b.kind) ? 'an' : 'a'} ${b.kind.toLowerCase()} — they are measured differently, so I can't put them side by side. Try two places of the same kind.<br><span class="small">${examples}</span>`, 'bot'); return true; }
   const keys = [...new Set([...Object.keys(a.rows), ...Object.keys(b.rows)])];
   askSay(`<span class="lbl result">Our result</span><br><b>${esc(a.name)} vs ${esc(b.name)}</b> <span class="small muted">(${a.kind.toLowerCase()})</span>
-    <table class="cmp small"><thead><tr><th></th><th>${esc(a.name)}</th><th>${esc(b.name)}</th></tr></thead><tbody>${keys.map((k) =>
-    `<tr><td>${k}</td><td>${a.rows[k] ?? '–'}</td><td>${b.rows[k] ?? '–'}</td></tr>`).join('')}</tbody></table>
+    <div class="ask-table"><table class="cmp small"><thead><tr><th></th><th>${esc(a.name)}</th><th>${esc(b.name)}</th></tr></thead><tbody>${keys.map((k) =>
+    `<tr><td>${k}</td><td>${a.rows[k] ?? '–'}</td><td>${b.rows[k] ?? '–'}</td></tr>`).join('')}</tbody></table></div>
     <div class="small muted">Numbers from our data files (moon_targets, earth_cpr, references, showcase).</div>`, 'bot');
   return true;
 }

@@ -62,7 +62,7 @@ We used Claude (Anthropic) through Claude Code as a tool for writing code (Pytho
 - Raney, R. K. (2007). Hybrid-polarity SAR architecture. IEEE TGRS, 45. doi:10.1109/TGRS.2007.895883
 - Raney, R. K., et al. (2011). The lunar Mini-RF radars: Hybrid polarimetric architecture and initial results. Proc. IEEE, 99. doi:10.1109/JPROC.2010.2084970
 - Raney, R. K., et al. (2012). The m-chi decomposition of hybrid dual-polarimetric radar data with application to lunar craters. JGR Planets, 117. doi:10.1029/2011JE003986
-- Sinha, R. K., et al. (2026). Subsurface ice in doubly shadowed craters as revealed by Chandrayaan-2 DFSAR. npj Space Exploration, 2, 22. doi:10.1038/s44453-026-00038-9
+- Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9
 - Colaprete, A., et al. (2010). Detection of water in the LCROSS ejecta plume. Science, 330. doi:10.1126/science.1186986
 - Paige, D. A., et al. (2010). Diviner Lunar Radiometer observations of cold traps in the Moon's south polar region. Science, 330. doi:10.1126/science.1187726
 - Smith, D. E., et al. (2010). Initial observations from the Lunar Orbiter Laser Altimeter (LOLA). GRL, 37. doi:10.1029/2010GL043751

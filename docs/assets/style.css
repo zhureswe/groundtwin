@@ -207,3 +207,16 @@ tr.gold td { background: rgba(79, 209, 232, .07); }
 
 .ask-panel[hidden], .ask-btn[hidden] { display: none; }
 #sc-cards .card, #sc-top > div { min-width: 0; overflow-wrap: anywhere; }
+
+/* T9: no horizontal page scroll on phones (390 px) */
+.grid2 > *, .steps > *, .cards3 > *, .grid-explore > *, .figs > *, .card { min-width: 0; }
+.tex, .table-wrap, .katex-display { overflow-x: auto; max-width: 100%; }
+.katex-display > .katex { white-space: nowrap; }
+.card p, .card li, .note { overflow-wrap: anywhere; }
+.ask-table { overflow-x: auto; max-width: 100%; margin-top: 6px; }
+.ask-msg { min-width: 0; overflow-wrap: anywhere; }
+.ask-table td, .ask-table th { overflow-wrap: normal; }
+.ask-table td:not(:first-child) { white-space: nowrap; }
+.ask-table th { min-width: 7em; }
+.ask-table td:first-child { min-width: 9em; }
+@media (max-width: 480px) { .stat b { font-size: 1.6rem; white-space: nowrap; } }

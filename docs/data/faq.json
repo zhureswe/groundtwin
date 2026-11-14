@@ -297,7 +297,7 @@
     "chandrayaan",
     "lava"
    ],
-   "a": "In our C-band RCM data it barely separates ice from lava: cells passing both tests — ice 1.7%, lava/rock 1.2%, smooth 0.04%. On the Moon: Shackleton floor 0.72% vs outside 0.16%; Faustini floor 0.58% vs outside 0.37%. χ separates the classes better (median smooth -41°, rock -28°, ice 9°). One radar clue is not enough. The criterion is from Sinha et al. 2026 (Chandrayaan-2 DFSAR, L-band), so the wavelength differs.",
+   "a": "In our C-band RCM data it barely separates ice from lava: cells passing both tests — ice 1.7%, lava/rock 1.2%, smooth 0.04%. On the Moon: Shackleton floor 0.72% vs outside 0.16%; Faustini floor 0.58% vs outside 0.37%. χ separates the classes better (median smooth -41°, rock -28°, ice 9°). One radar clue is not enough. The criterion is from Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9 (Chandrayaan-2 DFSAR, L-band), so the wavelength differs.",
    "label": "Our result",
    "links": [],
    "section": "#radar"
@@ -345,7 +345,7 @@
     "2026",
     "news"
    ],
-   "a": "ShadowCam (NASA, on Korea's Danuri) found no broad surface deposits above 20–30% ice, only small 20–50 m patches above 10% (University of Hawaiʻi, 2026). Chandrayaan-2 DFSAR suggested possible subsurface ice in 4 doubly shadowed craters (Sinha et al., npj Space Exploration, 2026).",
+   "a": "ShadowCam (NASA, on Korea's Danuri) found no broad surface deposits above 20–30% ice, only small 20–50 m patches above 10% (University of Hawaiʻi, 2026). Chandrayaan-2 DFSAR suggested possible subsurface ice in 4 doubly shadowed craters (Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9).",
    "label": "Official source",
    "links": [],
    "section": null

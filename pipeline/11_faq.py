@@ -119,7 +119,7 @@ def build():
         + '; '.join(f"{k} floor {pct(t['inside']['frac_criterion'], 2)} vs outside {pct(t['outside']['frac_criterion'], 2)}" for k, t in gold.items())
         + f". χ separates the classes better (median smooth {PC['smooth']['chi_median_of_sites_deg']:.0f}°, rock "
         f"{PC['rough_rock']['chi_median_of_sites_deg']:.0f}°, ice {PC['ice']['chi_median_of_sites_deg']:.0f}°). One radar clue is not enough. "
-        'The criterion is from Sinha et al. 2026 (Chandrayaan-2 DFSAR, L-band), so the wavelength differs.', RESULT, section='#radar')
+        'The criterion is from Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9 (Chandrayaan-2 DFSAR, L-band), so the wavelength differs.', RESULT, section='#radar')
     add('Why do wavelengths matter?', ['wavelength', 'band', 'rayleigh', 'c-band', 's-band', 'roughness'],
         f"Radar is most sensitive to roughness near its wavelength. Rayleigh threshold h = λ/(8 cos θ): RCM {lim[0][1]}–{lim[1][1]} cm "
         f"({lim[0][0]}–{lim[1][0]}°), Mini-RF {w['minirf']['h_cm']} cm. So we compare the order of classes and the inside/outside "
@@ -131,7 +131,7 @@ def build():
     add('What do recent missions say about lunar ice?', ['shadowcam', 'danuri', 'recent', '2026', 'news'],
         'ShadowCam (NASA, on Korea\'s Danuri) found no broad surface deposits above 20–30% ice, only small 20–50 m patches above 10% '
         '(University of Hawaiʻi, 2026). Chandrayaan-2 DFSAR suggested possible subsurface ice in 4 doubly shadowed craters '
-        '(Sinha et al., npj Space Exploration, 2026).', OFFICIAL)
+        '(Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9).', OFFICIAL)
 
     # --- analog engine
     add('How does the Analog Engine work?', ['analog', 'engine', 'similarity', 'formula', 'score', 'percentile'],

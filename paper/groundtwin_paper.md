@@ -167,7 +167,7 @@ We used Claude (Anthropic) via Claude Code to help write Python and HTML/JavaScr
 - Raney, R. K. (2007). Hybrid-polarity SAR architecture. *IEEE Trans. Geosci. Remote Sens.*, 45, 3397–3404. doi:10.1109/TGRS.2007.895883
 - Raney, R. K., et al. (2011). The lunar Mini-RF radars: Hybrid polarimetric architecture and initial results. *Proc. IEEE*, 99, 808–823. doi:10.1109/JPROC.2010.2084970
 - Raney, R. K., et al. (2012). The m-chi decomposition of hybrid dual-polarimetric radar data with application to lunar craters. *JGR Planets*, 117(E12). doi:10.1029/2011JE003986
-- Sinha, R. K., et al. (2026). Subsurface ice in doubly shadowed craters as revealed by Chandrayaan-2 dual frequency synthetic aperture radar. *npj Space Exploration*, 2, 22. doi:10.1038/s44453-026-00038-9
+- Sinha et al. (2026), npj Space Exploration, doi:10.1038/s44453-026-00038-9
 - Smith, D. E., et al. (2010). Initial observations from the Lunar Orbiter Laser Altimeter (LOLA). *Geophys. Res. Lett.*, 37(18). doi:10.1029/2010GL043751
 - Spudis, P. D., et al. (2013). Evidence for water ice on the Moon: Results for anomalous polar craters from the LRO Mini-RF imaging radar. *JGR Planets*, 118, 2016–2029. doi:10.1002/jgre.20156
 - Squyres, S. W., et al. (2004). In situ evidence for an ancient aqueous environment at Meridiani Planum, Mars. *Science*, 306, 1709–1714. doi:10.1126/science.1104559
