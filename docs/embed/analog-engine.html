@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GroundTwin Analog Engine</title>
+<!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. Embeddable: add ?embed=1 to hide header/footer.
+     Step-by-step explainer of direction 1 (Earth analogs). All numbers come from ../data/analog_grid.json, targets.json, showcase.json,
+     validation.json, blind_test.json, famous_analogs.json and analogs8.json; the worked example is computed live in the browser. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="embed.css">
+<style>
+  .ae-step { margin-top: 30px; }
+  .ae-step h2 { font-size: clamp(1.3rem, 3vw, 1.8rem); }
+  .ae-lead { color: #c9d3e3; max-width: 860px; }
+  .ae-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; margin-top: 10px; }
+  .ae-map { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 14px; border-top: 3px solid var(--ice); min-width: 0; }
+  .ae-map h3 { margin-bottom: 4px; font-size: 1rem; }
+  .ae-map .src { font-family: var(--font-mono); font-size: .7rem; color: var(--muted); overflow-wrap: anywhere; }
+  .ae-map p { margin: 6px 0 0; font-size: .87rem; }
+  .ae-prob { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
+  .ae-prob div { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--surface); min-width: 0; }
+  .ae-prob b { display: block; font-family: var(--font-head); margin-bottom: 4px; }
+  .tw { overflow-x: auto; }
+  table.ae { width: 100%; border-collapse: collapse; font-size: .86rem; }
+  .ae th, .ae td { padding: 7px 9px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  .ae th { color: var(--muted); font-weight: 600; }
+  .ae td.num, .ae th.num { text-align: right; font-family: var(--font-mono); }
+  .ae tr.tot td { font-weight: 700; border-top: 2px solid var(--line); }
+  .ae-ctrl { display: flex; flex-wrap: wrap; gap: 10px 16px; margin: 10px 0; }
+  .ae-ctrl label { font-family: var(--font-mono); font-size: .74rem; color: var(--muted); text-transform: uppercase; display: flex; gap: 8px; align-items: center; max-width: 100%; }
+  .ae-ctrl select { max-width: 100%; min-width: 0; }
+  .ae-result { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .ae-result div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: rgba(79,209,232,.06); }
+  .ae-result b { display: block; font-family: var(--font-head); font-size: 1.35rem; color: var(--ice); }
+  .ae-result span { font-family: var(--font-mono); font-size: .68rem; color: var(--muted); text-transform: uppercase; }
+  .ae-top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .ae-top ol { margin: 0; padding-left: 1.3em; } .ae-top li { margin: 5px 0; font-size: .9rem; }
+  .ae-top .s { font-family: var(--font-mono); color: var(--ice); } .ae-top .mars .s { color: var(--mars); }
+  .ae-check { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+  .ae-check div { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--surface); }
+  .ae-check b { display: block; font-family: var(--font-head); font-size: 1.5rem; }
+  .ae-check .weak b { color: #f0c35e; } .ae-check .strong b { color: var(--yes); }
+  .ae-flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--font-mono); font-size: .78rem; margin: 10px 0 0; }
+  .ae-flow span { border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; background: var(--surface); }
+  .ae-flow i { color: var(--ice); font-style: normal; }
+  iframe.scout { width: 100%; height: 1100px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
+  @media (max-width: 720px) { .ae-top { grid-template-columns: 1fr; } iframe.scout { height: 1300px; } }
+</style>
+</head>
+<body>
+<header class="e-head"><a class="brand" href="../index.html" target="_top">GroundTwin</a><span class="e-title">Analog Engine · how we find Earth twins</span></header>
+<main class="e-wrap" id="app"><p class="muted">Loading…</p></main>
+<footer class="e-foot">Data: NASA GPM IMERG; NASA MODIS (NDVI, land surface temperature, aerosol, land cover); USGS GMTED2010 elevation. Known analogs: NASA Planetary Analog Explorer, USGS. Not endorsed by NASA.</footer>
+<script src="common.js"></script>
+<script>
+'use strict';
+(async () => {
+  const { FEAT, esc, fmt, ll, load } = window.GTE;
+  const app = document.getElementById('app');
+  let G, T, SC, V, B, FA, A8;
+  try { [G, T, SC, V, B, FA, A8] = await Promise.all(['analog_grid', 'targets', 'showcase', 'validation', 'blind_test', 'famous_analogs', 'analogs8'].map(load)); }
+  catch (e) { app.innerHTML = `<p>Could not load data: ${esc(e.message)}</p>`; return; }
+
+  const FK = G.features, N = G.cells.length, CD = G.cell_deg;
+  const MEANS = { aridity: 'Dry: Moon and Mars have no rain. Water changes soils, rocks and radar echoes.', barren: 'No plants: plants hide bare rock and soil that instruments must see.',
+    thermal_range: 'Day–night swing: airless worlds swing hugely between day and night; equipment must survive it.', cold: 'Cold: the lunar poles and Mars are extremely cold — key for ice tests.',
+    dust: 'Dust: Mars has global dust storms; dust tests seals, solar panels and wheels.', roughness: 'Rough terrain: craters, boulders and slopes test rover driving and landing.',
+    elevation: 'High altitude: thinner air is a little closer to space conditions.' };
+  const pct = (x) => `${Math.round(x * 100)}%`;
+  const key = (lat, lon) => `${(Math.floor(lat / CD) * CD + CD / 2).toFixed(2)},${(Math.floor(lon / CD) * CD + CD / 2).toFixed(2)}`;
+  const IDX = new Map(G.cells.map((c, i) => [`${c[1].toFixed(2)},${c[0].toFixed(2)}`, i]));
+  const cellAt = (lat, lon) => { let i = IDX.get(key(lat, lon)); if (i != null) return G.cells[i];
+    for (const a of [-CD, 0, CD]) for (const b of [-CD, 0, CD]) { i = IDX.get(key(lat + a, lon + b)); if (i != null) return G.cells[i]; } return null; };
+  const feats = (c) => Object.fromEntries(FK.map((k, j) => [k, c[2 + j]]));
+  const S = (f, tk, mk) => { const p = T.targets[tk].profile, w = T.modes[mk].weights; let n = 0, d = 0; FK.forEach((k) => { n += (w[k] || 0) * (1 - Math.abs(f[k] - p[k])); d += (w[k] || 0); }); return d ? n / d : 0; };
+  const sortedCache = {};
+  const rankOf = (s, tk, mk) => { const ck = tk + mk; if (!sortedCache[ck]) sortedCache[ck] = G.cells.map((c) => S(feats(c), tk, mk)).sort((a, b) => b - a);
+    const a = sortedCache[ck]; let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] > s + 1e-12) lo = m + 1; else hi = m; } return lo + 1; };
+
+  // places for the worked example: only places with coordinates in our data files
+  const PLACES = [];
+  [...A8.official, ...A8.found].forEach((x) => PLACES.push({ name: `${x.name}, ${x.country}`, lat: x.lat, lon: x.lon, tk: x.target }));
+  Object.entries(SC.top).forEach(([tk, rows]) => rows.forEach((r) => PLACES.push({ name: `#${r.rank} ${tk.startsWith('moon') ? 'Moon' : 'Mars'} top · ${r.region}`, lat: r.lat, lon: r.lon, tk })));
+  (SC.cards || []).forEach((c) => (c.sites || []).forEach((s) => PLACES.push({ name: `${s.name}${c.key === 'mangystau' ? ' (Mangystau)' : ''}`, lat: s.lat, lon: s.lon, tk: c.target })));
+  (FA.sites || []).forEach((s) => PLACES.push({ name: `${s.name}${s.country ? ', ' + s.country : ''}`, lat: s.lat, lon: s.lon, tk: s.primary || 'mars_gale' }));
+  const seen = new Set(); const PL = PLACES.filter((p) => { const k = p.name; if (seen.has(k) || !cellAt(p.lat, p.lon)) return false; seen.add(k); return true; });
+
+  const tgtOpts = Object.entries(T.targets).map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join('');
+  const modeOpts = Object.entries(T.modes).map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join('');
+  const mt = SC.mars_target, mtp = V.mean_top_percent, mp = V.mean_top_percent_p;
+
+  app.innerHTML = `
+  <div class="hud">Direction 1 · Earth analogs</div>
+  <h1 style="font-size:clamp(1.7rem,4.5vw,2.8rem)">How we find Earth twins of the Moon and Mars</h1>
+  <p class="ae-lead">Seven maps of the whole Earth, one common scale, clear criteria for each target and mission — then the same formula scores every one of Earth's ${N.toLocaleString('en')} land cells. Every number below is computed from our open data.</p>
+  <div class="ae-flow"><span>7 Earth maps</span><i>→</i><span>one 0–1 scale</span><i>→</i><span>target profile</span><i>→</i><span>mission weights</span><i>→</i><span>score S for every cell</span><i>→</i><span>8 places</span><i>→</i><span>check on known analogs</span></div>
+
+  <section class="ae-step"><div class="hud">The problem</div><h2>Why finding analogs is hard</h2>
+    <div class="ae-prob">
+      <div><b>Nothing on Earth is the Moon</b>No Earth place has 1/6 gravity, vacuum or space radiation. So we ask: <i>in which ways</i> is a place similar, and how much?</div>
+      <div><b>Raw numbers don't compare</b>The lunar south pole is colder than anything on Earth. Comparing kelvins directly would rank every Earth place as "not cold at all".</div>
+      <div><b>Different missions, different needs</b>Rover tests need rough ground; ice tests need cold; science needs dry, bare rock. One fixed list cannot serve all.</div>
+      <div><b>Analogs are picked mostly by hand</b>Today sites are chosen from experience. We search the whole planet with data and show where each analogy breaks.</div>
+    </div></section>
+
+  <section class="ae-step"><div class="hud">Step 1 — seven maps of the whole Earth</div><h2>The criteria we measure</h2>
+    <p class="ae-lead">Each map covers all land between 60°S and 90°N (Antarctica excluded), averaged over ${esc(G.period)}, on a ${CD}° grid (≈ 50 km): ${N.toLocaleString('en')} land cells.</p>
+    <div class="ae-grid">${FK.map((k) => `<div class="ae-map"><h3>${FEAT[k]}</h3><div class="src">${esc(G.sources[k] || '')}</div><p>${esc(MEANS[k])}</p></div>`).join('')}</div></section>
+
+  <section class="ae-step"><div class="hud">Step 2 — one common scale</div><h2>Turn every map into "how extreme on Earth"</h2>
+    <p class="ae-lead">For each criterion we rank all land cells and convert the value to a percentile <b>p</b> from 0 to 1 in the "extreme" direction (drier, barer, bigger swing, colder, dustier, rougher, higher). Example: <b>p = 0.95</b> for Dry means "drier than 95% of Earth's land". Now all seven criteria share one scale, and the lunar cold no longer breaks the comparison.</p></section>
+
+  <section class="ae-step"><div class="hud">Step 3 — what each target needs</div><h2>Target profiles (t)</h2>
+    <p class="ae-lead">For each target we set how extreme it is on each criterion (1 = as extreme as Earth's most extreme places). These profiles are our documented choice.</p>
+    <div class="tw"><table class="ae"><tr><th>Criterion</th>${Object.values(T.targets).map((t) => `<th class="num">${esc(t.label.split(' (')[0])}</th>`).join('')}</tr>
+      ${FK.map((k) => `<tr><td>${FEAT[k]}</td>${Object.values(T.targets).map((t) => `<td class="num">${fmt(t.profile[k], 1)}</td>`).join('')}</tr>`).join('')}
+      <tr><td>Earth cannot reproduce</td>${Object.values(T.targets).map((t) => `<td style="white-space:normal;font-size:.8rem">${esc((t.cannot || []).join(', '))}</td>`).join('')}</tr></table></div></section>
+
+  <section class="ae-step"><div class="hud">Step 4 — what the mission needs</div><h2>Mission weights (w)</h2>
+    <div class="tw"><table class="ae"><tr><th>Criterion</th>${Object.values(T.modes).map((m) => `<th class="num">${esc(m.label)}</th>`).join('')}</tr>
+      ${FK.map((k) => `<tr><td>${FEAT[k]}</td>${Object.values(T.modes).map((m) => `<td class="num">${fmt(m.weights[k], 1)}</td>`).join('')}</tr>`).join('')}</table></div></section>
+
+  <section class="ae-step"><div class="hud">Step 5 — score every place</div><h2>The formula, computed in front of you</h2>
+    <div class="e-formula">s<sub>i</sub> = 1 − |p<sub>i</sub> − t<sub>i</sub>| &nbsp;&nbsp; S = Σ w<sub>i</sub>·s<sub>i</sub> / Σ w<sub>i</sub> &nbsp;&nbsp; rank = position of S among all ${N.toLocaleString('en')} land cells</div>
+    <div class="ae-ctrl">
+      <label>Place <select id="pl">${PL.map((p, i) => `<option value="${i}">${esc(p.name)}</option>`).join('')}</select></label>
+      <label>Target <select id="tg">${tgtOpts}</select></label>
+      <label>Mission <select id="md">${modeOpts}</select></label>
+    </div>
+    <div id="calc"></div></section>
+
+  <section class="ae-step"><div class="hud">Step 6 — eight places</div><h2>4 official analog sites + 4 found by GroundTwin (Science mode)</h2>
+    <p class="ae-lead">${esc(A8.rule_official)} ${esc(A8.rule_found)} Nobody picked these by hand.</p>
+    <div class="ae-top">${[['official', 'Official analog sites — listed by NASA or USGS', 'var(--ice)'], ['found', 'Found by GroundTwin — not on any official list', 'var(--mars)']].map(([k, h, col]) =>
+      `<div><h3 style="color:${col}">${h}</h3><ol>${A8[k].map((x) => `<li class="${x.target.startsWith('mars') ? 'mars' : ''}">${esc(x.name)}, ${esc(x.country)} <span class="e-sub">${x.target.startsWith('moon') ? 'Moon' : 'Mars'} · ${ll(x.lat, x.lon)} · <span class="s">S = ${fmt(x.S, 3)}</span> · #${x.position.toLocaleString('en')} · top ${x.top_percent >= 0.1 ? fmt(x.top_percent, 1) : fmt(x.top_percent, 3)}% of land cells${x.listed_by ? ` · listed by ${esc(x.listed_by.startsWith('USGS') ? 'USGS' : x.listed_by)}` : ''}</span></li>`).join('')}</ol></div>`).join('')}
+    </div><p class="note"><a href="analogs.html">See all 8 places with criteria and reasons →</a></p></section>
+
+  <section class="ae-step"><div class="hud">Step 7 — did it work?</div><h2>Check on analog sites listed by NASA and USGS</h2>
+    <div class="ae-check">
+      <div class="strong"><b>top ${fmt(mtp.mars_gale.science, 1)}%</b>average rank of known Mars analogs for Gale (random ≈ 50%, p = ${mp.mars_gale.science})</div>
+      <div class="strong"><b>top ${fmt(mtp.mars_jezero.science, 1)}%</b>average rank for Jezero (p = ${mp.mars_jezero.science})</div>
+      <div class="strong"><b>${B.groups.mars.recognised} of ${B.groups.mars.total}</b>known Mars analogs recognised in a blind test (chance ≈ ${B.groups.mars.expected_by_chance}, p = ${B.groups.mars.p_value_binomial})</div>
+      <div class="weak"><b>×${fmt(V.lift.moon_south_pole.science, 2)} / ×${fmt(V.lift.mars_gale.science, 2)}</b>Lift in the top 10% for Moon / Gale — weak, because few known sites map to cells (Moon: ${V.unique_cells_per_target.moon_south_pole})</div>
+    </div></section>
+
+  <section class="ae-step"><div class="hud">Honest limits</div>
+    <ul class="limits"><li>Seven criteria only; target profiles and weights are our documented choice.</li><li>A ${CD}° grid (≈ 50 km) hides small sites.</li>
+      <li>Similarity, not probability — and Earth never reproduces gravity, vacuum or radiation.</li><li>Known analogs are few and cluster in accessible places (e.g. the US Southwest).</li></ul></section>
+
+  <section class="ae-step"><div class="hud">Try it yourself</div><h2>Ask the formula about any place</h2>
+    <iframe class="scout" src="scout.html?embed=1" title="GroundTwin Scout" loading="lazy"></iframe></section>`;
+
+  const pl = document.getElementById('pl'), tg = document.getElementById('tg'), md = document.getElementById('md');
+  const calc = () => {
+    const P = PL[+pl.value], tk = tg.value, mk = md.value, c = cellAt(P.lat, P.lon), f = feats(c), prof = T.targets[tk].profile, w = T.modes[mk].weights;
+    let sw = 0, sws = 0;
+    const rows = FK.map((k) => { const s = 1 - Math.abs(f[k] - prof[k]); sw += w[k]; sws += w[k] * s;
+      return `<tr><td>${FEAT[k]}</td><td class="num">${fmt(f[k], 3)}</td><td class="num">${fmt(prof[k], 2)}</td><td class="num">${fmt(s, 3)}</td><td class="num">${fmt(w[k], 1)}</td><td class="num">${fmt(w[k] * s, 3)}</td><td>${s >= 0.8 ? '✓ matches' : s >= 0.5 ? '≈ partly' : '≠ differs'}</td></tr>`; }).join('');
+    const s = sws / sw, r = rankOf(s, tk, mk);
+    document.getElementById('calc').innerHTML = `<p class="e-sub">${esc(P.name)} · ${ll(P.lat, P.lon)} · grid cell ${ll(c[1], c[0])}</p>
+      <div class="tw"><table class="ae"><tr><th>Criterion</th><th class="num">p (place)</th><th class="num">t (target)</th><th class="num">s = 1 − |p − t|</th><th class="num">w</th><th class="num">w · s</th><th></th></tr>${rows}
+      <tr class="tot"><td>Total</td><td></td><td></td><td></td><td class="num">${fmt(sw, 1)}</td><td class="num">${fmt(sws, 3)}</td><td></td></tr></table></div>
+      <div class="ae-result"><div><b>${fmt(s, 3)}</b><span>S = ${fmt(sws, 3)} / ${fmt(sw, 1)}</span></div><div><b>${(s * 100).toFixed(1)}%</b><span>match (not a probability)</span></div>
+      <div><b>#${r.toLocaleString('en')}</b><span>of ${N.toLocaleString('en')} land cells</span></div><div><b>top ${(r / N * 100).toFixed(r / N * 100 >= 0.1 ? 1 : 3)}%</b><span>of Earth's land</span></div></div>`;
+  };
+  pl.onchange = () => { tg.value = PL[+pl.value].tk in T.targets ? PL[+pl.value].tk : tg.value; calc(); };
+  tg.onchange = md.onchange = calc;
+  tg.value = PL[0].tk; md.value = SC.mode in T.modes ? SC.mode : 'science'; calc();
+})();
+</script>
+</body>
+</html>
