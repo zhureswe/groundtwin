@@ -125,6 +125,10 @@ async function globe() {
     url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg',
     tilingScheme: new Cesium.WebMercatorTilingScheme(), maximumLevel: 8, credit: 'Imagery: NASA Blue Marble via NASA EOSDIS GIBS' });
   let viewer;
+  // No WebGL → skip Cesium (it would pop up a red error box) and open the 2D map instead.
+  const hasGL = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; } })();
+  if (!hasGL) { const b2 = document.querySelector('.e-tabs button[data-view="2d"]'); if (b2) b2.click();
+    return msg('This browser cannot show the 3D globe (WebGL is needed), so the 2D map is shown.'); }
   try {
     viewer = new Cesium.Viewer('globe', { baseLayer: new Cesium.ImageryLayer(gibs), baseLayerPicker: false, geocoder: false, timeline: false,
       animation: false, sceneModePicker: false, navigationHelpButton: false, infoBox: false, fullscreenButton: false, homeButton: true });
