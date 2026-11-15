@@ -50,6 +50,7 @@
   details.how { margin-top: 8px; font-size: .84rem; color: var(--muted); }
   details.how summary { cursor: pointer; color: var(--ice); }
   .tops li { margin: 3px 0; }
+  .why ul { margin: 0 0 8px 1.1em; padding: 0; font-size: .88rem; } .why li { margin: 3px 0; } .why p { margin: 6px 0 2px; }
   @media (max-width: 600px) { .kv { grid-template-columns: repeat(2, minmax(0, 1fr)); } .msg.bot { width: 100%; max-width: 100%; } .res-score { text-align: left; } }
 </style>
 </head>
@@ -169,6 +170,24 @@
     const med = n % 2 ? ps[(n - 1) / 2] : (ps[n / 2 - 1] + ps[n / 2]) / 2;
     return { s: ss.reduce((a, x) => a + x, 0) / n, rank: Math.floor(med) + 1 };   // same rule as the Analogs page: mean S, median rank of the cells
   };
+  // plain-language reasons from the numbers: p = how extreme the place is on Earth (0–1), t = what the target needs
+  const WHAT = { aridity: ['drier', 'dry'], barren: ['barer (fewer plants)', 'bare of plants'], thermal_range: ['bigger day–night temperature swing', 'big day–night swings'],
+    cold: ['colder nights', 'cold'], dust: ['dustier air', 'dusty'], roughness: ['rougher terrain', 'rough terrain'], elevation: ['higher ground', 'high ground'] };
+  const WHY = { aridity: 'water and rain change soils and radar echoes, so analogs must be dry', barren: 'plants hide the bare rock and soil that instruments need to see',
+    thermal_range: 'equipment must survive large temperature swings', cold: 'cold matters for ice-related tests', dust: 'dust tests seals, solar panels and rover wheels',
+    roughness: 'rough ground tests rover driving and landing hazards', elevation: 'thinner air is a little closer to space conditions' };
+  const reasons = (f, tk, mk) => {
+    const prof = T.targets[tk].profile, w = T.modes[mk].weights, pct = (x) => Math.round(x * 100);
+    const items = FK.map((k) => ({ k, p: f[k], t: prof[k], s: 1 - Math.abs(f[k] - prof[k]), w: w[k] || 0 }));
+    const good = items.filter((i) => i.s >= 0.8).sort((a, b) => b.w * b.s - a.w * a.s);
+    const bad = items.filter((i) => i.s < 0.8).sort((a, b) => b.w * (1 - b.s) - a.w * (1 - a.s));
+    const fit = good.slice(0, 3).map((i) => `<li><b>${FEAT[i.k]}:</b> ${WHAT[i.k][0]} than ${pct(i.p)}% of Earth's land; the target needs ${pct(i.t)}% — close (${WHY[i.k]}).</li>`);
+    const miss = bad.slice(0, 3).map((i) => i.p < i.t
+      ? `<li><b>${FEAT[i.k]}:</b> not ${WHAT[i.k][1]} enough — ${WHAT[i.k][0]} than only ${pct(i.p)}% of land, but the target needs ${pct(i.t)}%${i.w >= 2 ? ' (heavily weighted for this mission need)' : ''}.</li>`
+      : `<li><b>${FEAT[i.k]}:</b> too extreme — ${WHAT[i.k][0]} than ${pct(i.p)}% of land, while the target needs only ${pct(i.t)}%${i.w >= 2 ? ' (heavily weighted for this mission need)' : ''}.</li>`);
+    return `<div class="why"><p><b style="color:var(--yes)">Why it fits</b></p><ul>${fit.join('') || '<li>No criterion is a close match.</li>'}</ul>
+      <p><b style="color:var(--no)">Why it doesn't fit</b></p><ul>${miss.join('') || '<li>No weak criteria — all seven are close to the target.</li>'}</ul></div>`;
+  };
   const scoreBlock = (r, tk, mk) => {
     const { s, rank } = scoreOf(r, tk, mk), top = rank / N * 100, [vt, vc] = verdict(top), prof = T.targets[tk].profile, mars = tk.startsWith('mars');
     const parts = FK.map((k) => [k, 1 - Math.abs(r.f[k] - prof[k])]);
@@ -179,6 +198,7 @@
       <div class="kv"><div><b>${fmt(s, 3)}</b><span>Score S</span></div><div><b>#${rank.toLocaleString('en')}</b><span>of ${N.toLocaleString('en')} cells</span></div><div><b>${topTxt(top)}</b><span>of Earth's land</span></div></div>
       ${bars(r.f, prof)}
       <p style="margin-top:8px"><b style="color:var(--yes)">Matches:</b> ${yes.join(', ') || '—'} · <b style="color:#f0c35e">Partly:</b> ${part.join(', ') || '—'} · <b style="color:var(--no)">Differs:</b> ${no.join(', ') || '—'}</p>
+      ${reasons(r.f, tk, mk)}
       <p><b>What Earth cannot reproduce:</b> ${esc((T.targets[tk].cannot || []).join(', '))}.</p>
       ${buttons(r.lat, r.lon, tk)}
       <details class="how"><summary>How was this computed?</summary>
@@ -235,12 +255,13 @@
       <tr><th>Match</th><td></td><th>${(sa * 100).toFixed(1)}%</th><th>${(sb * 100).toFixed(1)}%</th></tr>
       <tr><th>Rank</th><td></td><td>#${ka.toLocaleString('en')} (${topTxt(ka / N * 100)})</td><td>#${kb.toLocaleString('en')} (${topTxt(kb / N * 100)})</td></tr></table></div>
       <p style="margin-top:8px">${sa === sb ? 'They score the same.' : `<b>${esc(sa > sb ? ra.name : rb.name)}</b> is the closer match by our formula.`} ${diffs.length ? diffs.join('; ') + '.' : 'Their criteria are very similar.'}</p>
+      <details class="how" open><summary>Why each place fits or not</summary><p><b>${esc(ra.name)}</b></p>${reasons(ra.f, tk, mk)}<p><b>${esc(rb.name)}</b></p>${reasons(rb.f, tk, mk)}</details>
       <p><b>Neither can reproduce:</b> ${esc((T.targets[tk].cannot || []).join(', '))}.</p>`);
   };
   const help = () => say(`<p><b>Hi! I'm GroundTwin Scout.</b> I compute our Analog Engine formula live for any place you type.</p>
     <p>Try:</p><ul style="margin:0 0 6px 1.1em">
     <li><i>How good is the Atacama Desert for a Moon base?</i></li><li><i>44.36, 51.56 for Mars rover testing</i></li>
-    <li><i>Compare Mangystau and Death Valley for Mars</i></li><li><i>Top places for Moon ice &amp; resources</i></li><li><i>Shackleton</i> — ice evidence for a lunar crater</li></ul>
+    <li><i>Compare Mangystau and Death Valley for Mars</i></li><li><i>Top places for Moon ice &amp; resources</i></li><li><i>Why is Death Valley good or bad for Mars?</i> — reasons in plain words</li><li><i>Shackleton</i> — ice evidence for a lunar crater</li></ul>
     <p class="hint">Words like "Mars", "Jezero", "rover", "build", "ice" switch the target and mission need. Earth places get an analog match; lunar craters get an ice evidence score (0–3).</p>`);
 
   const handle = async (text) => {
@@ -259,7 +280,7 @@
     thinking.remove();
   };
   document.getElementById('f').addEventListener('submit', (e) => { e.preventDefault(); const v = q.value; q.value = ''; handle(v); });
-  const EX = ['How good is the Atacama Desert for a Moon base?', 'Mangystau for Mars', '36.75, 85.75 for Moon ice', 'Compare Mangystau and Death Valley for Mars', 'Top places for Mars rover testing', 'Shackleton'];
+  const EX = ['How good is the Atacama Desert for a Moon base?', 'Mangystau for Mars', '36.75, 85.75 for Moon ice', 'Compare Mangystau and Death Valley for Mars', 'Top places for Mars rover testing', 'Why is Death Valley good or bad for Mars?', 'Shackleton'];
   const ex = document.getElementById('ex'); EX.forEach((x) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = x; b.onclick = () => handle(x); ex.appendChild(b); });
   help();
 })();
