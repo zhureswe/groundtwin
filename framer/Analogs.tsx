@@ -447,6 +447,57 @@ function Images({ lat, lon, cols }: any) {
         </div>
     )
 }
+// Exploded "breakdown" of one place: the three maps of the same 4 deg region, stacked and labelled.
+function Breakdown({ lat, lon, target, name, S, top, color }: any) {
+    const ref = useRef<HTMLDivElement>(null)
+    const w = useWidth(ref)
+    const [open, setOpen] = useState(false)
+    useEffect(() => {
+        const el = ref.current
+        if (!el || typeof IntersectionObserver === "undefined") { setOpen(true); return }
+        const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setOpen(true); io.disconnect() } }, { threshold: 0.25 })
+        io.observe(el)
+        return () => io.disconnect()
+    }, [])
+    const narrow = w > 0 && w < 620
+    const L = Math.round(Math.max(150, Math.min(300, (w || 900) * (narrow ? 0.46 : 0.3))))
+    const gap = open ? Math.round(L * 0.5) : Math.round(L * 0.07)
+    const top0 = Math.round(L * 0.08)
+    const left = narrow ? 0 : Math.round((w || 900) * 0.06)
+    const labX = narrow ? Math.round(L * 1.08) : Math.round((w || 900) * 0.52)
+    const H = top0 + 2 * Math.round(L * 0.5) + L + 30
+    const bd = BASE + "assets/img/bd/" + target + "_" + lat.toFixed(2) + "_" + lon.toFixed(2) + ".png"
+    const layers = [
+        { img: s2Url(lat, lon, 4, 600), k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
+        { img: reliefUrl(lat, lon, 4, 600), k: "02", t: "Terrain relief", sub: "ASTER GDEM · NASA GIBS", d: "Hills, slopes and flat ground. The score's terrain criteria (roughness, elevation) come from USGS GMTED2010." },
+        { img: bd, k: "03", t: "Our score map", sub: "7 criteria → 1 score · NASA MODIS, GPM + USGS", d: "Each 0.5° land square coloured by S (brighter = closer to the target). White box: this place" + (typeof S === "number" ? ", S = " + S.toFixed(2) + (typeof top === "number" ? " · top " + fmtPct(top) + "% of land" : "") : "") + "." },
+    ]
+    return (
+        <div ref={ref} style={{ position: "relative", height: H, marginTop: 8 }}>
+            <div style={{ position: "absolute", left: 0, top: 0, fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.subtle, textTransform: "uppercase" }}>
+                <span style={{ color: C.text }}>{name}</span> / exploded view
+            </div>
+            {layers.map((ly, i) => {
+                const y = top0 + 24 + i * gap
+                return (
+                    <React.Fragment key={ly.k}>
+                        <div style={{ position: "absolute", left: left + L / 2, top: y + L / 2, width: Math.max(0, labX - left - L / 2 - 12), height: 1, background: C.line, transition: "top 1s cubic-bezier(.22,1,.36,1)", zIndex: 0 }} />
+                        <span style={{ position: "absolute", left: labX - 16, top: y + L / 2 - 3, width: 7, height: 7, borderRadius: 7, background: color, transition: "top 1s cubic-bezier(.22,1,.36,1)" }} />
+                        <div style={{ position: "absolute", left, top: y, width: L, height: L, transform: "rotateX(58deg) rotateZ(-42deg)", transformOrigin: "50% 50%", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,.25)", boxShadow: "0 30px 60px rgba(0,0,0,.55)", background: C.s2, transition: "top 1s cubic-bezier(.22,1,.36,1)", zIndex: 10 - i }}>
+                            <img src={ly.img} alt={ly.t + " of " + name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                        </div>
+                        <div style={{ position: "absolute", left: labX, top: y + L / 2 - 12, right: 0, transition: "top 1s cubic-bezier(.22,1,.36,1)" }}>
+                            <div style={{ fontFamily: MONO, fontSize: 10.5, color }}>{ly.k}</div>
+                            <div style={{ fontFamily: HEAD, fontSize: narrow ? 15 : 18, fontWeight: 600, marginTop: 2 }}>{ly.t}</div>
+                            <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}>{ly.sub}</div>
+                            {narrow ? null : <div style={{ fontSize: 13, color: C.muted, marginTop: 6, lineHeight: 1.5, maxWidth: 380 }}>{ly.d}</div>}
+                        </div>
+                    </React.Fragment>
+                )
+            })}
+        </div>
+    )
+}
 function Criteria({ r, color, weights, wide }: any) {
     return (
         <div style={{ borderTop: "1px solid " + C.line }}>
@@ -665,6 +716,11 @@ export default function AnalogDetail(props: any) {
                         <div style={{ fontSize: 15, color: C.muted, marginTop: 8, lineHeight: 1.6 }}>We could not score this place with our formula: {f.reason}. The satellite views below still show what it looks like.</div>
                     </div>
                 )}
+                {it.scored ? (
+                    <Section kicker="Breakdown" title="Three maps, one place" mt={52}>
+                        <Breakdown lat={f.lat} lon={f.lon} target={f.primary} name={f.name} S={f.targets[f.primary].S} top={f.targets[f.primary].top_percent} color={m.color} />
+                    </Section>
+                ) : null}
                 <Section kicker="Satellite view" title="What the place looks like" mt={52}>
                     <Images lat={f.lat} lon={f.lon} cols={wide ? 3 : mid ? 2 : 1} />
                     {it.scored ? <div style={{ fontSize: 13, color: C.muted, marginTop: 14 }}>The white box is the 0.5° cell we scored.</div> : null}
@@ -720,6 +776,9 @@ export default function AnalogDetail(props: any) {
                     <ScoreCard r={it} color={m.color} nCells={d.nCells} />
                 </div>
 
+                <Section kicker="Breakdown" title="Three maps, one place" mt={52}>
+                    <Breakdown lat={it.lat} lon={it.lon} target={it.target} name={it.region} S={it.S} top={it.topPercent} color={m.color} />
+                </Section>
                 <Section kicker="Satellite view" title="What the place looks like" mt={52}>
                     <Images lat={it.lat} lon={it.lon} cols={wide ? 3 : mid ? 2 : 1} />
                     <div style={{ fontSize: 13, color: C.muted, marginTop: 14 }}>The white box is the 0.5° cell we scored.</div>
@@ -773,6 +832,11 @@ export default function AnalogDetail(props: any) {
                     {it.facts.map((f: string) => (
                         <p key={f} style={{ fontSize: 15.5, lineHeight: 1.65, color: C.muted, margin: "0 0 10px", maxWidth: 900 }}>{f}</p>
                     ))}
+                </Section>
+            ) : null}
+            {it.sites.length ? (
+                <Section kicker="Breakdown" title="Three maps, one place">
+                    <Breakdown lat={it.sites[0].lat} lon={it.sites[0].lon} target={it.target} name={it.sites[0].name} S={null} top={null} color={m.color} />
                 </Section>
             ) : null}
             {it.sites.length ? (
