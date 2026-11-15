@@ -5,6 +5,8 @@
   const params = new URLSearchParams(location.search);
   if (params.get('embed') === '1') {
     document.documentElement.classList.add('is-embed');   // hide header/footer inside Framer
+    // ?swarm=1 (used on the /video page): cursors build every element of this page as the parent page scrolls
+    if (params.get('swarm') === '1') { const sw = document.createElement('script'); sw.src = 'swarm.js?v=1'; document.head.appendChild(sw); }
     // Tell the Framer page how tall we are, so the frame grows to fit and the page (not the frame) scrolls.
     if (window.parent !== window) {
       let lastH = 0;
