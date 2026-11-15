@@ -477,27 +477,35 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
     useEffect(() => {
         const el = ref.current
         if (!el || typeof IntersectionObserver === "undefined") { setOpen(true); return }
-        const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setOpen(true); io.disconnect() } }, { threshold: 0.2 })
+        let t: any
+        const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { t = setTimeout(() => setOpen(true), 700); io.disconnect() } }, { threshold: 0.35 })
         io.observe(el)
-        return () => io.disconnect()
+        return () => { io.disconnect(); clearTimeout(t) }
     }, [])
+    const replay = (k?: string) => {
+        setOpen(false)
+        if (k) setMode(k)
+        setTimeout(() => setOpen(true), 750)
+    }
     const W = w || 900
     const narrow = W < 620
     const many = mode === "layers" && !!r
     const L = Math.round(Math.max(130, Math.min(many ? 230 : 300, W * (narrow ? 0.44 : many ? 0.24 : 0.3))))
     const step = many ? 0.34 : 0.5
-    const gap = open ? Math.round(L * step) : Math.round(L * 0.06)
+    const gap = open ? Math.round(L * step) : 0
     const left = narrow ? 0 : Math.round(W * (many ? 0.1 : 0.06))
     const labX = narrow ? Math.round(L * 1.08) : Math.round(W * 0.52)
     const fileBase = BASE + "assets/img/bd/" + target + "_" + lat.toFixed(2) + "_" + lon.toFixed(2)
     const scoreTxt = typeof S === "number" ? ", S = " + S.toFixed(2) + (typeof top === "number" ? " · top " + fmtPct(top) + "% of land" : "") : ""
-    const scoreLayer = { img: fileBase + ".png", k: many ? "08" : "03", t: "Our score map", href: URLS.code, sub: many ? "weighted average of the 7 layers above · our code" : "7 criteria → 1 score · NASA MODIS, GPM + USGS · our code", d: "Each 0.5° land square coloured by S (brighter = closer to the target). White box: this place" + scoreTxt + "." }
+    const photo = s2Url(lat, lon, 4, 600)
+    const scoreLayer = { overlay: true, img: fileBase + ".png", k: many ? "08" : "03", t: "Our score map", href: URLS.code, sub: many ? "weighted average of the 7 layers above · our code" : "7 criteria → 1 score · NASA MODIS, GPM + USGS · our code", d: "Each 0.5° land square (about 55 km) coloured by S on top of the photo; brighter = closer to the target, no colour = sea. White box: this place" + scoreTxt + "." }
     const layers: any[] = many
         ? FEATS.map((f, i) => {
               const p = r.features && typeof r.features[f] === "number" ? r.features[f] : null
               const t = r.profile && typeof r.profile[f] === "number" ? r.profile[f] : null
               const st = status(r, f)
               return {
+                  overlay: true,
                   img: fileBase + "_" + f + ".png",
                   href: FEAT_URL[f],
                   k: "0" + (i + 1),
@@ -508,7 +516,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
               }
           }).concat([scoreLayer])
         : [
-              { img: s2Url(lat, lon, 4, 600), href: lat < -60 ? URLS.gibs : URLS.s2, k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
+              { img: photo, href: lat < -60 ? URLS.gibs : URLS.s2, k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
               { img: reliefUrl(lat, lon, 4, 600), href: URLS.gibs, k: "02", t: "Terrain relief", sub: "ASTER GDEM · NASA GIBS", d: "Hills, slopes and flat ground. The score's terrain criteria (roughness, elevation) come from USGS GMTED2010." },
               scoreLayer,
           ]
@@ -516,30 +524,38 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
     const top0 = 64
     const H = top0 + (n - 1) * Math.round(L * step) + L + 40
     const tbtn = (k: string, label: string) => (
-        <button key={k} onClick={() => setMode(k)} style={{ cursor: "pointer", padding: "7px 12px", borderRadius: 999, border: "1px solid " + (mode === k ? color + "99" : C.line), background: mode === k ? C.s2 : "transparent", color: mode === k ? C.text : C.muted, fontFamily: MONO, fontSize: 11.5 }}>
+        <button key={k} onClick={() => replay(k)} style={{ cursor: "pointer", padding: "7px 12px", borderRadius: 999, border: "1px solid " + (mode === k ? color + "99" : C.line), background: mode === k ? C.s2 : "transparent", color: mode === k ? C.text : C.muted, fontFamily: MONO, fontSize: 11.5 }}>
             {label}
         </button>
     )
-    const tr = "top 1s cubic-bezier(.22,1,.36,1)"
     return (
         <div ref={ref} style={{ position: "relative", height: H, marginTop: 8, transition: "height .4s ease" }}>
             <div style={{ position: "absolute", left: 0, top: 0, right: 0, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                 <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.subtle, textTransform: "uppercase" }}>
                     <span style={{ color: C.text }}>{name}</span> / exploded view
                 </div>
-                {r ? <div style={{ display: "flex", gap: 6 }}>{tbtn("maps", "3 maps")}{tbtn("layers", "Inside the score · 7 layers")}</div> : null}
+                <div style={{ display: "flex", gap: 6 }}>
+                    {r ? tbtn("maps", "3 maps") : null}
+                    {r ? tbtn("layers", "Inside the score · 7 layers") : null}
+                    <button onClick={() => replay()} style={{ cursor: "pointer", padding: "7px 12px", borderRadius: 999, border: "1px solid " + C.line, background: "transparent", color: C.muted, fontFamily: MONO, fontSize: 11.5 }}>↻ replay</button>
+                </div>
             </div>
             {layers.map((ly, i) => {
-                const y = top0 + i * gap
+                const span = (n - 1) * Math.round(L * step)
+                const y = open ? top0 + i * gap : top0 + span / 2
+                const dl = open ? i * 0.07 : (n - 1 - i) * 0.03
+                const trI = "top 1.1s cubic-bezier(.22,1,.36,1) " + dl + "s, opacity .5s ease " + (open ? 0.5 + i * 0.07 : 0) + "s"
+                const fade = { opacity: open ? 1 : 0 }
                 const dot = ly.st === "differs" ? C.subtle : ly.st === "partly" ? C.muted : color
                 return (
                     <React.Fragment key={mode + ly.k}>
-                        <div style={{ position: "absolute", left: left + L / 2, top: y + L / 2, width: Math.max(0, labX - left - L / 2 - 12), height: 1, background: C.line, transition: tr, zIndex: 0 }} />
-                        <span style={{ position: "absolute", left: labX - 16, top: y + L / 2 - 3, width: 7, height: 7, borderRadius: 7, background: dot, transition: tr }} />
-                        <div style={{ position: "absolute", left, top: y, width: L, height: L, transform: "rotateX(58deg) rotateZ(-42deg)", transformOrigin: "50% 50%", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,.25)", boxShadow: "0 24px 50px rgba(0,0,0,.55)", background: C.s2, transition: tr, zIndex: 20 - i }}>
-                            <img src={ly.img} alt={ly.t + " map of " + name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                        <div style={{ position: "absolute", left: left + L / 2, top: y + L / 2, width: Math.max(0, labX - left - L / 2 - 12), height: 1, background: C.line, transition: trI, zIndex: 0, ...fade }} />
+                        <span style={{ position: "absolute", left: labX - 16, top: y + L / 2 - 3, width: 7, height: 7, borderRadius: 7, background: dot, transition: trI, ...fade }} />
+                        <div style={{ position: "absolute", left, top: y, width: L, height: L, transform: "rotateX(58deg) rotateZ(-42deg)", transformOrigin: "50% 50%", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,.25)", boxShadow: "0 24px 50px rgba(0,0,0,.55)", background: C.s2, transition: trI, zIndex: 20 - i }}>
+                            {ly.overlay ? <img src={photo} alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", filter: "brightness(.5) saturate(.55)" }} /> : null}
+                            <img src={ly.img} alt={ly.t + " map of " + name} style={{ position: "relative", width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                         </div>
-                        <div style={{ position: "absolute", left: labX, top: y + L / 2 - (many ? 9 : 12), right: 0, transition: tr }}>
+                        <div style={{ position: "absolute", left: labX, top: y + L / 2 - (many ? 9 : 12), right: 0, transition: trI, ...fade }}>
                             <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
                                 <span style={{ fontFamily: MONO, fontSize: 10.5, color: dot }}>{ly.k}</span>
                                 <span style={{ fontFamily: HEAD, fontSize: narrow ? 14 : many ? 15.5 : 18, fontWeight: 600 }}>{ly.t}</span>
@@ -552,7 +568,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
             })}
             {many ? (
                 <div style={{ position: "absolute", left: 0, bottom: 0, fontSize: 12, color: C.subtle, maxWidth: 760, lineHeight: 1.5 }}>
-                    Layers 01–07: each square's match on one criterion, s = 1 − |place − target| (brighter = closer). Layer 08 averages them with the Science weights (×3 for dry and no plants). Cell values: <SrcLink href={URLS.grid}>analog_grid.json</SrcLink>, computed in Google Earth Engine from the NASA and USGS datasets linked above.
+                    Layers 01–07 (over a dimmed satellite photo): each square's match on one criterion, s = 1 − |place − target| (brighter = closer). Layer 08 averages them with the Science weights (×3 for dry and no plants). Cell values: <SrcLink href={URLS.grid}>analog_grid.json</SrcLink>, computed in Google Earth Engine from the NASA and USGS datasets linked above.
                 </div>
             ) : null}
         </div>

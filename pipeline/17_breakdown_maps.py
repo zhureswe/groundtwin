@@ -15,7 +15,7 @@ def render(target, lat, lon, px=360, feat=None):
     prof = T['targets'][target]['profile']; col = COL['moon' if target.startswith('moon') else 'mars']
     dlat = 4.0; dlon = dlat / max(0.2, math.cos(math.radians(lat)))
     w, n = lon - dlon / 2, lat + dlat / 2
-    im = Image.new('RGBA', (px, px), (6, 9, 16, 255)); d = ImageDraw.Draw(im)
+    im = Image.new('RGBA', (px, px), (0, 0, 0, 0)); d = ImageDraw.Draw(im)   # transparent: the satellite photo shows through on the site
     la0, la1 = ctr(lat - dlat / 2), ctr(lat + dlat / 2); lo0, lo1 = ctr(lon - dlon / 2), ctr(lon + dlon / 2)
     la = la0
     while la <= la1 + 1e-9:
@@ -28,12 +28,12 @@ def render(target, lat, lon, px=360, feat=None):
                 if feat is None: s = S(p, prof); k = max(0.0, min(1.0, (s - 0.45) / 0.5)) ** 1.4
                 else: i = F.index(feat); k = max(0.0, 1 - abs(p[i] - prof[feat])) ** 2   # match on one criterion
                 c = tuple(int(14 + (col[i] - 14) * k) for i in range(3))
-                d.rectangle([x0, y0, x1, y1], fill=c + (255,), outline=(255, 255, 255, 28))
+                d.rectangle([x0, y0, x1, y1], fill=c + (int(120 + 115 * k),), outline=(255, 255, 255, 60))
             lo += 0.5
         la += 0.5
     cl, co = ctr(lat), ctr(lon)
     d.rectangle([(co - 0.25 - w) / dlon * px, (n - (cl + 0.25)) / dlat * px, (co + 0.25 - w) / dlon * px, (n - (cl - 0.25)) / dlat * px], outline=(255, 255, 255, 255), width=3)
-    name = f"{target}_{lat:.2f}_{lon:.2f}" + (f"_{feat}" if feat else "") + ".png"; im.convert('RGB').save(f'{OUT}/{name}', optimize=True)
+    name = f"{target}_{lat:.2f}_{lon:.2f}" + (f"_{feat}" if feat else "") + ".png"; im.save(f'{OUT}/{name}', optimize=True)
     pc = cells.get((round(cl, 2), round(co, 2)))
     return name, (round(S(pc, prof), 3) if pc else None)
 _render = render
