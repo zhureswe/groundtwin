@@ -81,7 +81,7 @@ function loadAll() {
                 if (!r.ok) throw new Error(n + ".json HTTP " + r.status)
                 return r.json()
             })
-        cache = Promise.all([get("showcase"), get("explanations"), get("targets"), get("famous_analogs").catch(() => ({ sites: [] }))]).then(([sc, ex, tg, fa]) => build(sc, ex, tg, fa))
+        cache = Promise.all([get("showcase"), get("explanations"), get("targets"), get("famous_analogs").catch(() => ({ sites: [] })), get("country_top").catch(() => null)]).then(([sc, ex, tg, fa, ct]) => build(sc, ex, tg, fa, ct))
         cache.catch(() => {
             cache = null
         })
@@ -104,8 +104,8 @@ function row(e: any, fallback: any = {}) {
         textDiffer: e.differs || "",
     }
 }
-function build(sc: any, ex: any, tg: any, fa: any) {
-    const items: any[] = []
+function build(sc: any, ex: any, tg: any, fa: any, ct: any) {
+    let items: any[] = []
     const keys = ["moon_south_pole", sc.mars_target || "mars_gale"]
     for (const key of keys) {
         const tops = ((sc.top || {})[key] || []).slice(0, 5)
@@ -115,6 +115,16 @@ function build(sc: any, ex: any, tg: any, fa: any) {
             r.profile = Object.keys(r.profile).length ? r.profile : ((tg.targets || {})[key] || {}).profile || {}
             items.push({ ...r, id: metaFor(key).side + "-" + (i + 1), kind: "top", target: key, listRank: i + 1, region: t.region, lat: t.lat, lon: t.lon })
         })
+    }
+    // One place per country (docs/data/country_top.json), same score and rank as above
+    if (ct && ct.top) {
+        const cItems: any[] = []
+        for (const key of keys) {
+            ;((ct.top || {})[key] || []).slice(0, 5).forEach((c: any, i: number) => {
+                cItems.push({ id: metaFor(key).side + "-" + (i + 1), kind: "top", target: key, listRank: i + 1, region: c.province + ", " + c.country, near: c.near, lat: c.lat, lon: c.lon, place: c.province, S: c.S, position: c.position, nCells: c.n_cells, topPercent: c.top_percent, features: c.features || {}, profile: c.profile || {}, match: c.match || [], partly: c.partly || [], differ: c.differ || [], textMatch: "", textDiffer: "" })
+            })
+        }
+        if (cItems.length === 10) items = cItems
     }
     const bench: any[] = []
     for (const card of sc.cards || []) {
@@ -223,7 +233,7 @@ function Card({ it, href }: any) {
             <div style={{ minWidth: 0 }}>
                 <div style={{ fontFamily: HEAD, fontSize: 17, fontWeight: 600, lineHeight: 1.25, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.region}</div>
                 <div style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {it.kind === "famous" ? it.famous.tag + (it.scored ? " · top " + fmtPct(it.topPercent) + "%" : "") : fmtLL(it.lat, it.lon) + " · top " + fmtPct(it.topPercent) + "% of land"}
+                    {it.kind === "famous" ? it.famous.tag + (it.scored ? " · top " + fmtPct(it.topPercent) + "%" : "") : (it.near ? "near " + it.near + " · " : "") + fmtLL(it.lat, it.lon) + " · top " + fmtPct(it.topPercent) + "%"}
                 </div>
                 {it.scored === false ? <div style={{ fontSize: 12, color: C.subtle, marginTop: 8 }}>Not scored: {it.famous.reason}</div> : <MiniBars r={it} color={m.color} />}
             </div>
@@ -276,7 +286,7 @@ export function AnalogList(props: any) {
                 <>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 26 }}>
                         {famous.length ? tabBtn("famous", "Famous field analogs", "10 places agencies use · our score") : null}
-                        {tabBtn("formula", "Our formula's top 10", "5 for the Moon + 5 for Mars")}
+                        {tabBtn("formula", "Our formula's top 10", "best place per country · 5 Moon + 5 Mars")}
                     </div>
                     {tab === "famous" && famous.length ? (
                         <>
@@ -313,7 +323,7 @@ export function AnalogList(props: any) {
                                 })}
                             </div>
                             <p style={{ margin: "22px 0 0", fontSize: 13, lineHeight: 1.55, color: C.muted, maxWidth: 820 }}>
-                                The best-scoring 0.5° cells on Earth, at least 600 km apart, chosen by the score alone. Several fall in Xinjiang: the Tarim Basin and the Kunlun foothills are among the driest, barest high places on Earth. Names are provinces (FAO GAUL level 1), so cells far apart can share a name; the coordinates tell them apart.
+                                The best-scoring 0.5° cell in each country (no country twice, at least 600 km apart), chosen by the score alone; the rank is the place among all {fmtInt(d.nCells)} land cells. Without the one-per-country rule, three of the five Moon picks fall in Xinjiang, China. Place names: nearest town and province from GeoNames.
                             </p>
                             {d.bench.length ? (
                                 <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid " + C.line, display: "flex", flexWrap: "wrap", gap: "10px 22px", alignItems: "baseline" }}>
@@ -612,6 +622,7 @@ export default function AnalogDetail(props: any) {
                         <Chip color={m.color}>{targetLabel + " · #" + it.listRank + " of 5"}</Chip>
                         <h1 style={{ fontFamily: HEAD, fontSize: wide ? 56 : mid ? 42 : 34, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{it.region}</h1>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginTop: 16, fontFamily: MONO, fontSize: 12, color: C.muted }}>
+                            {it.near ? <span>near {it.near}</span> : null}
                             <span>{fmtLL(it.lat, it.lon)}</span>
                             <span>0.5° grid cell · about 56 × {kmEW} km</span>
                             <span>Earth twin of {m.short}</span>
