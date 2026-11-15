@@ -7,9 +7,9 @@
   'use strict';
   if (window.parent === window) return;
   if (!document.body) { document.addEventListener('DOMContentLoaded', boot); return; }
-  const SPEED = 2.2, LINE = 0.86, N = 10;
-  const NAMES = ['Ari', 'Bex', 'Cal', 'Dot', 'Eon', 'Fox', 'Gem', 'Hex', 'Ivo', 'Jet'];
-  const COLORS = ['#ff5c8a', '#34d399', '#38bdf8', '#facc15', '#fb923c', '#a78bfa', '#f43f5e', '#2dd4bf', '#60a5fa', '#e879f9'];
+  const SPEED = 2.2, LINE = 0.86, N = 16;
+  const NAMES = ['Ari', 'Bex', 'Cal', 'Dot', 'Eon', 'Fox', 'Gem', 'Hex', 'Ivo', 'Jet', 'Kit', 'Lyn', 'Max', 'Neo', 'Oz', 'Pip'];
+  const COLORS = ['#ff5c8a', '#34d399', '#38bdf8', '#facc15', '#fb923c', '#a78bfa', '#f43f5e', '#2dd4bf', '#60a5fa', '#e879f9', '#a3e635', '#f472b6', '#22d3ee', '#fbbf24', '#c084fc', '#4ade80'];
   const ACC = '#22d3ee', MONO = "'JetBrains Mono', ui-monospace, Menlo, monospace";
   const st = document.createElement('style');
   st.textContent = '[data-sw="h"]{clip-path:inset(0 100% 100% 0)!important}' +
@@ -37,25 +37,26 @@
     return hasBg || bd;
   };
   const add = (el, kind, frame) => {
-    const job = { el, kind, frame, state: 0, chars: (el.textContent || '').length, p: 0, doneAt: 0 };
+    const job = { el, kind, frame, state: 0, chars: (el.textContent || '').length, p: 0, doneAt: 0, lines: null };
     map.set(el, job);
-    el.setAttribute('data-sw', kind === 'leaf' ? 'h' : 'f');
+    el.setAttribute('data-sw', kind === 'frame' ? 'f' : 'h');
     jobs.push(job);
     return job;
   };
-  const scan = (el, frame) => {
+  const scan = (el, parent) => {
     for (const c of el.children) {
       if (c === canvas || SKIP.has(c.tagName)) continue;
       const known = map.get(c);
-      if (known) { if (known.kind === 'frame') scan(c, known); continue; }
+      if (known) { if (!MEDIA.has(c.tagName)) scan(c, known); continue; }
       const cs = getComputedStyle(c);
       if (cs.display === 'none' || cs.visibility === 'hidden') continue;
       const r = c.getBoundingClientRect();
-      if (r.width < 2 || r.height < 2) { if (c.children.length) scan(c, frame); continue; }
-      const tag = c.tagName;
-      if (ROW.has(tag) || MEDIA.has(tag) || hasText(c) || !c.children.length) { add(c, 'leaf', frame); continue; }
-      if (framed(cs)) scan(c, add(c, 'frame', frame));
-      else scan(c, frame);
+      if (r.width < 2 || r.height < 2) { if (c.children.length) scan(c, parent); continue; }
+      if (MEDIA.has(c.tagName)) { add(c, 'leaf', parent); continue; }
+      if (hasText(c)) { scan(c, add(c, 'text', parent)); continue; }
+      if (!c.children.length) { add(c, 'leaf', parent); continue; }
+      if (framed(cs)) scan(c, add(c, 'frame', parent));
+      else scan(c, parent);
     }
   };
   let pend = false;
@@ -73,6 +74,35 @@
   const arrow = new Path2D('M0 0 L0 15.5 L4.2 11.6 L7.1 18 L9.6 16.9 L6.8 10.7 L12.4 10.7 Z');
   const agents = [];
   for (let i = 0; i < N; i++) agents.push({ x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, k: 300, vis: 0, vt: 0, job: null, phase: 'idle', t0: 0, beam: false, idleAt: 0, color: COLORS[i], name: NAMES[i] });
+  const measure = (el) => {
+    const base = el.getBoundingClientRect(), range = document.createRange();
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), lines = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      if (!(node.textContent || '').trim()) continue;
+      range.selectNodeContents(node);
+      for (const q of range.getClientRects()) {
+        if (q.width < 0.5) continue;
+        const mid = (q.top + q.bottom) / 2 - base.top;
+        const line = lines.find((l) => mid > l.top && mid < l.bottom);
+        if (line) { line.left = Math.min(line.left, q.left - base.left); line.right = Math.max(line.right, q.right - base.left); line.top = Math.min(line.top, q.top - base.top); line.bottom = Math.max(line.bottom, q.bottom - base.top); }
+        else lines.push({ top: q.top - base.top, bottom: q.bottom - base.top, left: q.left - base.left, right: q.right - base.left });
+      }
+    }
+    return lines.sort((a, b) => a.top - b.top);
+  };
+  // reveal text line by line, like typing; returns the caret position
+  const typeClip = (j, t, r) => {
+    const L = j.lines;
+    if (!L || !L.length) { j.el.style.clipPath = 'inset(-4px ' + (100 - t * 100) + '% -4px -4px)'; return { x: r.left + r.width * t, y: r.top, h: Math.min(r.height, 24) }; }
+    let total = 0; for (const l of L) total += l.right - l.left;
+    let rem = t * total, i = 0;
+    while (i < L.length - 1 && rem > L[i].right - L[i].left) { rem -= L[i].right - L[i].left; i++; }
+    const cur = L[i], x = cur.left + Math.min(rem, cur.right - cur.left);
+    const top = i > 0 ? (L[i - 1].bottom + cur.top) / 2 : -20;
+    const bot = i < L.length - 1 ? (cur.bottom + L[i + 1].top) / 2 : r.height + 20;
+    j.el.style.clipPath = 'polygon(-20px -20px, calc(100% + 20px) -20px, calc(100% + 20px) ' + top + 'px, ' + x + 'px ' + top + 'px, ' + x + 'px ' + bot + 'px, -20px ' + bot + 'px)';
+    return { x: r.left + x, y: r.top + cur.top, h: cur.bottom - cur.top };
+  };
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const finish = (a, now) => {
     const j = a.job;
@@ -119,18 +149,24 @@
       a.vt = 1;
       const r = j.el.getBoundingClientRect();
       if (a.phase === 'travel') {
-        a.tx = r.left; a.ty = r.top; a.k = 260;
-        if (Math.hypot(a.x - r.left, a.y - r.top) < 12 || now - a.t0 > 650 / SPEED) { a.phase = 'draw'; a.t0 = now; }
+        a.tx = r.left; a.ty = r.top; a.k = 300;
+        if (Math.hypot(a.x - r.left, a.y - r.top) < 12 || now - a.t0 > 440 / SPEED) { a.phase = 'draw'; a.t0 = now; }
       } else if (a.phase === 'draw') {
-        const t = Math.min(1, (now - a.t0) / (340 / SPEED)), e = ease(t);
+        const t = Math.min(1, (now - a.t0) / (260 / SPEED)), e = ease(t);
         j.p = e; a.tx = r.left + r.width * e; a.ty = r.top + r.height * e; a.k = 1100;
         if (t >= 1) {
           if (j.kind === 'frame') finish(a, now);
-          else { j.el.setAttribute('data-sw', 'x'); j.el.style.clipPath = 'inset(0 100% 0 0)'; a.phase = hasText(j.el) || j.chars ? 'type' : 'fill'; a.beam = a.phase === 'type'; a.t0 = now; }
+          else if (j.kind === 'text') { j.el.setAttribute('data-sw', 'x'); j.lines = measure(j.el); typeClip(j, 0, r); a.phase = 'type'; a.beam = true; a.t0 = now; }
+          else { j.el.setAttribute('data-sw', 'x'); j.el.style.clipPath = 'inset(0 100% 0 0)'; a.phase = 'fill'; a.t0 = now; }
         }
+      } else if (a.phase === 'type') {
+        const own = Math.max(1, j.chars);
+        const t = Math.min(1, (now - a.t0) / (Math.min(1300, Math.max(220, own * 11)) / SPEED));
+        const c = typeClip(j, t, r);
+        a.tx = c.x + 3; a.ty = c.y + c.h * 0.5; a.k = 1100;
+        if (t >= 1) finish(a, now);
       } else {
-        const dur = a.phase === 'type' ? Math.min(1500, Math.max(260, j.chars * 14)) / SPEED : 380 / SPEED;
-        const t = Math.min(1, (now - a.t0) / dur), e = a.phase === 'type' ? t : ease(t);
+        const t = Math.min(1, (now - a.t0) / (300 / SPEED)), e = ease(t);
         j.el.style.clipPath = 'inset(-4px ' + (100 - e * 100) + '% -4px -4px)';
         a.tx = r.left + r.width * e + 3; a.ty = r.top + Math.min(r.height, 28) * 0.5; a.k = 1100;
         if (t >= 1) finish(a, now);
