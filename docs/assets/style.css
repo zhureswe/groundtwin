@@ -210,3 +210,4 @@ h1 em { text-shadow: var(--glow); }
 @media (prefers-reduced-motion: reduce) { .page { animation: none; } }
 .map-card { position: sticky; }
 @media (max-width: 900px) { .map-card { position: static; } }
+[hidden] { display: none !important; }

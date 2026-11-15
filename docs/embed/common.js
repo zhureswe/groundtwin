@@ -29,5 +29,23 @@
   }).join('')}<div class="e-bar-key"><span><i class="k-fill"></i>place percentile</span><span><i class="k-tick"></i>target profile</span></div></div>`;
   const chips = (x) => [['match_features', 'yes', '✓', 'Matches'], ['partly_features', 'part', '≈', 'Partly'], ['differ_features', 'no', '≠', 'Differs']]
     .map(([k, c, sym, lab]) => `<div class="e-chiprow"><span class="e-chiplab">${lab}</span>${(x[k] || []).map((f) => `<span class="chip ${c}">${sym} ${FEAT[f]}</span>`).join('') || '<span class="muted small">—</span>'}</div>`).join('');
-  window.GTE = { FEAT, TREK, esc, fmt, topPct, ll, body, load, gearth, buttons, bars, chips };
+  // plain-language reasons from the numbers: p = how extreme the place is on Earth (0–1), t = what the target needs
+  const WHAT = { aridity: ['drier', 'dry'], barren: ['barer (fewer plants)', 'bare of plants'], thermal_range: ['bigger day–night temperature swing', 'big day–night swings'],
+    cold: ['colder nights', 'cold'], dust: ['dustier air', 'dusty'], roughness: ['rougher terrain', 'rough terrain'], elevation: ['higher ground', 'high ground'] };
+  const WHY = { aridity: 'water and rain change soils and radar echoes, so analogs must be dry', barren: 'plants hide the bare rock and soil that instruments need to see',
+    thermal_range: 'equipment must survive large temperature swings', cold: 'cold matters for ice-related tests', dust: 'dust tests seals, solar panels and rover wheels',
+    roughness: 'rough ground tests rover driving and landing hazards', elevation: 'thinner air is a little closer to space conditions' };
+  const reasons = (f, prof, w) => {
+    const pct = (x) => Math.round(x * 100);
+    const items = Object.keys(FEAT).map((k) => ({ k, p: f[k], t: prof[k], s: 1 - Math.abs(f[k] - prof[k]), w: w[k] || 0 }));
+    const good = items.filter((i) => i.s >= 0.8).sort((a, b) => b.w * b.s - a.w * a.s);
+    const bad = items.filter((i) => i.s < 0.8).sort((a, b) => b.w * (1 - b.s) - a.w * (1 - a.s));
+    const fit = good.slice(0, 3).map((i) => `<li><b>${FEAT[i.k]}:</b> ${WHAT[i.k][0]} than ${pct(i.p)}% of Earth's land; the target needs ${pct(i.t)}% — close (${WHY[i.k]}).</li>`);
+    const miss = bad.slice(0, 3).map((i) => i.p < i.t
+      ? `<li><b>${FEAT[i.k]}:</b> not ${WHAT[i.k][1]} enough — ${WHAT[i.k][0]} than only ${pct(i.p)}% of land, but the target needs ${pct(i.t)}%${i.w >= 2 ? ' (heavily weighted for this mission need)' : ''}.</li>`
+      : `<li><b>${FEAT[i.k]}:</b> too extreme — ${WHAT[i.k][0]} than ${pct(i.p)}% of land, while the target needs only ${pct(i.t)}%${i.w >= 2 ? ' (heavily weighted for this mission need)' : ''}.</li>`);
+    return `<div class="why"><p><b style="color:var(--yes)">Why it fits</b></p><ul>${fit.join('') || '<li>No criterion is a close match.</li>'}</ul>
+      <p><b style="color:var(--no)">Why it doesn't fit</b></p><ul>${miss.join('') || '<li>No weak criteria — all seven are close to the target.</li>'}</ul></div>`;
+  };
+  window.GTE = { FEAT, TREK, esc, fmt, topPct, ll, body, load, gearth, buttons, bars, chips, reasons };
 })();

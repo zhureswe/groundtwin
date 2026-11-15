@@ -1,0 +1,399 @@
+{
+ "demo": false,
+ "mode": "science",
+ "n_cells": 60215,
+ "separation_km": 600,
+ "rule_official": "Known analog sites listed by NASA Planetary Analog Explorer or USGS (validation.json), scored for their own body; sites listed for any body get the better of Moon/Mars. Top 4 by S, one per grid cell.",
+ "rule_found": "Best cells by S that are at least 600 km from every listed or famous analog site: 2 for the Moon (south pole base) and 2 for Mars (Gale), from 4 different countries, at least 600 km apart.",
+ "official": [
+  {
+   "target": "mars_gale",
+   "cell": [
+    -24.25,
+    -69.25
+   ],
+   "S": 0.841,
+   "position": 4728,
+   "n_cells": 60215,
+   "top_percent": 7.852,
+   "features": {
+    "aridity": 0.945,
+    "barren": 0.946,
+    "thermal_range": 0.999,
+    "cold": 0.422,
+    "dust": 0.049,
+    "roughness": 0.729,
+    "elevation": 0.967
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "roughness"
+   ],
+   "partly": [
+    "cold",
+    "elevation"
+   ],
+   "differ": [
+    "dust"
+   ],
+   "name": "Atacama Desert",
+   "country": "Chile",
+   "lat": -24.5,
+   "lon": -69.25,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Atacama_Desert",
+   "listed_by": "NASA Planetary Analog Explorer"
+  },
+  {
+   "target": "moon_south_pole",
+   "cell": [
+    34.75,
+    -116.25
+   ],
+   "S": 0.829,
+   "position": 1573,
+   "n_cells": 60215,
+   "top_percent": 2.612,
+   "features": {
+    "aridity": 0.859,
+    "barren": 0.868,
+    "thermal_range": 0.953,
+    "cold": 0.397,
+    "dust": 0.056,
+    "roughness": 0.729,
+    "elevation": 0.721
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 1,
+    "cold": 1,
+    "dust": 0.3,
+    "roughness": 0.8,
+    "elevation": 0.7
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "roughness",
+    "elevation"
+   ],
+   "partly": [
+    "dust"
+   ],
+   "differ": [
+    "cold"
+   ],
+   "name": "Pisgah Lava Flow",
+   "country": "USA",
+   "lat": 34.7412,
+   "lon": -116.374,
+   "coord_source": "USGS TADP API",
+   "listed_by": "USGS Terrestrial Analog Data Portal"
+  },
+  {
+   "target": "mars_gale",
+   "cell": [
+    36.25,
+    -116.75
+   ],
+   "S": 0.793,
+   "position": 7166,
+   "n_cells": 60215,
+   "top_percent": 11.901,
+   "features": {
+    "aridity": 0.889,
+    "barren": 0.863,
+    "thermal_range": 0.758,
+    "cold": 0.385,
+    "dust": 0.067,
+    "roughness": 0.879,
+    "elevation": 0.715
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "roughness",
+    "elevation"
+   ],
+   "partly": [
+    "cold"
+   ],
+   "differ": [
+    "dust"
+   ],
+   "name": "Death Valley",
+   "country": "USA",
+   "lat": 36.24694444,
+   "lon": -116.81694444,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Death_Valley",
+   "listed_by": "NASA Planetary Analog Explorer"
+  },
+  {
+   "target": "mars_gale",
+   "cell": [
+    37.75,
+    29.75
+   ],
+   "S": 0.689,
+   "position": 16691,
+   "n_cells": 60215,
+   "top_percent": 27.719,
+   "features": {
+    "aridity": 0.484,
+    "barren": 0.716,
+    "thermal_range": 0.724,
+    "cold": 0.458,
+    "dust": 0.528,
+    "roughness": 0.765,
+    "elevation": 0.83
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "thermal_range",
+    "roughness"
+   ],
+   "partly": [
+    "barren",
+    "cold",
+    "dust",
+    "elevation"
+   ],
+   "differ": [
+    "aridity"
+   ],
+   "name": "Lake Salda",
+   "country": "Turkey",
+   "lat": 37.55,
+   "lon": 29.68333333,
+   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Lake_Salda",
+   "listed_by": "NASA Planetary Analog Explorer"
+  }
+ ],
+ "found": [
+  {
+   "target": "moon_south_pole",
+   "cell": [
+    36.75,
+    85.75
+   ],
+   "S": 0.925,
+   "position": 1,
+   "n_cells": 60215,
+   "top_percent": 0.002,
+   "features": {
+    "aridity": 0.951,
+    "barren": 0.949,
+    "thermal_range": 0.992,
+    "cold": 0.761,
+    "dust": 0.271,
+    "roughness": 0.863,
+    "elevation": 0.995
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 1,
+    "cold": 1,
+    "dust": 0.3,
+    "roughness": 0.8,
+    "elevation": 0.7
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "dust",
+    "roughness"
+   ],
+   "partly": [
+    "cold",
+    "elevation"
+   ],
+   "differ": [],
+   "name": "Near Aqqan, Xinjiang",
+   "country": "China",
+   "lat": 36.75,
+   "lon": 85.75,
+   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+  },
+  {
+   "target": "moon_south_pole",
+   "cell": [
+    46.25,
+    95.25
+   ],
+   "S": 0.904,
+   "position": 18,
+   "n_cells": 60215,
+   "top_percent": 0.03,
+   "features": {
+    "aridity": 0.895,
+    "barren": 0.909,
+    "thermal_range": 0.966,
+    "cold": 0.798,
+    "dust": 0.338,
+    "roughness": 0.765,
+    "elevation": 0.928
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 1,
+    "cold": 1,
+    "dust": 0.3,
+    "roughness": 0.8,
+    "elevation": 0.7
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "dust",
+    "roughness"
+   ],
+   "partly": [
+    "cold",
+    "elevation"
+   ],
+   "differ": [],
+   "name": "Near Sharga, Govi-Altai",
+   "country": "Mongolia",
+   "lat": 46.25,
+   "lon": 95.25,
+   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+  },
+  {
+   "target": "mars_gale",
+   "cell": [
+    27.25,
+    6.75
+   ],
+   "S": 0.926,
+   "position": 26,
+   "n_cells": 60215,
+   "top_percent": 0.043,
+   "features": {
+    "aridity": 0.978,
+    "barren": 0.905,
+    "thermal_range": 0.895,
+    "cold": 0.304,
+    "dust": 0.792,
+    "roughness": 0.683,
+    "elevation": 0.608
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "dust",
+    "roughness",
+    "elevation"
+   ],
+   "partly": [
+    "cold"
+   ],
+   "differ": [],
+   "name": "Near Illizi",
+   "country": "Algeria",
+   "lat": 27.25,
+   "lon": 6.75,
+   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+  },
+  {
+   "target": "mars_gale",
+   "cell": [
+    25.25,
+    33.75
+   ],
+   "S": 0.923,
+   "position": 34,
+   "n_cells": 60215,
+   "top_percent": 0.056,
+   "features": {
+    "aridity": 0.989,
+    "barren": 0.941,
+    "thermal_range": 0.939,
+    "cold": 0.233,
+    "dust": 0.817,
+    "roughness": 0.729,
+    "elevation": 0.498
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "dust",
+    "roughness",
+    "elevation"
+   ],
+   "partly": [
+    "cold"
+   ],
+   "differ": [],
+   "name": "Near Idfu, Aswan",
+   "country": "Egypt",
+   "lat": 25.25,
+   "lon": 33.75,
+   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+  }
+ ],
+ "mangystau": {
+  "name": "Mangystau",
+  "country": "Kazakhstan",
+  "target": "mars_gale",
+  "lat": 44.3614,
+  "lon": 51.5611,
+  "S": 0.822,
+  "position": 5729,
+  "n_cells": 60215,
+  "top_percent": 9.514
+ }
+}

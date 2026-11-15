@@ -50,7 +50,6 @@
   details.how { margin-top: 8px; font-size: .84rem; color: var(--muted); }
   details.how summary { cursor: pointer; color: var(--ice); }
   .tops li { margin: 3px 0; }
-  .why ul { margin: 0 0 8px 1.1em; padding: 0; font-size: .88rem; } .why li { margin: 3px 0; } .why p { margin: 6px 0 2px; }
   @media (max-width: 600px) { .kv { grid-template-columns: repeat(2, minmax(0, 1fr)); } .msg.bot { width: 100%; max-width: 100%; } .res-score { text-align: left; } }
 </style>
 </head>
@@ -170,24 +169,7 @@
     const med = n % 2 ? ps[(n - 1) / 2] : (ps[n / 2 - 1] + ps[n / 2]) / 2;
     return { s: ss.reduce((a, x) => a + x, 0) / n, rank: Math.floor(med) + 1 };   // same rule as the Analogs page: mean S, median rank of the cells
   };
-  // plain-language reasons from the numbers: p = how extreme the place is on Earth (0–1), t = what the target needs
-  const WHAT = { aridity: ['drier', 'dry'], barren: ['barer (fewer plants)', 'bare of plants'], thermal_range: ['bigger day–night temperature swing', 'big day–night swings'],
-    cold: ['colder nights', 'cold'], dust: ['dustier air', 'dusty'], roughness: ['rougher terrain', 'rough terrain'], elevation: ['higher ground', 'high ground'] };
-  const WHY = { aridity: 'water and rain change soils and radar echoes, so analogs must be dry', barren: 'plants hide the bare rock and soil that instruments need to see',
-    thermal_range: 'equipment must survive large temperature swings', cold: 'cold matters for ice-related tests', dust: 'dust tests seals, solar panels and rover wheels',
-    roughness: 'rough ground tests rover driving and landing hazards', elevation: 'thinner air is a little closer to space conditions' };
-  const reasons = (f, tk, mk) => {
-    const prof = T.targets[tk].profile, w = T.modes[mk].weights, pct = (x) => Math.round(x * 100);
-    const items = FK.map((k) => ({ k, p: f[k], t: prof[k], s: 1 - Math.abs(f[k] - prof[k]), w: w[k] || 0 }));
-    const good = items.filter((i) => i.s >= 0.8).sort((a, b) => b.w * b.s - a.w * a.s);
-    const bad = items.filter((i) => i.s < 0.8).sort((a, b) => b.w * (1 - b.s) - a.w * (1 - a.s));
-    const fit = good.slice(0, 3).map((i) => `<li><b>${FEAT[i.k]}:</b> ${WHAT[i.k][0]} than ${pct(i.p)}% of Earth's land; the target needs ${pct(i.t)}% — close (${WHY[i.k]}).</li>`);
-    const miss = bad.slice(0, 3).map((i) => i.p < i.t
-      ? `<li><b>${FEAT[i.k]}:</b> not ${WHAT[i.k][1]} enough — ${WHAT[i.k][0]} than only ${pct(i.p)}% of land, but the target needs ${pct(i.t)}%${i.w >= 2 ? ' (heavily weighted for this mission need)' : ''}.</li>`
-      : `<li><b>${FEAT[i.k]}:</b> too extreme — ${WHAT[i.k][0]} than ${pct(i.p)}% of land, while the target needs only ${pct(i.t)}%${i.w >= 2 ? ' (heavily weighted for this mission need)' : ''}.</li>`);
-    return `<div class="why"><p><b style="color:var(--yes)">Why it fits</b></p><ul>${fit.join('') || '<li>No criterion is a close match.</li>'}</ul>
-      <p><b style="color:var(--no)">Why it doesn't fit</b></p><ul>${miss.join('') || '<li>No weak criteria — all seven are close to the target.</li>'}</ul></div>`;
-  };
+  const reasons = (f, tk, mk) => window.GTE.reasons(f, T.targets[tk].profile, T.modes[mk].weights);   // shared with the Analogs page (common.js)
   const scoreBlock = (r, tk, mk) => {
     const { s, rank } = scoreOf(r, tk, mk), top = rank / N * 100, [vt, vc] = verdict(top), prof = T.targets[tk].profile, mars = tk.startsWith('mars');
     const parts = FK.map((k) => [k, 1 - Math.abs(r.f[k] - prof[k])]);
