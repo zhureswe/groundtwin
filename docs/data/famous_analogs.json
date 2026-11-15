@@ -1,0 +1,732 @@
+{
+ "demo": false,
+ "mode": "science",
+ "n_cells": 60215,
+ "method": "Each site scored with the Analog Engine on its own 0.5-deg land cell (Mangystau: mean of its 6 site cells), Science weights, target profiles from targets.json. Match = s_i >= 0.8, differs = s_i < 0.5. Rank = 1 + number of land cells with a higher S.",
+ "sites": [
+  {
+   "id": "atacama",
+   "name": "Atacama Desert",
+   "country": "Chile",
+   "tag": "MARS · rovers, life detection",
+   "primary": "mars_gale",
+   "blurb": "One of the driest places on Earth. NASA tests rover drills and life-detection instruments here before sending them to Mars.",
+   "coord_source": "Wikipedia: Atacama Desert (as in validation.json)",
+   "lat": -24.5,
+   "lon": -69.25,
+   "cell": [
+    -24.25,
+    -69.25
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.945,
+    "barren": 0.946,
+    "thermal_range": 0.999,
+    "cold": 0.422,
+    "dust": 0.049,
+    "roughness": 0.729,
+    "elevation": 0.967
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.87,
+     "position": 274,
+     "n_cells": 60215,
+     "top_percent": 0.455,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "roughness"
+     ],
+     "partly": [
+      "dust",
+      "elevation"
+     ],
+     "differ": [
+      "cold"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.841,
+     "position": 4728,
+     "n_cells": 60215,
+     "top_percent": 7.852,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "roughness"
+     ],
+     "partly": [
+      "cold",
+      "elevation"
+     ],
+     "differ": [
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "id": "death-valley",
+   "name": "Death Valley",
+   "country": "USA",
+   "tag": "MARS · salts, geology",
+   "primary": "mars_gale",
+   "blurb": "A hot, hyper-arid basin with salt flats and alluvial fans, used to study how water and salt shaped Martian terrain.",
+   "coord_source": "Wikipedia: Death Valley (as in validation.json)",
+   "lat": 36.24694444,
+   "lon": -116.81694444,
+   "cell": [
+    36.25,
+    -116.75
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.889,
+    "barren": 0.863,
+    "thermal_range": 0.758,
+    "cold": 0.385,
+    "dust": 0.067,
+    "roughness": 0.879,
+    "elevation": 0.715
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.817,
+     "position": 2300,
+     "n_cells": 60215,
+     "top_percent": 3.82,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "roughness",
+      "elevation"
+     ],
+     "partly": [
+      "thermal_range",
+      "dust"
+     ],
+     "differ": [
+      "cold"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.793,
+     "position": 7166,
+     "n_cells": 60215,
+     "top_percent": 11.901,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "roughness",
+      "elevation"
+     ],
+     "partly": [
+      "cold"
+     ],
+     "differ": [
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "id": "devon-island",
+   "name": "Devon Island",
+   "country": "Canada",
+   "tag": "MOON & MARS · craters, EVA",
+   "primary": "mars_gale",
+   "blurb": "A polar desert around the Haughton impact crater, home of the long-running Haughton-Mars Project field station.",
+   "coord_source": "Wikipedia: Haughton impact crater (as in validation.json)",
+   "lat": 75.38333333,
+   "lon": -89.66666667,
+   "cell": [
+    75.25,
+    -89.75
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.879,
+    "barren": 0.835,
+    "thermal_range": 0.033,
+    "cold": 0.956,
+    "dust": 0.763,
+    "roughness": 0.623,
+    "elevation": 0.388
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.746,
+     "position": 9194,
+     "n_cells": 60215,
+     "top_percent": 15.269,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "cold",
+      "roughness"
+     ],
+     "partly": [
+      "dust",
+      "elevation"
+     ],
+     "differ": [
+      "thermal_range"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.79,
+     "position": 7305,
+     "n_cells": 60215,
+     "top_percent": 12.132,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "dust",
+      "roughness"
+     ],
+     "partly": [
+      "cold",
+      "elevation"
+     ],
+     "differ": [
+      "thermal_range"
+     ]
+    }
+   }
+  },
+  {
+   "id": "hawaii",
+   "name": "Hawaiʻi lava fields",
+   "country": "USA",
+   "tag": "MOON · rovers, habitats",
+   "primary": "moon_south_pole",
+   "blurb": "Fresh basalt, lava tubes and volcanic ash make Hawaiʻi a test ground for lunar rovers and habitat simulations.",
+   "coord_source": "Wikipedia: Kīlauea (as in validation.json)",
+   "lat": 19.42109747,
+   "lon": -155.28676243,
+   "cell": [
+    19.25,
+    -155.25
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.157,
+    "barren": 0.721,
+    "thermal_range": 0.84,
+    "cold": 0.141,
+    "dust": 0.151,
+    "roughness": 0.534,
+    "elevation": 0.67
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.541,
+     "position": 31049,
+     "n_cells": 60215,
+     "top_percent": 51.564,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "thermal_range",
+      "dust",
+      "elevation"
+     ],
+     "partly": [
+      "barren",
+      "roughness"
+     ],
+     "differ": [
+      "aridity",
+      "cold"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.54,
+     "position": 33721,
+     "n_cells": 60215,
+     "top_percent": 56.001,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "thermal_range",
+      "roughness",
+      "elevation"
+     ],
+     "partly": [
+      "barren"
+     ],
+     "differ": [
+      "aridity",
+      "cold",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lanzarote",
+   "name": "Lanzarote",
+   "country": "Spain",
+   "tag": "MOON & MARS · astronaut training",
+   "primary": "moon_south_pole",
+   "blurb": "Volcanic landscapes where ESA’s PANGAEA course trains astronauts to read planetary geology in the field.",
+   "coord_source": "Wikipedia: Timanfaya National Park",
+   "lat": 28.99417,
+   "lon": -13.79333,
+   "scored": false,
+   "reason": "its 0.5° cell is not a land cell of our grid (nearest land cell 172 km away)"
+  },
+  {
+   "id": "rio-tinto",
+   "name": "Río Tinto",
+   "country": "Spain",
+   "tag": "MARS · minerals, life",
+   "primary": "mars_gale",
+   "blurb": "An acidic, iron-rich river whose minerals and microbes resemble the chemistry of ancient Martian waters.",
+   "coord_source": "Peña de Hierro near Nerva, the NASA MARTE drill site (approximate)",
+   "lat": 37.72,
+   "lon": -6.56,
+   "cell": [
+    37.75,
+    -6.75
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.491,
+    "barren": 0.503,
+    "thermal_range": 0.626,
+    "cold": 0.36,
+    "dust": 0.138,
+    "roughness": 0.821,
+    "elevation": 0.535
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.591,
+     "position": 26224,
+     "n_cells": 60215,
+     "top_percent": 43.551,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "dust",
+      "roughness",
+      "elevation"
+     ],
+     "partly": [
+      "barren",
+      "thermal_range"
+     ],
+     "differ": [
+      "aridity",
+      "cold"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.576,
+     "position": 29530,
+     "n_cells": 60215,
+     "top_percent": 49.041,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "roughness",
+      "elevation"
+     ],
+     "partly": [
+      "barren",
+      "thermal_range",
+      "cold"
+     ],
+     "differ": [
+      "aridity",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "id": "mcmurdo",
+   "name": "McMurdo Dry Valleys",
+   "country": "Antarctica",
+   "tag": "MARS · cold, ice",
+   "primary": "mars_gale",
+   "blurb": "Cold, windy and almost without precipitation, the closest Earth gets to the frozen, dry Martian surface.",
+   "coord_source": "Wikipedia: McMurdo Dry Valleys (approximate)",
+   "lat": -77.5,
+   "lon": 162.0,
+   "scored": false,
+   "reason": "Antarctica is not in our grid"
+  },
+  {
+   "id": "utah",
+   "name": "Utah desert",
+   "country": "USA",
+   "tag": "MARS · crew simulations",
+   "primary": "mars_gale",
+   "blurb": "Red sedimentary desert around the Mars Desert Research Station, where crews rehearse long Mars missions.",
+   "coord_source": "Wikipedia: Mars Desert Research Station (as in validation.json)",
+   "lat": 38.40645833,
+   "lon": -110.79190278,
+   "cell": [
+    38.25,
+    -110.75
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.818,
+    "barren": 0.829,
+    "thermal_range": 0.831,
+    "cold": 0.491,
+    "dust": 0.033,
+    "roughness": 0.863,
+    "elevation": 0.947
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.791,
+     "position": 4299,
+     "n_cells": 60215,
+     "top_percent": 7.139,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "roughness"
+     ],
+     "partly": [
+      "dust",
+      "elevation"
+     ],
+     "differ": [
+      "cold"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.768,
+     "position": 8467,
+     "n_cells": 60215,
+     "top_percent": 14.061,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "roughness"
+     ],
+     "partly": [
+      "cold",
+      "elevation"
+     ],
+     "differ": [
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "id": "iceland",
+   "name": "Iceland lava fields",
+   "country": "Iceland",
+   "tag": "MOON · geology training",
+   "primary": "moon_south_pole",
+   "blurb": "Apollo astronauts trained here in the 1960s, learning to read volcanic rock before walking on the Moon.",
+   "coord_source": "Wikipedia: Askja (as in validation.json)",
+   "lat": 65.033,
+   "lon": -16.783,
+   "cell": [
+    65.25,
+    -16.75
+   ],
+   "scored": true,
+   "features": {
+    "aridity": 0.269,
+    "barren": 0.823,
+    "thermal_range": 0.414,
+    "cold": 0.554,
+    "dust": 0.278,
+    "roughness": 0.534,
+    "elevation": 0.738
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.613,
+     "position": 23750,
+     "n_cells": 60215,
+     "top_percent": 39.442,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "barren",
+      "dust",
+      "elevation"
+     ],
+     "partly": [
+      "cold",
+      "roughness"
+     ],
+     "differ": [
+      "aridity",
+      "thermal_range"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.608,
+     "position": 25798,
+     "n_cells": 60215,
+     "top_percent": 42.843,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "barren",
+      "cold",
+      "roughness",
+      "elevation"
+     ],
+     "partly": [
+      "thermal_range"
+     ],
+     "differ": [
+      "aridity",
+      "dust"
+     ]
+    }
+   }
+  },
+  {
+   "id": "mangystau",
+   "name": "Mangystau",
+   "country": "Kazakhstan",
+   "tag": "MARS · our case study",
+   "primary": "mars_gale",
+   "blurb": "The floor of the vanished Tethys Ocean: layered rock, salt flats and stone concretions. Our own case study, scored on NASA data, not looks.",
+   "coord_source": "showcase.json (6 sites)",
+   "lat": 44.3614,
+   "lon": 51.5611,
+   "sites": [
+    {
+     "name": "Torysh (Valley of Balls)",
+     "lat": 44.3614,
+     "lon": 51.5611,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Torysh"
+    },
+    {
+     "name": "Sherkala",
+     "lat": 44.25638889,
+     "lon": 52.00611111,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Sherkala"
+    },
+    {
+     "name": "Karagiye Depression",
+     "lat": 43.4,
+     "lon": 51.79,
+     "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Karagiye"
+    },
+    {
+     "name": "Karynzharyk Depression",
+     "lat": 42.91667,
+     "lon": 54.41667,
+     "coord_source": "Wikipedia: https://ru.wikipedia.org/wiki/Карынжарык"
+    },
+    {
+     "name": "Bozzhyra",
+     "lat": 43.4045686,
+     "lon": 54.0770414,
+     "coord_source": "OpenStreetMap: https://www.openstreetmap.org/node/4282143923"
+    },
+    {
+     "name": "Tuzbair sor",
+     "lat": 44.0011422,
+     "lon": 53.2833108,
+     "coord_source": "OpenStreetMap: https://www.openstreetmap.org/relation/5965693"
+    }
+   ],
+   "cell": "mean of the 6 site cells",
+   "scored": true,
+   "features": {
+    "aridity": 0.855,
+    "barren": 0.841,
+    "thermal_range": 0.794,
+    "cold": 0.504,
+    "dust": 0.738,
+    "roughness": 0.356,
+    "elevation": 0.136
+   },
+   "targets": {
+    "moon_south_pole": {
+     "S": 0.735,
+     "position": 10287,
+     "n_cells": 60215,
+     "top_percent": 17.084,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 1,
+      "cold": 1,
+      "dust": 0.3,
+      "roughness": 0.8,
+      "elevation": 0.7
+     },
+     "match": [
+      "aridity",
+      "barren"
+     ],
+     "partly": [
+      "thermal_range",
+      "cold",
+      "dust",
+      "roughness"
+     ],
+     "differ": [
+      "elevation"
+     ]
+    },
+    "mars_gale": {
+     "S": 0.822,
+     "position": 5729,
+     "n_cells": 60215,
+     "top_percent": 9.514,
+     "profile": {
+      "aridity": 1,
+      "barren": 1,
+      "thermal_range": 0.9,
+      "cold": 0.7,
+      "dust": 0.8,
+      "roughness": 0.7,
+      "elevation": 0.6
+     },
+     "match": [
+      "aridity",
+      "barren",
+      "thermal_range",
+      "cold",
+      "dust"
+     ],
+     "partly": [
+      "roughness",
+      "elevation"
+     ],
+     "differ": []
+    }
+   }
+  }
+ ]
+}

@@ -81,7 +81,7 @@ function loadAll() {
                 if (!r.ok) throw new Error(n + ".json HTTP " + r.status)
                 return r.json()
             })
-        cache = Promise.all([get("showcase"), get("explanations"), get("targets")]).then(([sc, ex, tg]) => build(sc, ex, tg))
+        cache = Promise.all([get("showcase"), get("explanations"), get("targets"), get("famous_analogs").catch(() => ({ sites: [] }))]).then(([sc, ex, tg, fa]) => build(sc, ex, tg, fa))
         cache.catch(() => {
             cache = null
         })
@@ -104,7 +104,7 @@ function row(e: any, fallback: any = {}) {
         textDiffer: e.differs || "",
     }
 }
-function build(sc: any, ex: any, tg: any) {
+function build(sc: any, ex: any, tg: any, fa: any) {
     const items: any[] = []
     const keys = ["moon_south_pole", sc.mars_target || "mars_gale"]
     for (const key of keys) {
@@ -123,7 +123,14 @@ function build(sc: any, ex: any, tg: any) {
         const name = String(card.title || "").split(": ").slice(1).join(": ") || card.title
         bench.push({ id, kind: "bench", key: card.key, title: card.title, name, target: card.target, sites: card.sites || [], facts: card.facts || [], notLike: card.not_like || [], rows: ers.map((e: any) => row(e)) })
     }
-    return { items, bench, targets: tg.targets || {}, nCells: sc.n_cells || 60215, weights: ((tg.modes || {}).science || {}).weights || {}, aiLabel: ex.label || "AI-written from our data" }
+    const famous: any[] = (fa.sites || []).map((f: any, i: number) => {
+        const tt = (f.targets || {})[f.primary] || {}
+        const r: any = f.scored
+            ? { place: f.name, S: tt.S, position: tt.position, nCells: tt.n_cells, topPercent: tt.top_percent, features: f.features || {}, profile: tt.profile || {}, match: tt.match || [], partly: tt.partly || [], differ: tt.differ || [], textMatch: "", textDiffer: "" }
+            : { place: f.name, features: {}, profile: {}, match: [], partly: [], differ: [] }
+        return { ...r, id: f.id === "mangystau" ? "mangystau" : "f-" + f.id, kind: "famous", famous: f, listRank: i + 1, target: f.primary, region: f.name + ", " + f.country, lat: f.lat, lon: f.lon, scored: !!f.scored }
+    })
+    return { famous, items, bench, targets: tg.targets || {}, nCells: sc.n_cells || 60215, weights: ((tg.modes || {}).science || {}).weights || {}, aiLabel: ex.label || "AI-written from our data" }
 }
 
 // ---------- helpers ----------
@@ -214,13 +221,13 @@ function Card({ it, href }: any) {
             <div style={{ minWidth: 0 }}>
                 <div style={{ fontFamily: HEAD, fontSize: 17, fontWeight: 600, lineHeight: 1.25, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.region}</div>
                 <div style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {fmtLL(it.lat, it.lon)} · top {fmtPct(it.topPercent)}% of land
+                    {it.kind === "famous" ? it.famous.tag + (it.scored ? " · top " + fmtPct(it.topPercent) + "%" : "") : fmtLL(it.lat, it.lon) + " · top " + fmtPct(it.topPercent) + "% of land"}
                 </div>
-                <MiniBars r={it} color={m.color} />
+                {it.scored === false ? <div style={{ fontSize: 12, color: C.subtle, marginTop: 8 }}>Not scored: {it.famous.reason}</div> : <MiniBars r={it} color={m.color} />}
             </div>
             <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: HEAD, fontSize: 28, fontWeight: 700, color: m.color, lineHeight: 1 }}>{it.S.toFixed(2)}</div>
-                <div style={{ fontFamily: MONO, fontSize: 10, color: C.subtle, marginTop: 5 }}>{hov ? "details →" : "score"}</div>
+                <div style={{ fontFamily: HEAD, fontSize: 28, fontWeight: 700, color: it.scored === false ? C.subtle : m.color, lineHeight: 1 }}>{typeof it.S === "number" ? it.S.toFixed(2) : "–"}</div>
+                <div style={{ fontFamily: MONO, fontSize: 10, color: C.subtle, marginTop: 5 }}>{hov ? "details →" : it.kind === "famous" && it.scored ? "vs " + m.short : "score"}</div>
             </div>
         </a>
     )
@@ -247,46 +254,77 @@ export function AnalogList(props: any) {
     useAutoPageHeight(ref, d)
     const path = props.detailPath || "/analog"
     const two = w > 780
+    const [tab, setTab] = useState<string>("famous")
+    const tabBtn = (key: string, label: string, sub: string) => (
+        <button
+            key={key}
+            onClick={() => setTab(key)}
+            style={{ cursor: "pointer", textAlign: "left", padding: "12px 18px", borderRadius: 14, border: "1px solid " + (tab === key ? C.moon + "88" : C.line), background: tab === key ? C.s2 : "transparent", color: tab === key ? C.text : C.muted, fontFamily: BODY }}
+        >
+            <div style={{ fontFamily: HEAD, fontSize: 16, fontWeight: 600 }}>{label}</div>
+            <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}>{sub}</div>
+        </button>
+    )
+    const famous = d ? d.famous : []
     return (
         <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
             {!d ? (
                 <Loading err={err} />
             ) : (
                 <>
-                    <div style={{ display: "grid", gridTemplateColumns: two ? "1fr 1fr" : "1fr", gap: two ? 28 : 36 }}>
-                        {["moon", "mars"].map((side) => {
-                            const list = d.items.filter((x: any) => metaFor(x.target).side === side)
-                            if (!list.length) return null
-                            const m = metaFor(list[0].target)
-                            const label = ((d.targets[list[0].target] || {}).label || m.head).replace(" - ", " · ")
-                            return (
-                                <div key={side}>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-                                        <Chip color={m.color}>{label}</Chip>
-                                        <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle }}>top 5</span>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                                        {list.map((it: any) => (
-                                            <Card key={it.id} it={it} href={path + "?id=" + it.id} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )
-                        })}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 26 }}>
+                        {famous.length ? tabBtn("famous", "Famous field analogs", "10 places agencies use · our score") : null}
+                        {tabBtn("formula", "Our formula's top 10", "5 for the Moon + 5 for Mars")}
                     </div>
-                    <p style={{ margin: "22px 0 0", fontSize: 13, lineHeight: 1.55, color: C.muted, maxWidth: 760 }}>
-                        Score S from 0 to 1: how close a place is to the target on 7 NASA/USGS criteria. Ranked among {fmtInt(d.nCells)} land cells of 0.5°, at least 600 km apart. Tap a card for satellite images and the full comparison.
-                    </p>
-                    {d.bench.length ? (
-                        <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid " + C.line, display: "flex", flexWrap: "wrap", gap: "10px 22px", alignItems: "baseline" }}>
-                            <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em" }}>For comparison · not in the top 10</span>
-                            {d.bench.map((b: any) => (
-                                <a key={b.id} href={path + "?id=" + b.id} style={{ color: C.text, textDecoration: "none", fontSize: 14, borderBottom: "1px solid " + C.line, paddingBottom: 2 }}>
-                                    {b.name} <span style={{ color: C.subtle, fontFamily: MONO, fontSize: 11 }}>{b.rows[0] ? "top " + fmtPct(b.rows[0].topPercent) + "%" : ""}</span> →
-                                </a>
-                            ))}
-                        </div>
-                    ) : null}
+                    {tab === "famous" && famous.length ? (
+                        <>
+                            <div style={{ display: "grid", gridTemplateColumns: two ? "1fr 1fr" : "1fr", gap: 10 }}>
+                                {famous.map((it: any) => (
+                                    <Card key={it.id} it={it} href={path + "?id=" + it.id} />
+                                ))}
+                            </div>
+                            <p style={{ margin: "22px 0 0", fontSize: 13, lineHeight: 1.55, color: C.muted, maxWidth: 820 }}>
+                                Well-known places where space agencies test rovers, suits and crews, each scored with our formula on its own 0.5° cell (score S from 0 to 1, rank among {fmtInt(d.nCells)} land cells). Many were picked for geology, chemistry or logistics, which our 7 climate and terrain criteria do not measure, so some rank low.
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <div style={{ display: "grid", gridTemplateColumns: two ? "1fr 1fr" : "1fr", gap: two ? 28 : 36 }}>
+                                {["moon", "mars"].map((side) => {
+                                    const list = d.items.filter((x: any) => metaFor(x.target).side === side)
+                                    if (!list.length) return null
+                                    const m = metaFor(list[0].target)
+                                    const label = ((d.targets[list[0].target] || {}).label || m.head).replace(" - ", " · ")
+                                    return (
+                                        <div key={side}>
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
+                                                <Chip color={m.color}>{label}</Chip>
+                                                <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle }}>top 5</span>
+                                            </div>
+                                            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                                                {list.map((it: any) => (
+                                                    <Card key={it.id} it={it} href={path + "?id=" + it.id} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <p style={{ margin: "22px 0 0", fontSize: 13, lineHeight: 1.55, color: C.muted, maxWidth: 820 }}>
+                                The best-scoring 0.5° cells on Earth, at least 600 km apart, chosen by the score alone. Several fall in Xinjiang: the Tarim Basin and the Kunlun foothills are among the driest, barest high places on Earth. Names are provinces (FAO GAUL level 1), so cells far apart can share a name; the coordinates tell them apart.
+                            </p>
+                            {d.bench.length ? (
+                                <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid " + C.line, display: "flex", flexWrap: "wrap", gap: "10px 22px", alignItems: "baseline" }}>
+                                    <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em" }}>For comparison · not in the top 10</span>
+                                    {d.bench.map((b: any) => (
+                                        <a key={b.id} href={path + "?id=" + b.id} style={{ color: C.text, textDecoration: "none", fontSize: 14, borderBottom: "1px solid " + C.line, paddingBottom: 2 }}>
+                                            {b.name} <span style={{ color: C.subtle, fontFamily: MONO, fontSize: 11 }}>{b.rows[0] ? "top " + fmtPct(b.rows[0].topPercent) + "%" : ""}</span> →
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : null}
+                        </>
+                    )}
                 </>
             )}
         </div>
@@ -442,7 +480,7 @@ function NavRow({ prev, next, path, listPath }: any) {
     const a = { color: C.muted, textDecoration: "none", fontSize: 14 }
     return (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <a href={listPath} style={{ ...a, color: C.text }}>← All 10 analogs</a>
+            <a href={listPath} style={{ ...a, color: C.text }}>← All analogs</a>
             {prev || next ? (
                 <div style={{ display: "flex", gap: 18 }}>
                     {prev ? <a href={path + "?id=" + prev.id} style={a}>← {prev.short}</a> : null}
@@ -472,7 +510,7 @@ export default function AnalogDetail(props: any) {
         } catch (e) {}
         loadAll().then(setD).catch((e) => setErr(String(e && e.message ? e.message : e)))
     }, [])
-    const all = d ? d.items.concat(d.bench) : []
+    const all = d ? d.items.concat(d.bench, d.famous || []) : []
     const it = d ? all.find((x: any) => x.id === id) || d.items[0] : null
     useEffect(() => {
         if (it && RenderTarget.current() !== RenderTarget.canvas) document.title = (it.region || it.name) + " — GroundTwin analog"
@@ -485,6 +523,76 @@ export default function AnalogDetail(props: any) {
     if (!it) return <div ref={ref} style={{ width: "100%", ...props.style }}><Loading err={err} /></div>
     const m = metaFor(it.target)
     const targetLabel = ((d.targets[it.target] || {}).label || m.head).replace(" - ", " · ")
+
+    if (it.kind === "famous") {
+        const list = d.famous
+        const idx = list.indexOf(it)
+        const prevIt = list[(idx - 1 + list.length) % list.length]
+        const nextIt = list[(idx + 1) % list.length]
+        const f = it.famous
+        const other = Object.keys(f.targets || {}).filter((t) => t !== f.primary)
+        const tcard = (t: string) => {
+            const v = f.targets[t]
+            return { S: v.S, position: v.position, nCells: v.n_cells, topPercent: v.top_percent }
+        }
+        return (
+            <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
+                <NavRow prev={{ id: prevIt.id, short: prevIt.famous.name }} next={{ id: nextIt.id, short: nextIt.famous.name }} path={path} listPath={listPath} />
+                <div style={{ marginTop: 36 }}>
+                    <Chip color={m.color}>{"Famous field analog · " + f.tag}</Chip>
+                    <h1 style={{ fontFamily: HEAD, fontSize: wide ? 56 : mid ? 42 : 34, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{f.name}</h1>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginTop: 16, fontFamily: MONO, fontSize: 12, color: C.muted }}>
+                        <span>{f.country}</span>
+                        <span>{fmtLL(f.lat, f.lon)}</span>
+                        <span>coordinates: {f.coord_source}</span>
+                    </div>
+                    <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, margin: "20px 0 0", maxWidth: 820 }}>{f.blurb}</p>
+                </div>
+                {it.scored ? (
+                    <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 18, marginTop: 36 }}>
+                        {[f.primary].concat(other).map((t: string) => (
+                            <div key={t}>
+                                <div style={{ fontFamily: MONO, fontSize: 11, color: metaFor(t).color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{"vs " + ((d.targets[t] || {}).label || metaFor(t).head).replace(" - ", " · ")}</div>
+                                <ScoreCard r={tcard(t)} color={metaFor(t).color} nCells={d.nCells} />
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ marginTop: 36, padding: 22, borderRadius: 16, border: "1px solid " + C.line, background: C.s1, maxWidth: 820 }}>
+                        <div style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em" }}>Not scored</div>
+                        <div style={{ fontSize: 15, color: C.muted, marginTop: 8, lineHeight: 1.6 }}>We could not score this place with our formula: {f.reason}. The satellite views below still show what it looks like.</div>
+                    </div>
+                )}
+                <Section kicker="Satellite view" title="What the place looks like" mt={52}>
+                    <Images lat={f.lat} lon={f.lon} cols={wide ? 3 : mid ? 2 : 1} />
+                    {it.scored ? <div style={{ fontSize: 13, color: C.muted, marginTop: 14 }}>The white box is the 0.5° cell we scored.</div> : null}
+                </Section>
+                {it.scored ? (
+                    <div style={{ display: "grid", gridTemplateColumns: wide ? "minmax(0,1.45fr) minmax(0,1fr)" : "1fr", gap: 36, marginTop: 56, alignItems: "start" }}>
+                        <Section kicker="7 criteria · NASA / USGS data, 2015–2024" title={"How it compares with " + m.short} mt={0}>
+                            <Criteria r={it} color={m.color} weights={d.weights} wide={mid} />
+                        </Section>
+                        <Section kicker="Target" title="Compared with" mt={0}>
+                            <TargetPanel target={it.target} d={d} />
+                        </Section>
+                    </div>
+                ) : null}
+                <Section kicker="Explore" title="See it yourself">
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                        <LinkBtn href={earthUrl(f.lat, f.lon)}>Open in Google Earth</LinkBtn>
+                        <LinkBtn href={worldviewUrl(f.lat, f.lon)}>NASA Worldview</LinkBtn>
+                        <LinkBtn href={m.trek}>{m.trekName}</LinkBtn>
+                    </div>
+                </Section>
+                <Section kicker="More field analogs" title="Keep exploring">
+                    <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 10 }}>
+                        <Card it={prevIt} href={path + "?id=" + prevIt.id} />
+                        <Card it={nextIt} href={path + "?id=" + nextIt.id} />
+                    </div>
+                </Section>
+            </div>
+        )
+    }
 
     if (it.kind === "top") {
         const idx = d.items.indexOf(it)
