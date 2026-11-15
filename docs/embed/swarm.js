@@ -3,9 +3,10 @@
 // drawn and typed by cursor "agents" as the Framer page scrolls. Only runs with ?swarm=1 inside a frame
 // (used on the /video page). The parent page sends {type:"gt-view", top, vh, atBottom} so we know which
 // part of this page is on screen.
-(() => {
+(function boot() {
   'use strict';
   if (window.parent === window) return;
+  if (!document.body) { document.addEventListener('DOMContentLoaded', boot); return; }
   const SPEED = 2.2, LINE = 0.86, N = 10;
   const NAMES = ['Ari', 'Bex', 'Cal', 'Dot', 'Eon', 'Fox', 'Gem', 'Hex', 'Ivo', 'Jet'];
   const COLORS = ['#ff5c8a', '#34d399', '#38bdf8', '#facc15', '#fb923c', '#a78bfa', '#f43f5e', '#2dd4bf', '#60a5fa', '#e879f9'];
