@@ -498,7 +498,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
     const fileBase = BASE + "assets/img/bd/" + target + "_" + lat.toFixed(2) + "_" + lon.toFixed(2)
     const scoreTxt = typeof S === "number" ? ", S = " + S.toFixed(2) + (typeof top === "number" ? " · top " + fmtPct(top) + "% of land" : "") : ""
     const photo = s2Url(lat, lon, 4, 600)
-    const scoreLayer = { overlay: true, img: fileBase + ".png", k: many ? "08" : "03", t: "Our score map", href: URLS.code, sub: many ? "weighted average of the 7 layers above · our code" : "7 criteria → 1 score · NASA MODIS, GPM + USGS · our code", d: "Each 0.5° land square (about 55 km) coloured by S on top of the photo; brighter = closer to the target, no colour = sea. White box: this place" + scoreTxt + "." }
+    const scoreLayer = { overlay: true, img: fileBase + ".png?v=3", k: many ? "08" : "03", t: "Our score map", href: URLS.code, sub: many ? "weighted average of the 7 layers above · our code" : "7 criteria → 1 score · NASA MODIS, GPM + USGS · our code", d: "Each 0.5° land square (about 55 km) coloured by S on top of the photo; brighter = closer to the target, no colour = sea. White box: this place" + scoreTxt + "." }
     const layers: any[] = many
         ? FEATS.map((f, i) => {
               const p = r.features && typeof r.features[f] === "number" ? r.features[f] : null
@@ -506,7 +506,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
               const st = status(r, f)
               return {
                   overlay: true,
-                  img: fileBase + "_" + f + ".png",
+                  img: fileBase + "_" + f + ".png?v=3",
                   href: FEAT_URL[f],
                   k: "0" + (i + 1),
                   t: FNAME[f] + (weights && weights[f] != null ? "  ×" + weights[f] : ""),
