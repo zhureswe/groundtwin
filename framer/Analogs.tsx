@@ -300,6 +300,7 @@ function Card({ it, href }: any) {
     const [hov, setHov] = useState(false)
     return (
         <a
+            data-framer-name="Analog card" data-gt="1" 
             href={href}
             onMouseEnter={() => setHov(true)}
             onMouseLeave={() => setHov(false)}
@@ -364,14 +365,14 @@ export function AnalogList(props: any) {
             ) : (
                 <>
                     {d.cand ? (
-                        <a href={path + "?id=mangystau"} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 22px", padding: "18px 22px", marginBottom: 22, borderRadius: 16, border: "1px solid " + C.mars + "66", background: C.mars + "14", color: C.text, textDecoration: "none" }}>
+                        <a data-framer-name="Candidate banner" data-gt="1" href={path + "?id=mangystau"} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 22px", padding: "18px 22px", marginBottom: 22, borderRadius: 16, border: "1px solid " + C.mars + "66", background: C.mars + "14", color: C.text, textDecoration: "none" }}>
                             <span style={{ fontFamily: MONO, fontSize: 11, color: C.mars, textTransform: "uppercase", letterSpacing: "0.06em" }}>New candidate · Mars</span>
                             <span style={{ fontFamily: HEAD, fontSize: 19, fontWeight: 600 }}>Mangystau, Kazakhstan</span>
                             <span style={{ fontSize: 14, color: C.muted, flex: "1 1 320px", lineHeight: 1.5 }}>Not a known test site, but our formula ranks it in the top {d.cand.gale}% of Earth's land for Gale crater and top {d.cand.jezero}% for Jezero, inside the top-{d.cand.cut}% band our blind test uses to recognise known analogs.</span>
                             <span style={{ fontFamily: MONO, fontSize: 12, color: C.text }}>details →</span>
                         </a>
                     ) : null}
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 26 }}>
+                    <div data-framer-name="Tabs" data-gt="1" style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 26 }}>
                         {famous.length ? tabBtn("famous", "4 famous field analogs", "places agencies use · our score") : null}
                         {tabBtn("formula", "Our 4 picks", "Mangystau + our formula's best · Moon & Mars")}
                     </div>
@@ -420,16 +421,16 @@ addPropertyControls(AnalogList, {
 // ---------- detail ----------
 function Section({ title, kicker, children, mt = 56 }: any) {
     return (
-        <section style={{ marginTop: mt }}>
-            {kicker ? <div style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{kicker}</div> : null}
-            {title ? <h2 style={{ fontFamily: HEAD, fontSize: 26, fontWeight: 700, margin: "0 0 18px", letterSpacing: "-0.01em" }}>{title}</h2> : null}
+        <section data-framer-name="Section" data-gt="1" style={{ marginTop: mt }}>
+            {kicker ? <div data-framer-name="Kicker" data-gt="1" style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{kicker}</div> : null}
+            {title ? <h2 data-framer-name="Title" data-gt="1" style={{ fontFamily: HEAD, fontSize: 26, fontWeight: 700, margin: "0 0 18px", letterSpacing: "-0.01em" }}>{title}</h2> : null}
             {children}
         </section>
     )
 }
 function Shot({ src, title, credit, rect, alt, href }: any) {
     return (
-        <figure style={{ margin: 0 }}>
+        <figure data-framer-name="Image" data-gt="1" style={{ margin: 0 }}>
             <div style={{ position: "relative", aspectRatio: "1 / 1", borderRadius: 14, overflow: "hidden", background: C.s2, border: "1px solid " + C.line }}>
                 <img src={src} alt={alt} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 {rect ? <span style={{ position: "absolute", left: (50 - rect.w / 2) + "%", top: (50 - rect.h / 2) + "%", width: rect.w + "%", height: rect.h + "%", border: "1.5px solid #fff", boxShadow: "0 0 0 1px rgba(0,0,0,.5)", borderRadius: 2 }} /> : null}
@@ -520,7 +521,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
         </button>
     )
     return (
-        <div ref={ref} style={{ position: "relative", height: H, marginTop: 8, transition: "height .4s ease" }}>
+        <div data-framer-name="Breakdown" data-gt="1" ref={ref} style={{ position: "relative", height: H, marginTop: 8, transition: "height .4s ease" }}>
             <div style={{ position: "absolute", left: 0, top: 0, right: 0, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                 <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.subtle, textTransform: "uppercase" }}>
                     <span style={{ color: C.text }}>{name}</span> / exploded view
@@ -567,7 +568,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
 }
 function Criteria({ r, color, weights, wide }: any) {
     return (
-        <div style={{ borderTop: "1px solid " + C.line }}>
+        <div data-framer-name="Criteria" data-gt="1" style={{ borderTop: "1px solid " + C.line }}>
             {FEATS.map((f) => {
                 const p = typeof r.features[f] === "number" ? r.features[f] : null
                 const t = typeof r.profile[f] === "number" ? r.profile[f] : null
@@ -635,7 +636,7 @@ function TargetPanel({ target, d }: any) {
     const m = metaFor(target)
     const tg = d.targets[target] || {}
     return (
-        <div style={{ borderRadius: 18, border: "1px solid " + C.line, background: C.s1, overflow: "hidden" }}>
+        <div data-framer-name="Target panel" data-gt="1" style={{ borderRadius: 18, border: "1px solid " + C.line, background: C.s1, overflow: "hidden" }}>
             <div style={{ aspectRatio: "4 / 3", background: C.s2 }}>
                 <img src={m.img} alt={tg.label || m.head} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
@@ -659,7 +660,7 @@ function TargetPanel({ target, d }: any) {
 }
 function LinkBtn({ href, children }: any) {
     return (
-        <a href={href} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: 12, border: "1px solid " + C.line, background: C.s1, color: C.text, textDecoration: "none", fontSize: 14 }}>
+        <a data-framer-name="Link button" data-gt="1" href={href} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: 12, border: "1px solid " + C.line, background: C.s1, color: C.text, textDecoration: "none", fontSize: 14 }}>
             {children} <span style={{ color: C.subtle }}>↗</span>
         </a>
     )
@@ -675,7 +676,7 @@ function Sources({ target, site, extra }: any) {
         <Section kicker="Sources" title="Where the information comes from">
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "22px 36px" }}>
                 {groups.map(([h, links]) => (
-                    <div key={h}>
+                    <div key={h} data-framer-name="Source group" data-gt="1">
                         <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>{h}</div>
                         <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 9 }}>
                             {links.map(([t, u]) => (
@@ -687,7 +688,7 @@ function Sources({ target, site, extra }: any) {
                     </div>
                 ))}
             </div>
-            <p style={{ fontSize: 12.5, color: C.subtle, margin: "18px 0 0", lineHeight: 1.5 }}>Scores and ranks are computed by our own code from these datasets. Not endorsed by NASA.</p>
+            <p data-framer-name="Note" data-gt="1" style={{ fontSize: 12.5, color: C.subtle, margin: "18px 0 0", lineHeight: 1.5 }}>Scores and ranks are computed by our own code from these datasets. Not endorsed by NASA.</p>
         </Section>
     )
 }
@@ -699,7 +700,7 @@ function plain(r: any) {
 function NavRow({ prev, next, path, listPath }: any) {
     const a = { color: C.muted, textDecoration: "none", fontSize: 14 }
     return (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <div data-framer-name="Nav row" data-gt="1" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <a href={listPath} style={{ ...a, color: C.text }}>← All analogs</a>
             {prev || next ? (
                 <div style={{ display: "flex", gap: 18 }}>
@@ -758,7 +759,7 @@ export default function AnalogDetail(props: any) {
         return (
             <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
                 <NavRow prev={{ id: prevIt.id, short: prevIt.famous.name }} next={{ id: nextIt.id, short: nextIt.famous.name }} path={path} listPath={listPath} />
-                <div style={{ marginTop: 36 }}>
+                <div data-framer-name="Hero" data-gt="1" style={{ marginTop: 36 }}>
                     <Chip color={m.color}>{"Famous field analog · " + f.tag}</Chip>
                     <h1 style={{ fontFamily: HEAD, fontSize: wide ? 56 : mid ? 42 : 34, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{f.name}</h1>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginTop: 16, fontFamily: MONO, fontSize: 12, color: C.muted }}>
@@ -771,7 +772,7 @@ export default function AnalogDetail(props: any) {
                 {it.scored ? (
                     <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 18, marginTop: 36 }}>
                         {[f.primary].concat(other).map((t: string) => (
-                            <div key={t}>
+                            <div key={t} data-framer-name="Score block" data-gt="1">
                                 <div style={{ fontFamily: MONO, fontSize: 11, color: metaFor(t).color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{"vs " + ((d.targets[t] || {}).label || metaFor(t).head).replace(" - ", " · ")}</div>
                                 <ScoreCard r={tcard(t)} color={metaFor(t).color} nCells={d.nCells} />
                             </div>
@@ -830,7 +831,7 @@ export default function AnalogDetail(props: any) {
             <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
                 <NavRow prev={nm(prevIt)} next={nm(nextIt)} path={path} listPath={listPath} />
                 <div style={{ display: "grid", gridTemplateColumns: wide ? "minmax(0,1.5fr) minmax(0,1fr)" : "1fr", gap: 28, marginTop: 36, alignItems: "end" }}>
-                    <div>
+                    <div data-framer-name="Hero" data-gt="1">
                         <Chip color={m.color}>{targetLabel + " · our formula's #" + (it.fRank || it.listRank) + " pick"}</Chip>
                         <h1 style={{ fontFamily: HEAD, fontSize: wide ? 56 : mid ? 42 : 34, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{it.region}</h1>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginTop: 16, fontFamily: MONO, fontSize: 12, color: C.muted }}>
@@ -840,7 +841,7 @@ export default function AnalogDetail(props: any) {
                             <span>Earth twin of {m.short}</span>
                         </div>
                     </div>
-                    <ScoreCard r={it} color={m.color} nCells={d.nCells} />
+                    <div data-framer-name="Score block" data-gt="1"><ScoreCard r={it} color={m.color} nCells={d.nCells} /></div>
                 </div>
 
                 <Section kicker="Breakdown" title="Three maps, one place" mt={52}>
@@ -890,7 +891,7 @@ export default function AnalogDetail(props: any) {
     return (
         <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
             <NavRow path={path} listPath={listPath} />
-            <div style={{ marginTop: 36 }}>
+            <div data-framer-name="Hero" data-gt="1" style={{ marginTop: 36 }}>
                 <Chip color={m.color}>{it.key === "mangystau" && d.cand ? "Candidate Mars analog · flagged by our formula" : "vs " + targetLabel + " · official training site"}</Chip>
                 <h1 style={{ fontFamily: HEAD, fontSize: wide ? 52 : mid ? 40 : 32, fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{it.name}</h1>
                 <div style={{ fontSize: 15, color: C.muted, marginTop: 12, lineHeight: 1.55, maxWidth: 860 }}>{it.key === "mangystau" && d.cand ? "Not a known test site yet. Our formula puts it in the top " + d.cand.gale + "% of Earth's land for Gale crater and the top " + d.cand.jezero + "% for Jezero crater, inside the top " + d.cand.cut + "% band our blind test uses to recognise known analogs. That makes it a candidate worth field work, not a proven analog." : String(it.title).split(":")[0] + " · shown with its real rank, for comparison"}</div>
@@ -898,7 +899,7 @@ export default function AnalogDetail(props: any) {
             {it.facts.length ? (
                 <Section kicker="Why this place" title="How it matches" mt={44}>
                     {it.facts.map((f: string) => (
-                        <p key={f} style={{ fontSize: 15.5, lineHeight: 1.65, color: C.muted, margin: "0 0 10px", maxWidth: 900 }}>{f}</p>
+                        <p key={f} data-framer-name="Fact" data-gt="1" style={{ fontSize: 15.5, lineHeight: 1.65, color: C.muted, margin: "0 0 10px", maxWidth: 900 }}>{f}</p>
                     ))}
                 </Section>
             ) : null}
