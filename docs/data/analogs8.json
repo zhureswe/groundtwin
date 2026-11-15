@@ -2,20 +2,19 @@
  "demo": false,
  "mode": "science",
  "n_cells": 60215,
- "separation_km": 600,
- "rule_official": "Known analog sites listed by NASA Planetary Analog Explorer or USGS (validation.json), scored for their own body; sites listed for any body get the better of Moon/Mars. Top 4 by S, one per grid cell.",
- "rule_found": "Best cells by S that are at least 600 km from every listed or famous analog site: 2 for the Moon (south pole base) and 2 for Mars (Gale), from 4 different countries, at least 600 km apart.",
- "official": [
+ "rule_famous": "Famous field analogs used for Moon and Mars training and tests, each scored on its own 0.5° cell for its main target (famous_analogs.json).",
+ "rule_ours": "Mangystau, our Kazakhstan case study (mean of its 6 site cells), and the formula's best places by S: the two best Moon cells and the best Mars cell, one per country, at least 600 km apart (country_top.json).",
+ "famous": [
   {
+   "id": "atacama",
+   "name": "Atacama Desert",
+   "country": "Chile",
    "target": "mars_gale",
-   "cell": [
-    -24.25,
-    -69.25
-   ],
-   "S": 0.841,
-   "position": 4728,
-   "n_cells": 60215,
-   "top_percent": 7.852,
+   "lat": -24.5,
+   "lon": -69.25,
+   "coord_source": "Wikipedia: Atacama Desert (as in validation.json)",
+   "tag": "MARS · rovers, life detection",
+   "blurb": "One of the driest places on Earth. NASA tests rover drills and life-detection instruments here before sending them to Mars.",
    "features": {
     "aridity": 0.945,
     "barren": 0.946,
@@ -47,71 +46,21 @@
    "differ": [
     "dust"
    ],
-   "name": "Atacama Desert",
-   "country": "Chile",
-   "lat": -24.5,
-   "lon": -69.25,
-   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Atacama_Desert",
-   "listed_by": "NASA Planetary Analog Explorer"
+   "S": 0.841,
+   "position": 4728,
+   "n_cells": 60215,
+   "top_percent": 7.852
   },
   {
-   "target": "moon_south_pole",
-   "cell": [
-    34.75,
-    -116.25
-   ],
-   "S": 0.829,
-   "position": 1573,
-   "n_cells": 60215,
-   "top_percent": 2.612,
-   "features": {
-    "aridity": 0.859,
-    "barren": 0.868,
-    "thermal_range": 0.953,
-    "cold": 0.397,
-    "dust": 0.056,
-    "roughness": 0.729,
-    "elevation": 0.721
-   },
-   "profile": {
-    "aridity": 1,
-    "barren": 1,
-    "thermal_range": 1,
-    "cold": 1,
-    "dust": 0.3,
-    "roughness": 0.8,
-    "elevation": 0.7
-   },
-   "match": [
-    "aridity",
-    "barren",
-    "thermal_range",
-    "roughness",
-    "elevation"
-   ],
-   "partly": [
-    "dust"
-   ],
-   "differ": [
-    "cold"
-   ],
-   "name": "Pisgah Lava Flow",
+   "id": "death-valley",
+   "name": "Death Valley",
    "country": "USA",
-   "lat": 34.7412,
-   "lon": -116.374,
-   "coord_source": "USGS TADP API",
-   "listed_by": "USGS Terrestrial Analog Data Portal"
-  },
-  {
    "target": "mars_gale",
-   "cell": [
-    36.25,
-    -116.75
-   ],
-   "S": 0.793,
-   "position": 7166,
-   "n_cells": 60215,
-   "top_percent": 11.901,
+   "lat": 36.24694444,
+   "lon": -116.81694444,
+   "coord_source": "Wikipedia: Death Valley (as in validation.json)",
+   "tag": "MARS · salts, geology",
+   "blurb": "A hot, hyper-arid basin with salt flats and alluvial fans, used to study how water and salt shaped Martian terrain.",
    "features": {
     "aridity": 0.889,
     "barren": 0.863,
@@ -143,31 +92,29 @@
    "differ": [
     "dust"
    ],
-   "name": "Death Valley",
-   "country": "USA",
-   "lat": 36.24694444,
-   "lon": -116.81694444,
-   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Death_Valley",
-   "listed_by": "NASA Planetary Analog Explorer"
+   "S": 0.793,
+   "position": 7166,
+   "n_cells": 60215,
+   "top_percent": 11.901
   },
   {
+   "id": "devon-island",
+   "name": "Devon Island",
+   "country": "Canada",
    "target": "mars_gale",
-   "cell": [
-    37.75,
-    29.75
-   ],
-   "S": 0.689,
-   "position": 16691,
-   "n_cells": 60215,
-   "top_percent": 27.719,
+   "lat": 75.38333333,
+   "lon": -89.66666667,
+   "coord_source": "Wikipedia: Haughton impact crater (as in validation.json)",
+   "tag": "MOON & MARS · craters, EVA",
+   "blurb": "A polar desert around the Haughton impact crater, home of the long-running Haughton-Mars Project field station.",
    "features": {
-    "aridity": 0.484,
-    "barren": 0.716,
-    "thermal_range": 0.724,
-    "cold": 0.458,
-    "dust": 0.528,
-    "roughness": 0.765,
-    "elevation": 0.83
+    "aridity": 0.879,
+    "barren": 0.835,
+    "thermal_range": 0.033,
+    "cold": 0.956,
+    "dust": 0.763,
+    "roughness": 0.623,
+    "elevation": 0.388
    },
    "profile": {
     "aridity": 1,
@@ -179,33 +126,124 @@
     "elevation": 0.6
    },
    "match": [
+    "aridity",
+    "barren",
+    "dust",
+    "roughness"
+   ],
+   "partly": [
+    "cold",
+    "elevation"
+   ],
+   "differ": [
+    "thermal_range"
+   ],
+   "S": 0.79,
+   "position": 7305,
+   "n_cells": 60215,
+   "top_percent": 12.132
+  },
+  {
+   "id": "utah",
+   "name": "Utah desert",
+   "country": "USA",
+   "target": "mars_gale",
+   "lat": 38.40645833,
+   "lon": -110.79190278,
+   "coord_source": "Wikipedia: Mars Desert Research Station (as in validation.json)",
+   "tag": "MARS · crew simulations",
+   "blurb": "Red sedimentary desert around the Mars Desert Research Station, where crews rehearse long Mars missions.",
+   "features": {
+    "aridity": 0.818,
+    "barren": 0.829,
+    "thermal_range": 0.831,
+    "cold": 0.491,
+    "dust": 0.033,
+    "roughness": 0.863,
+    "elevation": 0.947
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "aridity",
+    "barren",
     "thermal_range",
     "roughness"
    ],
    "partly": [
-    "barren",
     "cold",
-    "dust",
     "elevation"
    ],
    "differ": [
-    "aridity"
+    "dust"
    ],
-   "name": "Lake Salda",
-   "country": "Turkey",
-   "lat": 37.55,
-   "lon": 29.68333333,
-   "coord_source": "Wikipedia: https://en.wikipedia.org/wiki/Lake_Salda",
-   "listed_by": "NASA Planetary Analog Explorer"
+   "S": 0.768,
+   "position": 8467,
+   "n_cells": 60215,
+   "top_percent": 14.061
   }
  ],
- "found": [
+ "ours": [
   {
-   "target": "moon_south_pole",
-   "cell": [
-    36.75,
-    85.75
+   "id": "mangystau",
+   "name": "Mangystau",
+   "country": "Kazakhstan",
+   "target": "mars_gale",
+   "lat": 44.3614,
+   "lon": 51.5611,
+   "coord_source": "showcase.json (6 sites)",
+   "tag": "MARS · our case study",
+   "blurb": "The floor of the vanished Tethys Ocean: layered rock, salt flats and stone concretions. Our own case study, scored on NASA data, not looks.",
+   "features": {
+    "aridity": 0.855,
+    "barren": 0.841,
+    "thermal_range": 0.794,
+    "cold": 0.504,
+    "dust": 0.738,
+    "roughness": 0.356,
+    "elevation": 0.136
+   },
+   "profile": {
+    "aridity": 1,
+    "barren": 1,
+    "thermal_range": 0.9,
+    "cold": 0.7,
+    "dust": 0.8,
+    "roughness": 0.7,
+    "elevation": 0.6
+   },
+   "match": [
+    "aridity",
+    "barren",
+    "thermal_range",
+    "cold",
+    "dust"
    ],
+   "partly": [
+    "roughness",
+    "elevation"
+   ],
+   "differ": [],
+   "S": 0.822,
+   "position": 5729,
+   "n_cells": 60215,
+   "top_percent": 9.514
+  },
+  {
+   "name": "Xinjiang, China",
+   "country": "China",
+   "target": "moon_south_pole",
+   "lat": 36.75,
+   "lon": 85.75,
+   "coord_source": "0.5° grid cell centre; place name: GeoNames (country_top.json)",
+   "near": "Aqqan",
    "S": 0.925,
    "position": 1,
    "n_cells": 60215,
@@ -239,19 +277,16 @@
     "cold",
     "elevation"
    ],
-   "differ": [],
-   "name": "Near Aqqan, Xinjiang",
-   "country": "China",
-   "lat": 36.75,
-   "lon": 85.75,
-   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+   "differ": []
   },
   {
+   "name": "Govi-Altai, Mongolia",
+   "country": "Mongolia",
    "target": "moon_south_pole",
-   "cell": [
-    46.25,
-    95.25
-   ],
+   "lat": 46.25,
+   "lon": 95.25,
+   "coord_source": "0.5° grid cell centre; place name: GeoNames (country_top.json)",
+   "near": "Sharga",
    "S": 0.904,
    "position": 18,
    "n_cells": 60215,
@@ -285,77 +320,28 @@
     "cold",
     "elevation"
    ],
-   "differ": [],
-   "name": "Near Sharga, Govi-Altai",
-   "country": "Mongolia",
-   "lat": 46.25,
-   "lon": 95.25,
-   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+   "differ": []
   },
   {
+   "name": "Xinjiang, China",
+   "country": "China",
    "target": "mars_gale",
-   "cell": [
-    27.25,
-    6.75
-   ],
-   "S": 0.926,
-   "position": 26,
+   "lat": 40.25,
+   "lon": 86.75,
+   "coord_source": "0.5° grid cell centre; place name: GeoNames (country_top.json)",
+   "near": "Yuli",
+   "S": 0.941,
+   "position": 1,
    "n_cells": 60215,
-   "top_percent": 0.043,
+   "top_percent": 0.002,
    "features": {
-    "aridity": 0.978,
-    "barren": 0.905,
-    "thermal_range": 0.895,
-    "cold": 0.304,
-    "dust": 0.792,
-    "roughness": 0.683,
-    "elevation": 0.608
-   },
-   "profile": {
-    "aridity": 1,
-    "barren": 1,
-    "thermal_range": 0.9,
-    "cold": 0.7,
-    "dust": 0.8,
-    "roughness": 0.7,
-    "elevation": 0.6
-   },
-   "match": [
-    "aridity",
-    "barren",
-    "thermal_range",
-    "dust",
-    "roughness",
-    "elevation"
-   ],
-   "partly": [
-    "cold"
-   ],
-   "differ": [],
-   "name": "Near Illizi",
-   "country": "Algeria",
-   "lat": 27.25,
-   "lon": 6.75,
-   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
-  },
-  {
-   "target": "mars_gale",
-   "cell": [
-    25.25,
-    33.75
-   ],
-   "S": 0.923,
-   "position": 34,
-   "n_cells": 60215,
-   "top_percent": 0.056,
-   "features": {
-    "aridity": 0.989,
-    "barren": 0.941,
-    "thermal_range": 0.939,
-    "cold": 0.233,
-    "dust": 0.817,
+    "aridity": 0.962,
+    "barren": 0.951,
+    "thermal_range": 0.991,
+    "cold": 0.562,
+    "dust": 0.807,
     "roughness": 0.729,
-    "elevation": 0.498
+    "elevation": 0.795
    },
    "profile": {
     "aridity": 1,
@@ -370,30 +356,13 @@
     "aridity",
     "barren",
     "thermal_range",
+    "cold",
     "dust",
     "roughness",
     "elevation"
    ],
-   "partly": [
-    "cold"
-   ],
-   "differ": [],
-   "name": "Near Idfu, Aswan",
-   "country": "Egypt",
-   "lat": 25.25,
-   "lon": 33.75,
-   "coord_source": "0.5° grid cell centre; names: GeoNames (reverse_geocoder)"
+   "partly": [],
+   "differ": []
   }
- ],
- "mangystau": {
-  "name": "Mangystau",
-  "country": "Kazakhstan",
-  "target": "mars_gale",
-  "lat": 44.3614,
-  "lon": 51.5611,
-  "S": 0.822,
-  "position": 5729,
-  "n_cells": 60215,
-  "top_percent": 9.514
- }
+ ]
 }

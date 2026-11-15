@@ -46,7 +46,7 @@ Targets are polar craters with permanent shadow and Artemis III candidate region
 
 IES = [CPR<sub>in</sub> / CPR<sub>out</sub> > $ratio_thr] + [floor slope < $slope_thr° (median over craters)] + [T<sub>max</sub> < $cold_thr K].
 
-It is an evidence score 0–3 meaning "consistent with ice", not a probability. Mountains (Mons Malapert, Mons Mouton) are not scored.
+It is an evidence score 0–3 meaning "consistent with ice", not proof of ice. Mountains (Mons Malapert, Mons Mouton) are not scored.
 
 ### 4.3 Compact-pol m-χ and DOP
 
@@ -58,7 +58,7 @@ RCM uses λ = $lam_rcm cm and Mini-RF λ = $lam_minirf cm. The Rayleigh smoothne
 
 ### 4.5 Analog Engine
 
-Earth's land (60°S–90°N, Antarctica excluded) is divided into $cell_deg° cells ($n_cells cells). Seven features are converted to percentiles p ∈ [0, 1] over all land cells in the "extreme" direction: dryness (GPM), absence of vegetation (MODIS NDVI), day–night temperature swing and cold nights (MODIS LST), dust (MODIS AOD), terrain roughness and elevation (GMTED2010). Missing dust values ($dust_imputed cells) are set to a neutral 0.5. Each target has a profile t and each mission mode weights w (Science, Rover operations, Base construction, Ice & resources; all published in `targets.json`):
+Earth's land (60°S–90°N, Antarctica excluded) is divided into $cell_deg° cells ($n_cells cells). Seven criteria are converted to percentiles p ∈ [0, 1] over all land cells in the "extreme" direction: dryness (GPM), absence of vegetation (MODIS NDVI), day–night temperature swing and cold nights (MODIS LST), dust (MODIS AOD), terrain roughness and elevation (GMTED2010). Missing dust values ($dust_imputed cells) are set to a neutral 0.5. Each target has a profile t and each mission mode weights w (Science, Rover operations, Base construction, Ice & resources; all published in `targets.json`):
 
 s<sub>i</sub> = 1 − |p<sub>i</sub> − t<sub>i</sub>|,  S = Σ w<sub>i</sub> s<sub>i</sub> / Σ w<sub>i</sub>.
 
@@ -112,7 +112,7 @@ Mangystau combines layered Tethys Sea sediments (Bozzhyra, Sherkala), salt flats
 |---|---|---|---|---|---|---|
 $ref_table
 
-Mangystau is closer to both Mars profiles than the Utah and Devon references by all three measures. A PCA of the seven features (PC1 $pc1%, PC2 $pc2% of variance) shows the same picture. The analogy has limits: Torysh concretions are metres across and made of sandstone, while Opportunity's spherules in Meridiani are millimetres across and made of hematite [Squyres et al. 2004]; Tethys was a sea, whereas Gale held lakes [Grotzinger et al. 2014, 2015]; and Earth has air, warmth and life. We found no scientific study of Mangystau as a Mars analog, only travel writing.
+Mangystau is closer to both Mars profiles than the Utah and Devon references by all three measures. A PCA of the seven criteria (PC1 $pc1%, PC2 $pc2% of variance) shows the same picture. The analogy has limits: Torysh concretions are metres across and made of sandstone, while Opportunity's spherules in Meridiani are millimetres across and made of hematite [Squyres et al. 2004]; Tethys was a sea, whereas Gale held lakes [Grotzinger et al. 2014, 2015]; and Earth has air, warmth and life. We found no scientific study of Mangystau as a Mars analog, only travel writing.
 
 ![PCA of Earth land cells with known analogs and Mangystau](../data/analog_pca.png)
 
@@ -137,7 +137,7 @@ All code (Python pipeline `pipeline/01–12`) and the derived JSON files are ope
 
 ## 9. AI use statement
 
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.
 
 ## References
 

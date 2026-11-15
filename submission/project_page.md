@@ -11,7 +11,7 @@ GroundTwin — Earth as the twin of the Moon and Mars
 Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars
 
 ## High-Level Summary
-GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our Analog Engine scores all 60,215 land cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven features from NASA data. For each place it shows what matches, what does not, and what Earth can never reproduce. Tested on known analog sites, it recognised 7 of 11 Mars analogs in a blind test. Mangystau in Kazakhstan, the floor of a vanished sea, ranks in the top 9.5% of Earth's land cells for Gale crater. Second, Canada's RCM radar shares the design of NASA's Mini-RF, so we check radar ice signatures on Earth, where the truth is known. We then combine Mini-RF, LOLA and Diviner into an Ice Evidence Score for south-pole craters that helps choose where a lunar base could find ice. Everything is open and traceable to data.
+GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our Analog Engine scores all 60,215 land cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven criteria from NASA data. For each place it shows what matches, what does not, and what Earth can never reproduce. Tested on known analog sites, it recognised 7 of 11 Mars analogs in a blind test. Mangystau in Kazakhstan, the floor of a vanished sea, ranks in the top 9.5% of Earth's land cells for Gale crater. Second, Canada's RCM radar shares the design of NASA's Mini-RF, so we check radar ice signatures on Earth, where the truth is known. We then combine Mini-RF, LOLA and Diviner into an Ice Evidence Score for south-pole craters that helps choose where a lunar base could find ice. Everything is open and traceable to data.
 
 ## Project Demo
 [Demo link — 7 slides, public Google Drive / GitHub]
@@ -40,7 +40,7 @@ GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our 
 **Tools.** Python (numpy, rasterio, rioxarray, pyproj, shapely, scipy, matplotlib, earthengine-api), Google Earth Engine, HTML/CSS/JavaScript with Leaflet, Chart.js, KaTeX and CesiumJS, and GitHub Pages.
 
 ## Use of Artificial Intelligence
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.
 
 ## NASA Data
 - LRO Mini-RF global mosaics (CPR, degree of polarization M, Stokes S1, S4): https://science.nasa.gov/mission/lro/mini-rf/ · https://pds-geosciences.wustl.edu/missions/lro/

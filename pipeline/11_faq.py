@@ -105,15 +105,15 @@ def build():
     add('What is the Ice Evidence Score?', ['ies', 'score', 'evidence', 'clues', 'three'],
         f"An evidence score from 0 to 3 for each crater: +1 if CPR inside / outside > {m['ratio_threshold']} (Mini-RF), +1 if the floor "
         f"slope is below the median of all craters ({m['slope_threshold_deg']:.2f}°, LOLA), +1 if Tmax < {m['cold_threshold_k']} K (Diviner). "
-        'It means "consistent with ice", not a probability and not proof.', METHOD, ['minirf', 'lola', 'diviner'], '#radar')
+        'It means "consistent with ice", not proof.', METHOD, ['minirf', 'lola', 'diviner'], '#radar')
     add('Which lunar craters score highest?', ['crater', 'craters', 'best', 'highest', 'shackleton', 'moon', 'result'],
         f"{sum(t['ies'] >= 2 for t in craters)} of {len(craters)} craters have at least 2 of 3 clues: "
         + ', '.join(t['name'] for t in craters if t['ies'] >= 2)
         + f". Shackleton: CPR inside {sh['cpr_in']:.2f} vs outside {sh['cpr_out']:.2f}, Tmax {sh['tmax_k']:.0f} K, score {sh['ies']}/3. "
         + f"Cabeus fails the cold clue (median Tmax {cab['tmax_k']:.0f} K) although {cab['frac_floor_below_110k'] * 100:.0f}% of its floor stays below "
         f"{m['cold_threshold_k']} K; LCROSS found water there. Mountains (Mons Malapert, Mons Mouton) are not scored.", RESULT, ['minirf', 'diviner', 'lola', 'lcross'], '#radar')
-    add('Did you prove there is ice on the Moon?', ['prove', 'proof', 'confirmed', 'probability', 'sure'],
-        'No. We show which places are consistent with ice. Every score is an evidence score 0–3, never a probability.', METHOD, section='#radar')
+    add('Did you prove there is ice on the Moon?', ['prove', 'proof', 'confirmed', 'likely', 'sure'],
+        'No. We show which places are consistent with ice. Every score is an evidence score 0–3: it counts clues, it does not prove ice.', METHOD, section='#radar')
     add('What are DOP and the m-χ method?', ['dop', 'chi', 'm-chi', 'polarization', 'degree', 'ellipticity', 'alpha'],
         'm is the degree of polarization (DOP) and χ the ellipticity angle, both computed from compact-pol Stokes parameters. '
         'We do not compute the Cloude–Pottier α angle, because it needs full (4-channel) polarimetry.', METHOD, section='#radar')
@@ -140,7 +140,7 @@ def build():
     # --- analog engine
     cur['cat'] = 'Analogs'
     add('How does the Analog Engine work?', ['analog', 'engine', 'similarity', 'formula', 'score', 'percentile'],
-        f"Each of {sc['n_cells']:,} land cells (0.5°) gets percentiles p for 7 features: dryness, no plants, day–night swing, cold, dust, "
+        f"Each of {sc['n_cells']:,} land cells (0.5°) gets percentiles p for 7 criteria: dryness, no plants, day–night swing, cold, dust, "
         'rough terrain, elevation. Each target has a profile t, each mission mode has weights w: s_i = 1 − |p_i − t_i|, '
         'S = Σ w_i s_i / Σ w_i. The browser computes S live.', METHOD, ['gpm', 'earthdata'], '#explore')
     add('How do I use the Explore Earth page?', ['explore', 'map', 'use', 'how', 'click', 'mode'],
@@ -174,7 +174,7 @@ def build():
         'USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is '
         'used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): '
         + '; '.join(f"{x['place']} S {x['S']:.2f}, rank #{x['position']:,}, top {x['top_percent']}% of land cells" for x in card['moon_reference']['rows'])
-        + ' — they were chosen for crater geology, which our 7 features do not measure.', OFFICIAL, ['usgs_analogs'], '#explore')
+        + ' — they were chosen for crater geology, which our 7 criteria do not measure.', OFFICIAL, ['usgs_analogs'], '#explore')
     add('What about MDRS in Utah?', ['mdrs', 'utah', 'san rafael', 'mars society'],
         'MDRS is a Mars Society station for Mars-mission training (not a NASA station); Utah is in the NASA Planetary Analog Explorer. '
         f"For {lab(sc['mars_target'])}: " + '; '.join(f"{x['place']} S {x['S']:.2f}, rank #{x['position']:,}, top {x['top_percent']}% of land cells" for x in card['mars_reference']['rows']) + '.',
@@ -226,7 +226,7 @@ def build():
         'Team Code Influence from Kazakhstan, for the NASA Space Apps Challenge 2026. The code is open on GitHub (zhureswe/groundtwin).',
         METHOD, ['github'], '#about')
     add('How did you use AI?', ['ai', 'claude', 'artificial', 'intelligence', 'chatgpt'],
-        'We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.', METHOD, section='#about')
+        'We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.', METHOD, section='#about')
     add('Is this an AI model that predicts ice?', ['model', 'trained', 'machine learning', 'predict', 'neural'],
         'No. GroundTwin uses a transparent similarity formula and an evidence score, both checked against known sites. Nothing is a '
         'trained AI model.', METHOD, section='#method')

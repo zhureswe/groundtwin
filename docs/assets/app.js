@@ -433,7 +433,7 @@ function renderReferences() {
       <td class="${x[tk].top_percent === best[tk] ? 'yes' : ''}">${topPct(x[tk].top_percent)}</td>`).join('')}</tr>`).join('')}</tbody></table>
     <p class="note">${r.method}</p>
     <figure class="pca"><img src="${BASE}${r.pca.image}" alt="PCA of Earth land cells with known analogs, Mangystau and Mars target profiles">
-    <figcaption class="note">PCA of the 7 percentile features over all land cells: PC1 ${Math.round(r.pca.explained_variance[0] * 100)}% and PC2 ${Math.round(r.pca.explained_variance[1] * 100)}% of the variance. Points closer to the blue Mars profiles are more Mars-like by our features.</figcaption></figure>`;
+    <figcaption class="note">PCA of the 7 criteria (percentiles) over all land cells: PC1 ${Math.round(r.pca.explained_variance[0] * 100)}% and PC2 ${Math.round(r.pca.explained_variance[1] * 100)}% of the variance. Points closer to the blue Mars profiles are more Mars-like by our features.</figcaption></figure>`;
 }
 
 /* ---------------- method ---------------- */

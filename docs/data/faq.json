@@ -226,7 +226,7 @@
     "clues",
     "three"
    ],
-   "a": "An evidence score from 0 to 3 for each crater: +1 if CPR inside / outside > 1.2 (Mini-RF), +1 if the floor slope is below the median of all craters (8.12°, LOLA), +1 if Tmax < 110 K (Diviner). It means \"consistent with ice\", not a probability and not proof.",
+   "a": "An evidence score from 0 to 3 for each crater: +1 if CPR inside / outside > 1.2 (Mini-RF), +1 if the floor slope is below the median of all craters (8.12°, LOLA), +1 if Tmax < 110 K (Diviner). It means \"consistent with ice\", not proof.",
    "label": "Our method",
    "links": [
     {
@@ -285,10 +285,10 @@
     "prove",
     "proof",
     "confirmed",
-    "probability",
+    "likely",
     "sure"
    ],
-   "a": "No. We show which places are consistent with ice. Every score is an evidence score 0–3, never a probability.",
+   "a": "No. We show which places are consistent with ice. Every score is an evidence score 0–3: it counts clues, it does not prove ice.",
    "label": "Our method",
    "links": [],
    "section": "#radar"
@@ -388,7 +388,7 @@
     "score",
     "percentile"
    ],
-   "a": "Each of 60,215 land cells (0.5°) gets percentiles p for 7 features: dryness, no plants, day–night swing, cold, dust, rough terrain, elevation. Each target has a profile t, each mission mode has weights w: s_i = 1 − |p_i − t_i|, S = Σ w_i s_i / Σ w_i. The browser computes S live.",
+   "a": "Each of 60,215 land cells (0.5°) gets percentiles p for 7 criteria: dryness, no plants, day–night swing, cold, dust, rough terrain, elevation. Each target has a profile t, each mission mode has weights w: s_i = 1 − |p_i − t_i|, S = Σ w_i s_i / Σ w_i. The browser computes S live.",
    "label": "Our method",
    "links": [
     {
@@ -539,7 +539,7 @@
     "artemis",
     "training"
    ],
-   "a": "USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): Cinder Lake Crater Field S 0.68, rank #16,161, top 26.8% of land cells; Meteor Crater S 0.76, rank #7,410, top 12.3% of land cells — they were chosen for crater geology, which our 7 features do not measure.",
+   "a": "USGS blasted the Cinder Lake Crater Field in the late 1960s as a lunar training site for Apollo astronauts; USGS says it is used today to train and test Artemis astronauts. NASA astronauts also trained at Meteor Crater. In our engine (Moon, Science): Cinder Lake Crater Field S 0.68, rank #16,161, top 26.8% of land cells; Meteor Crater S 0.76, rank #7,410, top 12.3% of land cells — they were chosen for crater geology, which our 7 criteria do not measure.",
    "label": "Official source",
    "links": [
     {
@@ -821,7 +821,7 @@
     "intelligence",
     "chatgpt"
    ],
-   "a": "We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.",
+   "a": "We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.",
    "label": "Our method",
    "links": [],
    "section": "#about"

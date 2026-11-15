@@ -140,7 +140,7 @@
       + box(c.cold, 'Cold trap (Diviner)', `median T<sub>max</sub> ${Math.round(t.tmax_k)} K · ${fmt(t.frac_floor_below_110k * 100, 0)}% of floor &lt; ${m.cold_threshold_k} K`, `needs median &lt; ${m.cold_threshold_k} K`)
       + box(c.smooth, 'Smooth floor (LOLA)', `median slope ${fmt(t.slope_deg, 1)}°`, `needs &lt; ${fmt(m.slope_threshold_deg, 1)}°`);
     const verdict = t.ies === 3 ? 'strongly consistent with ice' : t.ies === 2 ? 'possibly icy — needs more evidence' : 'more likely rocks, slopes or too warm';
-    $('#score').innerHTML = `<span class="big">${t.ies} / 3</span><span><b>Evidence score</b> for ${esc(t.name)}: ${verdict}.<br><span class="small muted">An evidence score, not a probability. "Consistent with ice" is not proof of ice.</span></span>`;
+    $('#score').innerHTML = `<span class="big">${t.ies} / 3</span><span><b>Evidence score</b> for ${esc(t.name)}: ${verdict}.<br><span class="small muted">An evidence score from 0 to 3. "Consistent with ice" is not proof of ice.</span></span>`;
     document.querySelectorAll('#results tr[data-n]').forEach((tr) => tr.classList.toggle('sel', tr.dataset.n === name));
   }
 
@@ -160,7 +160,7 @@
   /* Honest limits */
   const cab = m.targets.find((t) => t.name === 'Cabeus');
   $('#limits').innerHTML = `<li><b>Different wavelengths.</b> RCM uses ${w.rcm.wavelength_cm} cm (C-band), Mini-RF ${w.minirf.wavelength_cm} cm (S-band). Each senses different roughness and depth (smooth below h ≈ ${fmt(Object.values(w.rcm.h_cm_at_filter_limits)[0])}–${fmt(Object.values(w.rcm.h_cm_at_filter_limits)[1])} cm for RCM, ${fmt(w.minirf.h_cm)} cm for Mini-RF), so we compare the order of classes and the inside/outside contrast, not exact values. No conversion factor is claimed.</li>
-    <li><b>Score ≠ probability.</b> "3 / 3" means three independent clues agree with ice — not a percentage chance of ice.</li>
+    <li><b>The score counts clues.</b> "3 / 3" means three independent clues agree with ice — it does not prove ice.</li>
     ${cab ? `<li><b>Cabeus.</b> NASA's LCROSS impact (2009) found water in Cabeus, yet its median T<sub>max</sub> in our data is ${Math.round(cab.tmax_k)} K, so it fails the cold clue — only ${fmt(cab.frac_floor_below_110k * 100, 0)}% of its floor stays below ${m.cold_threshold_k} K. Our floor zone can include sunlit slopes. We did not change the rule after seeing this.</li>` : ''}
     <li><b>Earth ice is not lunar ice.</b> Glacier ice is cleaner than ice mixed into lunar soil, and moisture changes the echo on Earth.</li>`;
 })();

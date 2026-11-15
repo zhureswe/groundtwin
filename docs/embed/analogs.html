@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GroundTwin Analogs</title>
 <!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. Embeddable: add ?embed=1 to hide header/footer.
-     8 places chosen by the Analog Engine score only (pipeline/18_analogs8.py -> ../data/analogs8.json). -->
+     8 places chosen by the Analog Engine score only (pipeline/18_analogs8.py -> ../data/analogs8.json (version B, same as the globe)). -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="../assets/style.css">
@@ -16,17 +16,13 @@
 <main class="e-wrap">
   <div class="a8-head"><h2>Earth twins of the Moon and Mars</h2><a class="btn" id="how" href="analog-engine.html" hidden>How we computed this →</a></div>
 
-  <p class="hud">Top 4 official analog sites</p>
-  <p class="a8-cap">Top 4 official analog sites — listed by NASA (Planetary Analog Explorer) or USGS, scored by our formula.</p>
-  <div class="a8-grid" id="official"></div>
-  <p class="note" id="rule-official"></p>
+  <p class="hud">4 famous field analogs</p>
+  <div class="a8-grid" id="famous"></div>
+  <p class="note" id="rule-famous"></p>
 
-  <p class="hud mars" style="margin-top:26px">Top 4 found by GroundTwin</p>
-  <p class="a8-cap">Found by our formula on NASA data — not on any official list.</p>
-  <div class="a8-grid" id="found"></div>
-  <p class="note" id="rule-found"></p>
-
-  <a class="a8-banner" id="mgs" href="../index.html#mangystau" target="_top"></a>
+  <p class="hud mars" style="margin-top:26px">Our 4 picks</p>
+  <div class="a8-grid" id="ours"></div>
+  <p class="note" id="rule-ours"></p>
 </main>
 <footer class="e-foot" id="foot"></footer>
 <script src="common.js"></script>
@@ -36,25 +32,23 @@
   const { esc, fmt, topPct, ll, body, load, buttons, bars, reasons } = GTE;
   let d, T;
   try { [d, T] = await Promise.all(['analogs8', 'targets'].map(load)); }
-  catch (e) { document.getElementById('official').innerHTML = `<p class="muted">Data not found: ${esc(e.message)}</p>`; return; }
+  catch (e) { document.getElementById('famous').innerHTML = `<p class="muted">Data not found: ${esc(e.message)}</p>`; return; }
   const w = T.modes[d.mode].weights;
   const card = (x) => {
     const b = body(x.target), lab = T.targets[x.target].label.split(' (')[0];
     return `<article class="card a8-card ${b}"><span class="tag ${b === 'moon' ? 'ice' : 'mars'}">${esc(lab)}</span>
-      <h3>${esc(x.name)}</h3><span class="a8-meta">${esc(x.country)} · ${ll(x.lat, x.lon)}</span>${x.listed_by ? `<div class="a8-listed">Listed by: ${esc(x.listed_by.startsWith('USGS') ? 'USGS' : x.listed_by)}</div>` : ''}
+      <h3>${esc(x.name)}</h3><span class="a8-meta">${esc(x.country)} · ${ll(x.lat, x.lon)}</span>${x.tag ? `<div class="a8-listed">${esc(x.tag)}</div>` : ''}${x.blurb ? `<p class="e-text">${esc(x.blurb)}</p>` : x.near ? `<p class="e-text">Near ${esc(x.near)}. Best-scoring 0.5° cell in ${esc(x.country)}.</p>` : ''}
       <div class="e-nums"><div>S<b class="e-s ${b}">${fmt(x.S, 3)}</b></div><div>Match<b>${fmt(x.S * 100, 1)}%</b></div>
         <div>Rank<b>#${x.position.toLocaleString('en')}</b></div><div>Share<b>${topPct(x.top_percent).replace(' of land cells', '')}</b>of land cells</div></div>
       ${bars(x.features, x.profile)}${reasons(x.features, x.profile, w)}
       <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[x.target].cannot.join(', '))}.</p>
       ${buttons(x.lat, x.lon, x.target)}<p class="note">Coordinates: ${esc(x.coord_source)}</p></article>`;
   };
-  document.getElementById('official').innerHTML = d.official.map(card).join('');
-  document.getElementById('found').innerHTML = d.found.map(card).join('');
-  document.getElementById('rule-official').textContent = d.rule_official;
-  document.getElementById('rule-found').textContent = d.rule_found;
-  const m = d.mangystau;
-  document.getElementById('mgs').innerHTML = `<span>Our candidate from Kazakhstan: <b>${esc(m.name)}</b> — top ${fmt(m.top_percent, 1)}% of Earth's land for Mars (Gale)</span><span>→</span>`;
-  document.getElementById('foot').textContent = `Science mode · match % = S × 100 (not a probability) · rank among ${d.n_cells.toLocaleString('en')} land cells · data: analogs8.json, targets.json · not endorsed by NASA.`;
+  document.getElementById('famous').innerHTML = d.famous.map(card).join('');
+  document.getElementById('ours').innerHTML = d.ours.map(card).join('');
+  document.getElementById('rule-famous').textContent = d.rule_famous;
+  document.getElementById('rule-ours').textContent = d.rule_ours;
+  document.getElementById('foot').textContent = `Science mode · match % = S × 100 (a similarity score) · rank among ${d.n_cells.toLocaleString('en')} land cells · data: analogs8.json, targets.json · not endorsed by NASA.`;
   // show the "How we computed this" button only when that page exists
   fetch('analog-engine.html', { method: 'HEAD' }).then((r) => { if (r.ok) document.getElementById('how').hidden = false; }).catch(() => {});
 })();

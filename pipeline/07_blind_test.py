@@ -29,7 +29,7 @@ def main():
     lon, lat, P = val.load_grid()
     out = dict(demo=False, top_fraction=TOP, groups={},
                method='For each known-analog cell: profile = mean percentile vector of the other cells in the group, '
-                      'similarity = 1 - mean |p - t| over 7 features (equal weights), rank among all land cells. '
+                      'similarity = 1 - mean |p - t| over 7 criteria (equal weights), rank among all land cells. '
                       'Recognised = top 10%. p = binomial probability of at least that many by chance (10% each). '
                       'Sites sharing a 0.5-deg cell count once.')
     for g, bodies in GROUPS.items():

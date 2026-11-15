@@ -11,7 +11,7 @@ $summary
 ## Two directions
 
 ### 1. Earth analogs of the Moon and Mars (main)
-- **Analog Engine.** Each of Earth's $n_cells land cells ($cell_deg°) gets percentiles for 7 features from NASA data: dryness, no plants, day–night swing, cold, dust, roughness and elevation. The score is s_i = 1 − |p_i − t_i| and S = Σ w_i s_i / Σ w_i, with a target profile t and mission-mode weights w. Scores are computed live in the browser.
+- **Analog Engine.** Each of Earth's $n_cells land cells ($cell_deg°) gets percentiles for 7 criteria from NASA data: dryness, no plants, day–night swing, cold, dust, roughness and elevation. The score is s_i = 1 − |p_i − t_i| and S = Σ w_i s_i / Σ w_i, with a target profile t and mission-mode weights w. Scores are computed live in the browser.
 - **Validation.** We use $n_known known analog sites from the NASA Planetary Analog Explorer and USGS.
   - Average rank of known Mars analogs: top $mr_gale% for Gale (p = $mrp_gale) and top $mr_jezero% for Jezero (p = $mrp_jezero); a random place averages ≈ 50%.
   - Blind leave-one-out test: $bt_mars_k of $bt_mars_n recognised (chance ≈ $bt_mars_chance, p = $bt_mars_p).
@@ -21,7 +21,7 @@ $summary
 
 ### 2. Radar ice signatures checked on Earth, for lunar base siting
 - **Earth radar ruler.** Canada's RCM shares the hybrid compact-polarimetric design of NASA's Mini-RF. Median CPR: smooth ground $smooth_median, rock fields $rough_rock_median, glacier ice $ice_median ($n_sites sites).
-- **Ice Evidence Score (0–3)** for $n_craters south-pole craters. It adds up three clues: Mini-RF inside/outside contrast, a smooth LOLA floor, and Diviner temperature below 110 K. $n_ies2 craters reach at least 2. The score means "consistent with ice", not a probability.
+- **Ice Evidence Score (0–3)** for $n_craters south-pole craters. It adds up three clues: Mini-RF inside/outside contrast, a smooth LOLA floor, and Diviner temperature below 110 K. $n_ies2 craters reach at least 2. The score means "consistent with ice", not proof of ice.
 - **One radar clue is not enough.** The criterion CPR > 1 and DOP < 0.13 is passed by $pol_ice% of ice cells and $pol_rough_rock% of lava cells in C-band.
 
 ## Run it
@@ -59,7 +59,7 @@ RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT 
 - **Temperature over the whole floor.** The cold clue uses the median temperature over the whole floor zone. Cabeus fails it although $cabeus_cold% of its floor stays below 110 K.
 
 ## Use of AI
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.
 
 ## Team
 Team Code Influence, Kazakhstan · GitHub: [zhureswe](https://github.com/zhureswe)

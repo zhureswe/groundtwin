@@ -6,12 +6,12 @@ NASA Space Apps Challenge 2026 · Team **Code Influence** (Kazakhstan) · Challe
 
 **Website:** https://zhureswe.github.io/groundtwin/ · **3D globe:** https://zhureswe.github.io/groundtwin/embed/globe.html · **Paper (PDF):** [paper/groundtwin_paper.pdf](paper/groundtwin_paper.pdf) · **Demo:** [link to be added]
 
-GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our Analog Engine scores all 60,215 land cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven features from NASA data. For each place it shows what matches, what does not, and what Earth can never reproduce. Tested on known analog sites, it recognised 7 of 11 Mars analogs in a blind test. Mangystau in Kazakhstan, the floor of a vanished sea, ranks in the top 9.5% of Earth's land cells for Gale crater. Second, Canada's RCM radar shares the design of NASA's Mini-RF, so we check radar ice signatures on Earth, where the truth is known. We then combine Mini-RF, LOLA and Diviner into an Ice Evidence Score for south-pole craters that helps choose where a lunar base could find ice. Everything is open and traceable to data.
+GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our Analog Engine scores all 60,215 land cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven criteria from NASA data. For each place it shows what matches, what does not, and what Earth can never reproduce. Tested on known analog sites, it recognised 7 of 11 Mars analogs in a blind test. Mangystau in Kazakhstan, the floor of a vanished sea, ranks in the top 9.5% of Earth's land cells for Gale crater. Second, Canada's RCM radar shares the design of NASA's Mini-RF, so we check radar ice signatures on Earth, where the truth is known. We then combine Mini-RF, LOLA and Diviner into an Ice Evidence Score for south-pole craters that helps choose where a lunar base could find ice. Everything is open and traceable to data.
 
 ## Two directions
 
 ### 1. Earth analogs of the Moon and Mars (main)
-- **Analog Engine.** Each of Earth's 60,215 land cells (0.5°) gets percentiles for 7 features from NASA data: dryness, no plants, day–night swing, cold, dust, roughness and elevation. The score is s_i = 1 − |p_i − t_i| and S = Σ w_i s_i / Σ w_i, with a target profile t and mission-mode weights w. Scores are computed live in the browser.
+- **Analog Engine.** Each of Earth's 60,215 land cells (0.5°) gets percentiles for 7 criteria from NASA data: dryness, no plants, day–night swing, cold, dust, roughness and elevation. The score is s_i = 1 − |p_i − t_i| and S = Σ w_i s_i / Σ w_i, with a target profile t and mission-mode weights w. Scores are computed live in the browser.
 - **Validation.** We use 16 known analog sites from the NASA Planetary Analog Explorer and USGS.
   - Average rank of known Mars analogs: top 21.3% for Gale (p = 0.001) and top 24.4% for Jezero (p = 0.003); a random place averages ≈ 50%.
   - Blind leave-one-out test: 7 of 11 recognised (chance ≈ 1.1, p = 2e-05).
@@ -21,7 +21,7 @@ GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our 
 
 ### 2. Radar ice signatures checked on Earth, for lunar base siting
 - **Earth radar ruler.** Canada's RCM shares the hybrid compact-polarimetric design of NASA's Mini-RF. Median CPR: smooth ground 0.21, rock fields 0.52, glacier ice 1.44 (8 sites).
-- **Ice Evidence Score (0–3)** for 10 south-pole craters. It adds up three clues: Mini-RF inside/outside contrast, a smooth LOLA floor, and Diviner temperature below 110 K. 5 craters reach at least 2. The score means "consistent with ice", not a probability.
+- **Ice Evidence Score (0–3)** for 10 south-pole craters. It adds up three clues: Mini-RF inside/outside contrast, a smooth LOLA floor, and Diviner temperature below 110 K. 5 craters reach at least 2. The score means "consistent with ice", not proof of ice.
 - **One radar clue is not enough.** The criterion CPR > 1 and DOP < 0.13 is passed by 1.69% of ice cells and 1.20% of lava cells in C-band.
 
 ## Run it
@@ -42,13 +42,11 @@ python 12_paper.py ; python 14_submission.py
 The website is static: `python -m http.server -d docs`, then open http://localhost:8000. Every number on the site and in the paper comes from `docs/data/*.json`. The full list of numbers with their source keys is in `paper/numbers.md`, and the audit is in `paper/number_audit.md`.
 
 ## Data
-- **NASA Moon:** LRO [Mini-RF](https://science.nasa.gov/mission/lro/mini-rf/), [Diviner](https://pds-geosciences.wustl.edu/missions/lro/diviner.htm), [LOLA](https://pds-geosciences.wustl.edu/missions/lro/lola.htm).
-- **NASA Earth:** [GPM IMERG](https://gpm.nasa.gov/data); MODIS [MOD13A2 NDVI](https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13a2-061), [MOD11A2 LST](https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11a2-061), [MOD08_M3 aerosol](https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD08_M3); [Blue Marble and ASTER relief via GIBS](https://www.earthdata.nasa.gov/gibs); [Planetary Analog Explorer](https://science.nasa.gov/solar-system/analog-explorer/).
-- **NASA targets:** [Artemis III candidate regions](https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/); [PIA15687 Gale crater](https://photojournal.jpl.nasa.gov/catalog/PIA15687); [LROC](https://lroc.sese.asu.edu/).
-- **CSA / NRCan:** [RADARSAT Constellation Mission CEOS-ARD](https://registry.opendata.aws/rcm-ceos-ard/).
-- **ESA:** Copernicus Sentinel-2 ([Sentinel-2 cloudless by EOX](https://s2maps.eu/)), Copernicus DEM.
-- **USGS:** [GMTED2010](https://www.usgs.gov/publications/global-multi-resolution-terrain-elevation-data-2010-gmted2010), [Known Terrestrial Analog Sites](https://catalog.data.gov/dataset/known-terrestrial-analog-sites-for-planetary-science), [IAU Gazetteer](https://planetarynames.wr.usgs.gov).
-- **Site coordinates:** IAU, CGNDB, Wikipedia, OpenStreetMap, USGS (recorded per site in `docs/data/*.json`). Place names: [GeoNames](https://www.geonames.org/).
+- **NASA:** LRO Mini-RF, Diviner and LOLA (PDS Geosciences); MODIS (MOD11A2, MOD13A2, MOD08_M3, MCD12Q1); GPM IMERG; Blue Marble via GIBS; Planetary Analog Explorer.
+- **CSA / NRCan:** RADARSAT Constellation Mission CEOS-ARD.
+- **ESA:** Copernicus Sentinel-2, Copernicus DEM.
+- **USGS:** GMTED2010, Terrestrial Analog Data Portal, IAU Gazetteer.
+- **Site coordinates:** IAU, CGNDB, Wikipedia, OpenStreetMap, USGS (recorded per site).
 
 RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT is an official mark of the Canadian Space Agency. GroundTwin is not endorsed by NASA or any space agency.
 
@@ -61,7 +59,7 @@ RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT 
 - **Temperature over the whole floor.** The cold clue uses the median temperature over the whole floor zone. Cabeus fails it although 17% of its floor stays below 110 K.
 
 ## Use of AI
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.
 
 ## Team
 Team Code Influence, Kazakhstan · GitHub: [zhureswe](https://github.com/zhureswe)

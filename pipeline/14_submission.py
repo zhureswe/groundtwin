@@ -9,7 +9,7 @@ paper = importlib.import_module('12_paper')
 MAX_SUMMARY_WORDS = 150
 SUMMARY = (
     "GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our Analog Engine scores all $n_cells land "
-    "cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven features from NASA data. "
+    "cells on Earth against a lunar south-pole profile and two Mars crater profiles, using seven criteria from NASA data. "
     "For each place it shows what matches, what does not, and what Earth can never reproduce. Tested on known analog sites, "
     "it recognised $bt_mars_k of $bt_mars_n Mars analogs in a blind test. Mangystau in Kazakhstan, the floor of a vanished "
     "sea, ranks in the top $mgs_gale% of Earth's land cells for Gale crater. Second, Canada's RCM radar shares the design of "

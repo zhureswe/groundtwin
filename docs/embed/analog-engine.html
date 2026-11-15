@@ -82,7 +82,8 @@
 
   // places for the worked example: only places with coordinates in our data files
   const PLACES = [];
-  [...A8.official, ...A8.found].forEach((x) => PLACES.push({ name: `${x.name}, ${x.country}`, lat: x.lat, lon: x.lon, tk: x.target }));
+  const disp = (x) => (x.name.includes(x.country) ? x.name : `${x.name}, ${x.country}`);
+  [...A8.famous, ...A8.ours].forEach((x) => PLACES.push({ name: `${disp(x)} (${x.target.startsWith('moon') ? 'Moon' : 'Mars'})`, lat: x.lat, lon: x.lon, tk: x.target }));
   Object.entries(SC.top).forEach(([tk, rows]) => rows.forEach((r) => PLACES.push({ name: `#${r.rank} ${tk.startsWith('moon') ? 'Moon' : 'Mars'} top · ${r.region}`, lat: r.lat, lon: r.lon, tk })));
   (SC.cards || []).forEach((c) => (c.sites || []).forEach((s) => PLACES.push({ name: `${s.name}${c.key === 'mangystau' ? ' (Mangystau)' : ''}`, lat: s.lat, lon: s.lon, tk: c.target })));
   (FA.sites || []).forEach((s) => PLACES.push({ name: `${s.name}${s.country ? ', ' + s.country : ''}`, lat: s.lat, lon: s.lon, tk: s.primary || 'mars_gale' }));
@@ -132,10 +133,10 @@
     </div>
     <div id="calc"></div></section>
 
-  <section class="ae-step"><div class="hud">Step 6 — eight places</div><h2>4 official analog sites + 4 found by GroundTwin (Science mode)</h2>
-    <p class="ae-lead">${esc(A8.rule_official)} ${esc(A8.rule_found)} Nobody picked these by hand.</p>
-    <div class="ae-top">${[['official', 'Official analog sites — listed by NASA or USGS', 'var(--ice)'], ['found', 'Found by GroundTwin — not on any official list', 'var(--mars)']].map(([k, h, col]) =>
-      `<div><h3 style="color:${col}">${h}</h3><ol>${A8[k].map((x) => `<li class="${x.target.startsWith('mars') ? 'mars' : ''}">${esc(x.name)}, ${esc(x.country)} <span class="e-sub">${x.target.startsWith('moon') ? 'Moon' : 'Mars'} · ${ll(x.lat, x.lon)} · <span class="s">S = ${fmt(x.S, 3)}</span> · #${x.position.toLocaleString('en')} · top ${x.top_percent >= 0.1 ? fmt(x.top_percent, 1) : fmt(x.top_percent, 3)}% of land cells${x.listed_by ? ` · listed by ${esc(x.listed_by.startsWith('USGS') ? 'USGS' : x.listed_by)}` : ''}</span></li>`).join('')}</ol></div>`).join('')}
+  <section class="ae-step"><div class="hud">Step 6 — eight places</div><h2>4 famous field analogs + our 4 picks (Science mode)</h2>
+    <p class="ae-lead">${esc(A8.rule_famous)} ${esc(A8.rule_ours)}</p>
+    <div class="ae-top">${[['famous', '4 famous field analogs', 'var(--ice)'], ['ours', 'Our 4 picks', 'var(--mars)']].map(([k, h, col]) =>
+      `<div><h3 style="color:${col}">${h}</h3><ol>${A8[k].map((x) => `<li class="${x.target.startsWith('mars') ? 'mars' : ''}">${esc(disp(x))} <span class="e-sub">${x.target.startsWith('moon') ? 'Moon' : 'Mars'} · ${ll(x.lat, x.lon)} · <span class="s">S = ${fmt(x.S, 3)}</span> · #${x.position.toLocaleString('en')} · top ${x.top_percent >= 0.1 ? fmt(x.top_percent, 1) : fmt(x.top_percent, 3)}% of land cells</span></li>`).join('')}</ol></div>`).join('')}
     </div><p class="note"><a href="analogs.html">See all 8 places with criteria and reasons →</a></p></section>
 
   <section class="ae-step"><div class="hud">Step 7 — did it work?</div><h2>Check on analog sites listed by NASA and USGS</h2>
@@ -148,7 +149,7 @@
 
   <section class="ae-step"><div class="hud">Honest limits</div>
     <ul class="limits"><li>Seven criteria only; target profiles and weights are our documented choice.</li><li>A ${CD}° grid (≈ 50 km) hides small sites.</li>
-      <li>Similarity, not probability — and Earth never reproduces gravity, vacuum or radiation.</li><li>Known analogs are few and cluster in accessible places (e.g. the US Southwest).</li></ul></section>
+      <li>A similarity score — and Earth never reproduces gravity, vacuum or radiation.</li><li>Known analogs are few and cluster in accessible places (e.g. the US Southwest).</li></ul></section>
 
   <section class="ae-step"><div class="hud">Try it yourself</div><h2>Ask the formula about any place</h2>
     <iframe class="scout" src="scout.html?embed=1" title="GroundTwin Scout" loading="lazy"></iframe></section>`;
@@ -163,7 +164,7 @@
     document.getElementById('calc').innerHTML = `<p class="e-sub">${esc(P.name)} · ${ll(P.lat, P.lon)} · grid cell ${ll(c[1], c[0])}</p>
       <div class="tw"><table class="ae"><tr><th>Criterion</th><th class="num">p (place)</th><th class="num">t (target)</th><th class="num">s = 1 − |p − t|</th><th class="num">w</th><th class="num">w · s</th><th></th></tr>${rows}
       <tr class="tot"><td>Total</td><td></td><td></td><td></td><td class="num">${fmt(sw, 1)}</td><td class="num">${fmt(sws, 3)}</td><td></td></tr></table></div>
-      <div class="ae-result"><div><b>${fmt(s, 3)}</b><span>S = ${fmt(sws, 3)} / ${fmt(sw, 1)}</span></div><div><b>${(s * 100).toFixed(1)}%</b><span>match (not a probability)</span></div>
+      <div class="ae-result"><div><b>${fmt(s, 3)}</b><span>S = ${fmt(sws, 3)} / ${fmt(sw, 1)}</span></div><div><b>${(s * 100).toFixed(1)}%</b><span>match (similarity score)</span></div>
       <div><b>#${r.toLocaleString('en')}</b><span>of ${N.toLocaleString('en')} land cells</span></div><div><b>top ${(r / N * 100).toFixed(r / N * 100 >= 0.1 ? 1 : 3)}%</b><span>of Earth's land</span></div></div>`;
   };
   pl.onchange = () => { tg.value = PL[+pl.value].tk in T.targets ? PL[+pl.value].tk : tg.value; calc(); };
