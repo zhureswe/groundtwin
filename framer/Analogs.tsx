@@ -211,8 +211,15 @@ function build(sc: any, ex: any, tg: any, fa: any, ct: any, mg?: any, va?: any) 
             : { place: f.name, features: {}, profile: {}, match: [], partly: [], differ: [] }
         return { ...r, id: f.id === "mangystau" ? "mangystau" : "f-" + f.id, kind: "famous", famous: f, listRank: i + 1, target: f.primary, region: f.name + ", " + f.country, lat: f.lat, lon: f.lon, scored: !!f.scored }
     })
+    // The page shows 8 analogs: 4 famous field analogs + 4 of ours (Mangystau and the formula's best Moon/Mars places).
+    const KNOWN = ["f-atacama", "f-death-valley", "f-devon-island", "f-utah"]
+    const OURS = ["moon-1", "moon-2", "mars-1"]
+    const famous4 = KNOWN.map((id) => famous.find((x: any) => x.id === id)).filter(Boolean).map((x: any, i: number) => ({ ...x, listRank: i + 1 }))
+    const mangy = famous.find((x: any) => x.id === "mangystau")
+    const top3 = OURS.map((id) => items.find((x: any) => x.id === id)).filter(Boolean).map((x: any) => ({ ...x, fRank: x.listRank }))
+    const ours = (mangy ? [mangy] : []).concat(top3).map((x: any, i: number) => ({ ...x, listRank: i + 1 }))
     const cand = mg && mg.rank_vs_mars ? { gale: mg.rank_vs_mars.mars_gale, jezero: mg.rank_vs_mars.mars_jezero, cut: 100 * ((va && va.top_fraction) || 0.1) } : null
-    return { cand, famous, items, bench, targets: tg.targets || {}, nCells: sc.n_cells || 60215, weights: ((tg.modes || {}).science || {}).weights || {}, aiLabel: ex.label || "AI-written from our data" }
+    return { cand, famous: famous4, items: ours.filter((x: any) => x.kind === "top"), ours, bench, targets: tg.targets || {}, nCells: sc.n_cells || 60215, weights: ((tg.modes || {}).science || {}).weights || {}, aiLabel: ex.label || "AI-written from our data" }
 }
 
 // ---------- helpers ----------
@@ -305,7 +312,7 @@ function Card({ it, href }: any) {
             <div style={{ minWidth: 0 }}>
                 <div style={{ fontFamily: HEAD, fontSize: 17, fontWeight: 600, lineHeight: 1.25, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.region}</div>
                 <div style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {it.kind === "famous" ? it.famous.tag + (it.scored ? " · top " + fmtPct(it.topPercent) + "%" : "") : (it.near ? "near " + it.near + " · " : "") + fmtLL(it.lat, it.lon) + " · top " + fmtPct(it.topPercent) + "%"}
+                    {it.kind === "famous" ? it.famous.tag + (it.scored ? " · top " + fmtPct(it.topPercent) + "%" : "") : metaFor(it.target).short.toUpperCase() + " · " + (it.near ? "near " + it.near + " · " : "") + "top " + fmtPct(it.topPercent) + "%"}
                 </div>
                 {it.scored === false ? <div style={{ fontSize: 12, color: C.subtle, marginTop: 8 }}>Not scored: {it.famous.reason}</div> : <MiniBars r={it} color={m.color} />}
             </div>
@@ -365,8 +372,8 @@ export function AnalogList(props: any) {
                         </a>
                     ) : null}
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 26 }}>
-                        {famous.length ? tabBtn("famous", "Famous field analogs", "10 places agencies use · our score") : null}
-                        {tabBtn("formula", "Our formula's top 10", "best place per country · 5 Moon + 5 Mars")}
+                        {famous.length ? tabBtn("famous", "4 famous field analogs", "places agencies use · our score") : null}
+                        {tabBtn("formula", "Our 4 picks", "Mangystau + our formula's best · Moon & Mars")}
                     </div>
                     {tab === "famous" && famous.length ? (
                         <>
@@ -381,34 +388,18 @@ export function AnalogList(props: any) {
                         </>
                     ) : (
                         <>
-                            <div style={{ display: "grid", gridTemplateColumns: two ? "1fr 1fr" : "1fr", gap: two ? 28 : 36 }}>
-                                {["moon", "mars"].map((side) => {
-                                    const list = d.items.filter((x: any) => metaFor(x.target).side === side)
-                                    if (!list.length) return null
-                                    const m = metaFor(list[0].target)
-                                    const label = ((d.targets[list[0].target] || {}).label || m.head).replace(" - ", " · ")
-                                    return (
-                                        <div key={side}>
-                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-                                                <Chip color={m.color}>{label}</Chip>
-                                                <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle }}>top 5</span>
-                                            </div>
-                                            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                                                {list.map((it: any) => (
-                                                    <Card key={it.id} it={it} href={path + "?id=" + it.id} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                            <div style={{ display: "grid", gridTemplateColumns: two ? "1fr 1fr" : "1fr", gap: 10 }}>
+                                {d.ours.map((it: any) => (
+                                    <Card key={it.id} it={it} href={path + "?id=" + it.id} />
+                                ))}
                             </div>
                             <p style={{ margin: "22px 0 0", fontSize: 13, lineHeight: 1.55, color: C.muted, maxWidth: 820 }}>
-                                The best-scoring 0.5° cell in each country (no country twice, at least 600 km apart), chosen by the score alone; the rank is the place among all {fmtInt(d.nCells)} land cells. Without the one-per-country rule, three of the five Moon picks fall in Xinjiang, China. Place names: nearest town and province from GeoNames.
+                                Mangystau is our Mars case study. The other three are the best-scoring 0.5° cells of our formula for the Moon and for Mars (best place per country, at least 600 km apart, chosen by the score alone); the rank is the place among all {fmtInt(d.nCells)} land cells. Place names: nearest town and province from GeoNames.
                             </p>
                             {d.bench.length ? (
                                 <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid " + C.line, display: "flex", flexWrap: "wrap", gap: "10px 22px", alignItems: "baseline" }}>
-                                    <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em" }}>For comparison · not in the top 10</span>
-                                    {d.bench.map((b: any) => (
+                                    <span style={{ fontFamily: MONO, fontSize: 11, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.06em" }}>For comparison · official training sites</span>
+                                    {d.bench.filter((b: any) => b.key !== "mangystau").map((b: any) => (
                                         <a key={b.id} href={path + "?id=" + b.id} style={{ color: C.text, textDecoration: "none", fontSize: 14, borderBottom: "1px solid " + C.line, paddingBottom: 2 }}>
                                             {b.name} <span style={{ color: C.subtle, fontFamily: MONO, fontSize: 11 }}>{b.rows[0] ? "top " + fmtPct(b.rows[0].topPercent) + "%" : ""}</span> →
                                         </a>
@@ -833,14 +824,14 @@ export default function AnalogDetail(props: any) {
         const idx = d.items.indexOf(it)
         const prevIt = d.items[(idx - 1 + d.items.length) % d.items.length]
         const nextIt = d.items[(idx + 1) % d.items.length]
-        const nm = (x: any) => ({ id: x.id, short: metaFor(x.target).short + " #" + x.listRank })
+        const nm = (x: any) => ({ id: x.id, short: x.region })
         const kmEW = Math.round(55.6 * cosd(it.lat))
         return (
             <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
                 <NavRow prev={nm(prevIt)} next={nm(nextIt)} path={path} listPath={listPath} />
                 <div style={{ display: "grid", gridTemplateColumns: wide ? "minmax(0,1.5fr) minmax(0,1fr)" : "1fr", gap: 28, marginTop: 36, alignItems: "end" }}>
                     <div>
-                        <Chip color={m.color}>{targetLabel + " · #" + it.listRank + " of 5"}</Chip>
+                        <Chip color={m.color}>{targetLabel + " · our formula's #" + (it.fRank || it.listRank) + " pick"}</Chip>
                         <h1 style={{ fontFamily: HEAD, fontSize: wide ? 56 : mid ? 42 : 34, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{it.region}</h1>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginTop: 16, fontFamily: MONO, fontSize: 12, color: C.muted }}>
                             {it.near ? <span>near {it.near}</span> : null}
@@ -884,7 +875,7 @@ export default function AnalogDetail(props: any) {
                 </Section>
 
                 <Sources target={it.target} site="" extra={[["Place name: GeoNames (nearest town and province)", "https://www.geonames.org/"]]} />
-                <Section kicker="More analogs" title="Next in the top 10">
+                <Section kicker="More analogs" title="More of our picks">
                     <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 10 }}>
                         <Card it={prevIt} href={path + "?id=" + prevIt.id} />
                         <Card it={nextIt} href={path + "?id=" + nextIt.id} />
@@ -900,7 +891,7 @@ export default function AnalogDetail(props: any) {
         <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
             <NavRow path={path} listPath={listPath} />
             <div style={{ marginTop: 36 }}>
-                <Chip color={m.color}>{it.key === "mangystau" && d.cand ? "Candidate Mars analog · flagged by our formula" : "vs " + targetLabel + " · not in the top 10"}</Chip>
+                <Chip color={m.color}>{it.key === "mangystau" && d.cand ? "Candidate Mars analog · flagged by our formula" : "vs " + targetLabel + " · official training site"}</Chip>
                 <h1 style={{ fontFamily: HEAD, fontSize: wide ? 52 : mid ? 40 : 32, fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{it.name}</h1>
                 <div style={{ fontSize: 15, color: C.muted, marginTop: 12, lineHeight: 1.55, maxWidth: 860 }}>{it.key === "mangystau" && d.cand ? "Not a known test site yet. Our formula puts it in the top " + d.cand.gale + "% of Earth's land for Gale crater and the top " + d.cand.jezero + "% for Jezero crater, inside the top " + d.cand.cut + "% band our blind test uses to recognise known analogs. That makes it a candidate worth field work, not a proven analog." : String(it.title).split(":")[0] + " · shown with its real rank, for comparison"}</div>
             </div>
@@ -956,7 +947,7 @@ export default function AnalogDetail(props: any) {
                 </Section>
             </div>
             <Sources target={it.target} site="" extra={it.key === "mangystau" ? [["Mars Field Twin: Mangystau data and method (GroundTwin)", "https://zhureswe.github.io/groundtwin/#mangystau"]] : []} />
-            <Section kicker="Back to the list" title="The top 10">
+            <Section kicker="Back to the list" title="Our picks">
                 <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 10 }}>
                     {d.items.filter((x: any) => x.target === it.target).slice(0, 2).map((x: any) => (
                         <Card key={x.id} it={x} href={path + "?id=" + x.id} />
