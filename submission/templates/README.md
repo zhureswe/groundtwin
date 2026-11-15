@@ -59,7 +59,7 @@ RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT 
 - **Temperature over the whole floor.** The cold clue uses the median temperature over the whole floor zone. Cabeus fails it although $cabeus_cold% of its floor stays below 110 K.
 
 ## Use of AI
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic) as a tool for code, data processing and drafting and editing English texts. The idea, methods, decisions, result checks and design are ours. No AI-generated images or videos.
 
 ## Team
 Team Code Influence, Kazakhstan · GitHub: [zhureswe](https://github.com/zhureswe)
