@@ -41,7 +41,7 @@
       <form class="gta-form"><input class="gta-in" placeholder="Ask a question, or “compare Mangystau and MDRS”" autocomplete="off" aria-label="Your question"><button class="gta-send" type="submit">Ask</button></form>
       <footer class="gta-foot">${FOOT}</footer>
     </section>`;
-  const mount = () => document.body.appendChild(root);
+  const mount = () => { document.body.appendChild(root); if (!PAGE_MODE) document.documentElement.classList.add('gta-has-launch'); };   // reserve space for the launcher
   document.body ? mount() : document.addEventListener('DOMContentLoaded', mount);
   const $ = (s) => root.querySelector(s);
 

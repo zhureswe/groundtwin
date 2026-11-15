@@ -7,7 +7,7 @@
 #gt-ask-root [hidden] { display: none !important; }
 #gt-ask-root button, #gt-ask-root input, #gt-ask-root select { font: inherit; color: inherit; }
 
-.gta-launch { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 2147483000; display: flex; align-items: center; gap: 10px;
+.gta-launch { position: fixed; left: calc(20px + env(safe-area-inset-left, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 2147483000; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px 8px 8px; border-radius: 999px; border: 1px solid rgba(79,209,232,.5); background: rgba(5,7,13,.92); cursor: pointer;
   box-shadow: 0 0 0 1px rgba(79,209,232,.15), 0 0 24px rgba(79,209,232,.35), 0 8px 24px rgba(0,0,0,.5); transition: transform .15s; }
 .gta-launch:hover { transform: translateY(-2px); }
@@ -17,7 +17,7 @@
 .gta-head .gta-orb { width: 34px; height: 34px; font-size: 15px; animation: none; }
 @keyframes gta-pulse { 50% { box-shadow: 0 0 26px rgba(79,209,232,.9); } }
 
-.gta-panel { position: fixed; right: 18px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 2147483000; width: min(410px, calc(100vw - 36px));
+.gta-panel { position: fixed; left: calc(20px + env(safe-area-inset-left, 0px)); bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform-origin: bottom left; z-index: 2147483000; width: min(410px, calc(100vw - 40px));
   height: min(640px, calc(100vh - 110px)); display: flex; flex-direction: column; overflow: hidden; border-radius: 16px;
   background: linear-gradient(rgba(79,209,232,.035) 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, rgba(79,209,232,.035) 1px, transparent 1px) 0 0 / 28px 28px, var(--gta-bg);
   border: 1px solid var(--gta-line); box-shadow: 0 0 0 1px rgba(79,209,232,.12), 0 18px 48px rgba(0,0,0,.6); animation: gta-in .18s ease; }
@@ -78,8 +78,12 @@
 .gta-send { padding: 0 16px; border-radius: 10px; border: 0; background: var(--gta-ice); color: #04131a !important; font-weight: 600; cursor: pointer; min-height: 36px; }
 .gta-foot { padding: 0 12px 10px; font: 10.5px/1.4 var(--gta-mono); color: var(--gta-muted); background: rgba(11,17,28,.9); flex: none; }
 
+/* keep page footers and map credits clear of the bottom-left launcher */
+.gta-has-launch .foot, .gta-has-launch .e-foot { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
+.gta-has-launch .cesium-viewer-bottom { left: auto !important; right: 6px; }
+.gta-has-launch .leaflet-bottom.leaflet-left { margin-bottom: 0; }
 @media (max-width: 480px) {
-  .gta-panel { inset: 0; right: 0; bottom: 0; width: 100%; height: 100%; height: 100dvh; border-radius: 0; border: 0; }
+  .gta-panel { inset: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; height: 100dvh; border-radius: 0; border: 0; }
   .gta-open .gta-launch { display: none; }
   .gta-launch-t { font-size: 13px; }
 }
