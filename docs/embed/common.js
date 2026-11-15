@@ -3,8 +3,16 @@
 'use strict';
 (() => {
   const params = new URLSearchParams(location.search);
-  if (params.get('embed') === '1') document.documentElement.classList.add('is-embed');   // hide header/footer inside Framer
-  else {   // standalone page: add the Ask GroundTwin guide (inside Framer it is added once for the whole site)
+  if (params.get('embed') === '1') {
+    document.documentElement.classList.add('is-embed');   // hide header/footer inside Framer
+    // Tell the Framer page how tall we are, so the frame grows to fit and the page (not the frame) scrolls.
+    if (window.parent !== window) {
+      let lastH = 0;
+      const send = () => { const b = document.body, h = Math.ceil(b.getBoundingClientRect().bottom + window.scrollY + (parseFloat(getComputedStyle(b).marginBottom) || 0)); if (Math.abs(h - lastH) > 2) { lastH = h; window.parent.postMessage({ type: 'gt-height', h, page: location.pathname }, '*'); } };
+      const go = () => { send(); if (window.ResizeObserver) new ResizeObserver(send).observe(document.body); setInterval(send, 1500); };
+      if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
+    }
+  } else {   // standalone page: add the Ask GroundTwin guide (inside Framer it is added once for the whole site)
     const s = document.createElement('script'); s.src = '../assets/ask.js'; s.defer = true; document.head.appendChild(s);
   }
   const FEAT = { aridity: 'Dry', barren: 'No plants', thermal_range: 'Day–night swing', cold: 'Cold', dust: 'Dust', roughness: 'Rough terrain', elevation: 'High altitude' };
