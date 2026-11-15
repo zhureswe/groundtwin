@@ -75,3 +75,4 @@ html, body { overflow-x: hidden; }
 @media (max-width: 400px) { .e-bar { grid-template-columns: 6.4em minmax(0, 1fr) 2.6em; } }
 .map-card { top: 64px; }
 .is-embed .map-card, #pane2d .map-card { top: 10px; }
+.scout-frame { display: block; width: 100%; height: min(1100px, 90vh); min-height: 640px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }

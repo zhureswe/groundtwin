@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GroundTwin Scout</title>
+<!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. Embeddable: add ?embed=1 to hide header/footer.
+     Scout computes the Analog Engine formula live in the browser from ../data/analog_grid.json and ../data/targets.json.
+     Lunar crater answers come from ../data/moon_targets.json. Place names: our data files first, then OpenStreetMap Nominatim. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="embed.css">
+<style>
+  .sc-lead { color: #c9d3e3; max-width: 860px; }
+  .sc-ctrl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 14px 0 10px; }
+  .sc-ctrl label { font-family: var(--font-mono); font-size: .74rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: flex; gap: 8px; align-items: center; }
+  .sc-ctrl select { max-width: 100%; }
+  .sc-chat { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); display: flex; flex-direction: column; min-height: 520px; }
+  .sc-log { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 70vh; }
+  .msg { max-width: 92%; padding: 12px 14px; border-radius: 14px; font-size: .93rem; overflow-wrap: anywhere; }
+  .msg.user { align-self: flex-end; background: rgba(79,209,232,.14); border: 1px solid rgba(79,209,232,.35); }
+  .msg.bot { align-self: flex-start; background: var(--surface2); border: 1px solid var(--line); width: 92%; }
+  .msg.bot p { margin: 0 0 8px; }
+  .msg .hint { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); }
+  .sc-form { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); }
+  .sc-form input { flex: 1; min-width: 0; background: #0a0f1a; color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font: inherit; }
+  .sc-form input:focus { outline: none; border-color: var(--ice); box-shadow: var(--glow); }
+  .sc-form button { background: var(--ice); color: #04131a; border: 0; border-radius: 12px; padding: 0 18px; font: 600 .95rem var(--font-body); cursor: pointer; }
+  .sc-ex { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 12px; }
+  .sc-ex button { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 6px 11px; font: .8rem var(--font-body); cursor: pointer; }
+  .sc-ex button:hover { color: var(--text); border-color: var(--ice); }
+  .res-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  .res-name { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; }
+  .res-sub { font-family: var(--font-mono); font-size: .74rem; color: var(--muted); }
+  .res-score { text-align: right; }
+  .res-pct { font-family: var(--font-head); font-weight: 700; font-size: 2.1rem; line-height: 1; color: var(--ice); }
+  .res-pct.mars { color: var(--mars); }
+  .verdict { display: inline-block; margin-top: 4px; font-size: .78rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); }
+  .v1 { color: var(--yes); border-color: rgba(111,207,151,.5); } .v2 { color: #b8e986; } .v3 { color: #f0c35e; } .v4 { color: var(--no); }
+  .kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+  .kv div { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+  .kv b { display: block; font-family: var(--font-head); font-size: 1.05rem; }
+  .kv span { font-family: var(--font-mono); font-size: .68rem; color: var(--muted); text-transform: uppercase; }
+  .cmp { width: 100%; border-collapse: collapse; font-size: .86rem; }
+  .cmp th, .cmp td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  .cmp th { color: var(--muted); font-weight: 600; }
+  .tw { overflow-x: auto; }
+  .clue { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 6px; margin: 4px 0; font-size: .9rem; }
+  details.how { margin-top: 8px; font-size: .84rem; color: var(--muted); }
+  details.how summary { cursor: pointer; color: var(--ice); }
+  .tops li { margin: 3px 0; }
+  @media (max-width: 600px) { .kv { grid-template-columns: repeat(2, minmax(0, 1fr)); } .msg.bot { width: 100%; max-width: 100%; } .res-score { text-align: left; } }
+</style>
+</head>
+<body>
+<header class="e-head"><a class="brand" href="../index.html" target="_top">GroundTwin</a><span class="e-title">Scout · ask the formula</span></header>
+<main class="e-wrap">
+  <div class="hud">Prototype · live calculation</div>
+  <h1 style="font-size:clamp(1.7rem,4.5vw,2.8rem)">GroundTwin Scout</h1>
+  <p class="sc-lead">Type any place on Earth or coordinates. Scout runs our Analog Engine formula on the spot — it is not a fixed list — and tells you how well that place matches a Moon base site or a Mars landing site. Ask about a lunar south-pole crater to see its ice evidence. Scout is not a chatbot that makes things up: every number is computed from our data.</p>
+  <div class="sc-ctrl">
+    <label>Target <select id="tgt"></select></label>
+    <label>Mission need <select id="mode"></select></label>
+  </div>
+  <section class="sc-chat" aria-label="GroundTwin Scout">
+    <div class="sc-log" id="log" aria-live="polite"></div>
+    <div class="sc-ex" id="ex"></div>
+    <form class="sc-form" id="f"><input id="q" placeholder="e.g. How good is the Atacama Desert for a Moon base?" autocomplete="off" aria-label="Your question"><button>Ask</button></form>
+  </section>
+  <p class="note">Match % = weighted similarity on our 7 criteria (S × 100). It is <b>not</b> a probability that a base can be built there. Rank is among all <span id="ncells">…</span> land cells (<span id="celldeg">…</span>° grid, Antarctica excluded). Place names: our data files first, otherwise OpenStreetMap Nominatim geocoding.</p>
+</main>
+<footer class="e-foot">Data: NASA GPM IMERG, MODIS (NDVI, LST, aerosol), DEM; NASA LRO Mini-RF, Diviner, LOLA (PDS). Geocoding © OpenStreetMap contributors (Nominatim). Not endorsed by NASA.</footer>
+<script src="common.js"></script>
+<script>
+'use strict';
+(async () => {
+  const { FEAT, esc, fmt, ll, load, bars, buttons } = window.GTE;
+  const log = document.getElementById('log'), q = document.getElementById('q');
+  const selT = document.getElementById('tgt'), selM = document.getElementById('mode');
+  let G, T, MT, SC, FA, V, EC, MG;
+  try {
+    [G, T, MT, SC, FA, V, EC, MG] = await Promise.all(['analog_grid', 'targets', 'moon_targets', 'showcase', 'famous_analogs', 'validation', 'earth_cpr', 'mangystau'].map(load));
+  } catch (e) { log.innerHTML = `<div class="msg bot">Could not load data: ${esc(e.message)}</div>`; return; }
+
+  const FK = G.features, N = G.cells.length, CD = G.cell_deg;
+  document.getElementById('ncells').textContent = N.toLocaleString('en'); document.getElementById('celldeg').textContent = CD;
+  Object.entries(T.targets).forEach(([k, v]) => selT.add(new Option(v.label, k)));
+  Object.entries(T.modes).forEach(([k, v]) => selM.add(new Option(v.label, k)));
+  selT.value = 'moon_south_pole'; selM.value = 'science';
+
+  // ---- grid index & scoring ----
+  const key = (lat, lon) => `${(Math.floor(lat / CD) * CD + CD / 2).toFixed(2)},${(Math.floor(lon / CD) * CD + CD / 2).toFixed(2)}`;
+  const IDX = new Map(G.cells.map((c, i) => [`${c[1].toFixed(2)},${c[0].toFixed(2)}`, i]));   // cells are [lon, lat, p1..p7]
+  const featsOf = (c) => Object.fromEntries(FK.map((k, j) => [k, c[2 + j]]));
+  const S = (f, tk, mk) => { const p = T.targets[tk].profile, w = T.modes[mk].weights; let n = 0, d = 0;
+    FK.forEach((k) => { n += (w[k] || 0) * (1 - Math.abs(f[k] - p[k])); d += (w[k] || 0); }); return d ? n / d : 0; };
+  const cache = {};
+  const sorted = (tk, mk) => cache[tk + mk] || (cache[tk + mk] = (() => {
+    const a = new Float64Array(N); G.cells.forEach((c, i) => { a[i] = S(featsOf(c), tk, mk); }); return { a, s: Float64Array.from(a).sort().reverse() }; })());
+  const rankOf = (s, tk, mk) => { const arr = sorted(tk, mk).s; let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] > s + 1e-12) lo = m + 1; else hi = m; } return lo + 1; };
+  const cellNear = (lat, lon) => {
+    const i = IDX.get(key(lat, lon)); if (i != null) return { i, exact: true };
+    for (const dl of [-CD, 0, CD]) for (const dn of [-CD, 0, CD]) { const j = IDX.get(key(lat + dl, lon + dn)); if (j != null) return { i: j, exact: false }; }
+    return null;
+  };
+  const verdict = (top) => top <= 1 ? ['Excellent analog', 'v1'] : top <= 10 ? ['Strong analog', 'v2'] : top <= 25 ? ['Moderate analog', 'v3'] : ['Weak analog', 'v4'];
+  const topTxt = (x) => `top ${x >= 0.1 ? x.toFixed(1) : x.toFixed(3)}%`;
+
+  // ---- gazetteer: only places with coordinates in our data files ----
+  const GAZ = [];
+  const add = (name, lat, lon, src, group) => { if (name && isFinite(lat) && isFinite(lon)) GAZ.push({ name, lat, lon, src, group }); };
+  (FA.sites || []).forEach((s) => add(s.name, s.lat, s.lon, s.coord_source));
+  (V.known_sites || []).forEach((s) => add(s.name, s.lat, s.lon, s.coord_source));
+  (SC.cards || []).forEach((c) => (c.sites || []).forEach((s) => add(s.name, s.lat, s.lon, s.coord_source, c.key)));
+  (MG.places || []).forEach((s) => add(s.name, s.lat, s.lon, s.coord_source, 'mangystau'));
+  (EC.sites || []).forEach((s) => add(s.site.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase()), s.lat, s.lon, 'earth_cpr.json'));
+  const groups = { mangystau: { name: 'Mangystau, Kazakhstan (6 field sites)', members: () => GAZ.filter((g) => g.group === 'mangystau') } };
+  const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const STOP = /\b(how|good|is|the|a|an|for|as|to|of|be|would|could|what|about|score|rate|check|analog|analogue|place|site|moon|lunar|base|mars|martian|gale|jezero|crater|landing|rover|rovers|testing|test|tests|build|building|construction|habitat|ice|water|resources|science|mission|training|good|best|candidate|please|me|tell|in|on|at|desert)\b/g;
+  const findLocal = (text) => {
+    const t = norm(text); if (!t) return null;
+    if (/\bmang(y|i)?stau\b|\bmangyshlak\b/.test(t)) return { group: 'mangystau' };
+    let best = null;
+    for (const g of GAZ) { const n = norm(g.name); const short = norm(g.name.split(/[(,/]/)[0]);
+      if (short.length >= 4 && (t.includes(short) || short.includes(t))) { if (!best || short.length > best.len) best = { g, len: short.length }; }
+      else if (n.length >= 4 && t.includes(n)) { if (!best || n.length > best.len) best = { g, len: n.length }; } }
+    return best ? { place: best.g } : null;
+  };
+  const geocode = async (text) => {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(text)}`, { headers: { 'Accept-Language': 'en' } });
+    if (!r.ok) throw new Error('geocoding failed'); const j = await r.json(); if (!j.length) return null;
+    return { name: j[0].display_name.split(',').slice(0, 3).join(','), lat: +j[0].lat, lon: +j[0].lon, src: 'OpenStreetMap Nominatim' };
+  };
+  const parseCoords = (text) => {
+    const m = text.match(/(-?\d{1,2}(?:\.\d+)?)\s*°?\s*([NSns])?\s*[,;\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*°?\s*([EWew])?/);
+    if (!m) return null; let lat = +m[1], lon = +m[3];
+    if (m[2] && /s/i.test(m[2])) lat = -Math.abs(lat); if (m[4] && /w/i.test(m[4])) lon = -Math.abs(lon);
+    if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return null; return { name: ll(lat, lon), lat, lon, src: 'your coordinates' };
+  };
+
+  // ---- intent ----
+  const intent = (text) => {
+    const t = text.toLowerCase(); let tk = selT.value, mk = selM.value;
+    let hasT = true;
+    if (/\bjezero\b/.test(t)) tk = 'mars_jezero'; else if (/\b(mars|martian|gale)\b/.test(t)) tk = 'mars_gale'; else if (/\b(moon|lunar)\b/.test(t)) tk = 'moon_south_pole'; else hasT = false;
+    if (/\b(rover|rovers|drive|driving|operations?)\b/.test(t)) mk = 'operations';
+    else if (/\b(build|building|construct|construction|habitat)\b/.test(t)) mk = 'construction';
+    else if (/\b(ice|water|resources?|cold traps?)\b/.test(t)) mk = 'resources';
+    else if (/\bscience\b/.test(t) || hasT) mk = 'science';   // naming a target without a mission need means the default (Science)
+    selT.value = tk; selM.value = mk; return { tk, mk };
+  };
+
+  // ---- answers ----
+  const say = (html, who = 'bot') => { const d = document.createElement('div'); d.className = `msg ${who}`; d.innerHTML = html; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
+  const evalPlace = (pl, tk, mk) => {
+    if (pl.group) { const ms = groups[pl.group].members(); const cells = ms.map((m) => cellNear(m.lat, m.lon)).filter(Boolean);
+      if (!cells.length) return null;
+      const cellsF = cells.map((c) => featsOf(G.cells[c.i]));
+      const f = Object.fromEntries(FK.map((k) => [k, cellsF.reduce((a, x) => a + x[k], 0) / cellsF.length]));
+      const lat = ms.reduce((a, m) => a + m.lat, 0) / ms.length, lon = ms.reduce((a, m) => a + m.lon, 0) / ms.length;
+      return { name: groups[pl.group].name, lat, lon, f, cellsF, src: '6 field-site cells (score = mean, rank = median, as on the Analogs page; coordinates from Wikipedia / OpenStreetMap)', exact: true, n: cells.length }; }
+    const c = cellNear(pl.lat, pl.lon); if (!c) return { none: true, name: pl.name, lat: pl.lat, lon: pl.lon };
+    return { name: pl.name, lat: pl.lat, lon: pl.lon, f: featsOf(G.cells[c.i]), src: pl.src, exact: c.exact, n: 1 };
+  };
+  const scoreOf = (r, tk, mk) => {
+    if (!r.cellsF) { const s = S(r.f, tk, mk); return { s, rank: rankOf(s, tk, mk) }; }
+    const ss = r.cellsF.map((f) => S(f, tk, mk)), ps = ss.map((x) => rankOf(x, tk, mk) - 1).sort((a, b) => a - b), n = ps.length;
+    const med = n % 2 ? ps[(n - 1) / 2] : (ps[n / 2 - 1] + ps[n / 2]) / 2;
+    return { s: ss.reduce((a, x) => a + x, 0) / n, rank: Math.floor(med) + 1 };   // same rule as the Analogs page: mean S, median rank of the cells
+  };
+  const scoreBlock = (r, tk, mk) => {
+    const { s, rank } = scoreOf(r, tk, mk), top = rank / N * 100, [vt, vc] = verdict(top), prof = T.targets[tk].profile, mars = tk.startsWith('mars');
+    const parts = FK.map((k) => [k, 1 - Math.abs(r.f[k] - prof[k])]);
+    const yes = parts.filter((p) => p[1] >= 0.8).map((p) => FEAT[p[0]]), part = parts.filter((p) => p[1] >= 0.5 && p[1] < 0.8).map((p) => FEAT[p[0]]), no = parts.filter((p) => p[1] < 0.5).map((p) => FEAT[p[0]]);
+    return { s, rank, top, html: `
+      <div class="res-head"><div><div class="res-name">${esc(r.name)}</div><div class="res-sub">${ll(r.lat, r.lon)} · ${esc(T.targets[tk].label)} · ${esc(T.modes[mk].label)}${r.exact ? '' : ' · nearest land cell'}</div></div>
+      <div class="res-score"><div class="res-pct ${mars ? 'mars' : ''}">${(s * 100).toFixed(1)}%</div><span class="verdict ${vc}">${vt}</span></div></div>
+      <div class="kv"><div><b>${fmt(s, 3)}</b><span>Score S</span></div><div><b>#${rank.toLocaleString('en')}</b><span>of ${N.toLocaleString('en')} cells</span></div><div><b>${topTxt(top)}</b><span>of Earth's land</span></div></div>
+      ${bars(r.f, prof)}
+      <p style="margin-top:8px"><b style="color:var(--yes)">Matches:</b> ${yes.join(', ') || '—'} · <b style="color:#f0c35e">Partly:</b> ${part.join(', ') || '—'} · <b style="color:var(--no)">Differs:</b> ${no.join(', ') || '—'}</p>
+      <p><b>What Earth cannot reproduce:</b> ${esc((T.targets[tk].cannot || []).join(', '))}.</p>
+      ${buttons(r.lat, r.lon, tk)}
+      <details class="how"><summary>How was this computed?</summary>
+        s<sub>i</sub> = 1 − |p<sub>i</sub> − t<sub>i</sub>| for each criterion (p = how extreme the place is on Earth, 0–1 percentile; t = target profile); S = Σ w<sub>i</sub>s<sub>i</sub> / Σ w<sub>i</sub>.
+        Weights for "${esc(T.modes[mk].label)}": ${FK.map((k) => `${FEAT[k]} ${T.modes[mk].weights[k]}`).join(' · ')}. Location source: ${esc(r.src)}. Grid cell 0.5°.
+        Verdict labels are ours: top 1% excellent, top 10% strong, top 25% moderate, otherwise weak. Grid values are stored rounded to 3 decimals, so a rank can differ by a few places from the pipeline output.</details>` };
+  };
+  const answerPlace = async (text) => {
+    const { tk, mk } = intent(text);
+    const pl = await resolve(text); if (!pl) return say(`<p>I couldn't find that place. Try a name (e.g. <i>Atacama Desert</i>, <i>Death Valley</i>, <i>Mangystau</i>) or coordinates like <i>44.36, 51.56</i>.</p>`);
+    const r = evalPlace(pl, tk, mk);
+    if (!r || r.none) return say(`<p><b>${esc(pl.name)}</b> (${ll(pl.lat, pl.lon)}) has no land cell in our grid — it is ocean, Antarctica (excluded) or outside 60°S–90°N.</p>`);
+    say(scoreBlock(r, tk, mk).html);
+  };
+  const resolve = async (text) => {
+    const c = parseCoords(text); if (c) return c;
+    const loc = findLocal(text); if (loc) return loc.group ? loc : loc.place;
+    const clean = text.replace(STOP, ' ').replace(/[?!.]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (clean.length < 3) return null;
+    const loc2 = findLocal(clean); if (loc2) return loc2.group ? loc2 : loc2.place;
+    try { return await geocode(clean); } catch { return null; }
+  };
+  const crater = (text) => { const t = norm(text); return (MT.targets || []).filter((x) => x.ies != null).sort((a, b) => b.name.length - a.name.length).find((x) => t.includes(norm(x.name))); };
+  const answerCrater = (c) => {
+    const ratio = c.cpr_in / c.cpr_out, ok = (b) => (b ? '✅' : '❌');
+    say(`<div class="res-head"><div><div class="res-name">${esc(c.name)} — lunar south pole</div><div class="res-sub">${fmt(Math.abs(c.lat), 2)}°S, ${fmt(c.lon, 2)}°E · ${esc(c.kind || '')}</div></div>
+      <div class="res-score"><div class="res-pct">${c.ies} / 3</div><span class="verdict ${c.ies >= 3 ? 'v1' : c.ies === 2 ? 'v2' : c.ies === 1 ? 'v3' : 'v4'}">ice evidence score</span></div></div>
+      <div class="clue"><span>${ok(c.clues.radar)}</span><span><b>Radar (Mini-RF):</b> CPR inside ${fmt(c.cpr_in)} vs outside ${fmt(c.cpr_out)} → ×${fmt(ratio)} (needs > ${MT.ratio_threshold})</span></div>
+      <div class="clue"><span>${ok(c.clues.cold)}</span><span><b>Cold (Diviner):</b> median floor T<sub>max</sub> ${fmt(c.tmax_k, 0)} K (needs < ${MT.cold_threshold_k} K) · ${fmt(c.frac_floor_below_110k * 100, 0)}% of the floor below 110 K</span></div>
+      <div class="clue"><span>${ok(c.clues.smooth)}</span><span><b>Smooth floor (LOLA):</b> median slope ${fmt(c.slope_deg, 1)}° (needs < ${fmt(MT.slope_threshold_deg, 1)}°)</span></div>
+      <p style="margin-top:8px">${c.ies >= 2 ? 'Consistent with ice — a candidate worth a closer look for a base near ice.' : 'Weak ice evidence from our three clues.'} This is an evidence score, not a probability, and not proof of ice. On Earth we found that one radar clue alone cannot separate ice from lava, so we combine three.</p>
+      <div class="e-btns"><a class="e-btn" href="https://trek.nasa.gov/moon/" target="_blank" rel="noopener">Open NASA Moon Trek ↗</a></div>`);
+  };
+  const answerTop = (text) => {
+    const { tk, mk } = intent(text); const { a } = sorted(tk, mk);
+    const idx = Array.from(a.keys()).sort((i, j) => a[j] - a[i]); const out = []; const minKm = 600;
+    const dist = (p, q) => { const R = 6371, r = Math.PI / 180, dl = (q[1] - p[1]) * r, dn = (q[0] - p[0]) * r; const h = Math.sin(dl / 2) ** 2 + Math.cos(p[1] * r) * Math.cos(q[1] * r) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
+    for (const i of idx) { const c = G.cells[i]; if (out.every((o) => dist(o, c) >= minKm)) out.push(c); if (out.length === 5) break; }
+    say(`<p><b>Top 5 land cells right now</b> for <i>${esc(T.targets[tk].label)}</i> · <i>${esc(T.modes[mk].label)}</i> (computed live, at least ${minKm} km apart):</p>
+      <ol class="tops">${out.map((c) => `<li>${ll(c[1], c[0])} — match <b>${(S(featsOf(c), tk, mk) * 100).toFixed(1)}%</b> · <a href="${window.GTE.gearth ? '' : ''}https://earth.google.com/web/@${c[1]},${c[0]},800a,60000d,35y,0h,0t,0r" target="_blank" rel="noopener">Google Earth ↗</a></li>`).join('')}</ol>
+      <p class="hint">Change the target or mission need above and ask again — the list is recomputed from the formula, not stored.</p>`);
+  };
+  const answerCompare = async (a, b, text) => {
+    const { tk, mk } = intent(text); const [pa, pb] = await Promise.all([resolve(a), resolve(b)]);
+    if (!pa || !pb) return say(`<p>I couldn't find ${!pa ? `"${esc(a)}"` : `"${esc(b)}"`}. Try another name or coordinates.</p>`);
+    const ra = evalPlace(pa, tk, mk), rb = evalPlace(pb, tk, mk);
+    if (!ra || ra.none || !rb || rb.none) return say('<p>One of these points has no land cell in our grid (ocean or Antarctica).</p>');
+    const oa = scoreOf(ra, tk, mk), ob = scoreOf(rb, tk, mk), sa = oa.s, sb = ob.s, ka = oa.rank, kb = ob.rank, prof = T.targets[tk].profile;
+    const diffs = FK.map((k) => [k, ra.f[k] - rb.f[k]]).filter((d) => Math.abs(d[1]) >= 0.1).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).slice(0, 3)
+      .map(([k, d]) => `${d > 0 ? esc(ra.name) : esc(rb.name)} is more extreme in <i>${FEAT[k]}</i> (${fmt(ra.f[k])} vs ${fmt(rb.f[k])})`);
+    say(`<p><b>${esc(ra.name)}</b> vs <b>${esc(rb.name)}</b> for <i>${esc(T.targets[tk].label)}</i> · <i>${esc(T.modes[mk].label)}</i></p>
+      <div class="tw"><table class="cmp"><tr><th>Criterion</th><th>Target</th><th>${esc(ra.name.slice(0, 28))}</th><th>${esc(rb.name.slice(0, 28))}</th></tr>
+      ${FK.map((k) => `<tr><td>${FEAT[k]}</td><td>${fmt(prof[k])}</td><td>${fmt(ra.f[k])}</td><td>${fmt(rb.f[k])}</td></tr>`).join('')}
+      <tr><th>Match</th><td></td><th>${(sa * 100).toFixed(1)}%</th><th>${(sb * 100).toFixed(1)}%</th></tr>
+      <tr><th>Rank</th><td></td><td>#${ka.toLocaleString('en')} (${topTxt(ka / N * 100)})</td><td>#${kb.toLocaleString('en')} (${topTxt(kb / N * 100)})</td></tr></table></div>
+      <p style="margin-top:8px">${sa === sb ? 'They score the same.' : `<b>${esc(sa > sb ? ra.name : rb.name)}</b> is the closer match by our formula.`} ${diffs.length ? diffs.join('; ') + '.' : 'Their criteria are very similar.'}</p>
+      <p><b>Neither can reproduce:</b> ${esc((T.targets[tk].cannot || []).join(', '))}.</p>`);
+  };
+  const help = () => say(`<p><b>Hi! I'm GroundTwin Scout.</b> I compute our Analog Engine formula live for any place you type.</p>
+    <p>Try:</p><ul style="margin:0 0 6px 1.1em">
+    <li><i>How good is the Atacama Desert for a Moon base?</i></li><li><i>44.36, 51.56 for Mars rover testing</i></li>
+    <li><i>Compare Mangystau and Death Valley for Mars</i></li><li><i>Top places for Moon ice &amp; resources</i></li><li><i>Shackleton</i> — ice evidence for a lunar crater</li></ul>
+    <p class="hint">Words like "Mars", "Jezero", "rover", "build", "ice" switch the target and mission need. Earth places get an analog match; lunar craters get an ice evidence score (0–3).</p>`);
+
+  const handle = async (text) => {
+    text = text.trim(); if (!text) return; say(esc(text), 'user');
+    const thinking = say('<span class="hint">Computing…</span>');
+    try {
+      const t = text.toLowerCase();
+      const cm = text.match(/^\s*(?:compare\s+)?(.+?)\s+(?:and|vs\.?|versus|with)\s+(.+?)(?:\s+for\s+.+)?\s*[?.!]?\s*$/i);
+      const c = crater(text);
+      if (/^(help|hi|hello|\?)$/i.test(t)) help();
+      else if (/\b(top|best)\b/.test(t) && !/\b(compare|vs)\b/.test(t)) answerTop(text);
+      else if (cm && /\b(compare|vs\.?|versus)\b/i.test(text)) await answerCompare(cm[1].replace(/^compare\s+/i, ''), cm[2], text);
+      else if (c && !parseCoords(text)) answerCrater(c);
+      else await answerPlace(text);
+    } catch (e) { say(`<p>Something went wrong: ${esc(e.message)}</p>`); }
+    thinking.remove();
+  };
+  document.getElementById('f').addEventListener('submit', (e) => { e.preventDefault(); const v = q.value; q.value = ''; handle(v); });
+  const EX = ['How good is the Atacama Desert for a Moon base?', 'Mangystau for Mars', '36.75, 85.75 for Moon ice', 'Compare Mangystau and Death Valley for Mars', 'Top places for Mars rover testing', 'Shackleton'];
+  const ex = document.getElementById('ex'); EX.forEach((x) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = x; b.onclick = () => handle(x); ex.appendChild(b); });
+  help();
+})();
+</script>
+</body>
+</html>

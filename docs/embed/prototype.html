@@ -15,7 +15,13 @@
 <body>
 <header class="e-head"><a class="brand" href="../index.html" target="_top">GroundTwin</a><span class="e-title">Working prototype</span></header>
 <main class="e-wrap">
-  <nav class="e-tabs" aria-label="Prototype modules"><a href="#explore" data-tab>Analog Engine</a><a href="#radar" data-tab>Radar Twin</a></nav>
+  <nav class="e-tabs" aria-label="Prototype modules"><a href="#scout" data-tab>Scout (ask the formula)</a><a href="#explore" data-tab>Analog Engine</a><a href="#radar" data-tab>Radar Twin</a></nav>
+
+  <section class="page" data-page="scout" hidden>
+    <p class="hud" style="margin-top:16px">Scout · ask the formula about any place</p>
+    <iframe class="scout-frame" src="scout.html?embed=1" title="GroundTwin Scout" loading="lazy"></iframe>
+    <p class="note"><a href="scout.html" target="_blank" rel="noopener">Open Scout in a new tab ↗</a></p>
+  </section>
 
   <section class="page" data-page="explore" hidden>
     <p class="hud" style="margin-top:16px">Analog Engine · similarity of every land cell</p>

@@ -28,6 +28,7 @@ L = dict(  # official pages, each checked to open (HTTP 200 and the right page t
     s2=('ESA: Sentinel-2', 'https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-2/'),
     spudis=('Spudis et al. 2013, JGR Planets (doi:10.1002/jgre.20156)', 'https://doi.org/10.1002/jgre.20156'),
     github=('GroundTwin code on GitHub', 'https://github.com/zhureswe/groundtwin'),
+    scout=('Open GroundTwin Scout', 'https://zhureswe.github.io/groundtwin/embed/scout.html'),
 )
 
 
@@ -225,13 +226,17 @@ def build():
         'Team Code Influence from Kazakhstan, for the NASA Space Apps Challenge 2026. The code is open on GitHub (zhureswe/groundtwin).',
         METHOD, ['github'], '#about')
     add('How did you use AI?', ['ai', 'claude', 'artificial', 'intelligence', 'chatgpt'],
-        'We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and editing the English texts. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.', METHOD, section='#about')
+        'We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing English texts from our results, under our direction. The project idea, the choice of sites and methods, all decisions, checking every result and the visual design are our own. No AI-generated images or videos are used.', METHOD, section='#about')
     add('Is this an AI model that predicts ice?', ['model', 'trained', 'machine learning', 'predict', 'neural'],
         'No. GroundTwin uses a transparent similarity formula and an evidence score, both checked against known sites. Nothing is a '
         'trained AI model.', METHOD, section='#method')
     add('Is the code open? How do I run it?', ['code', 'open', 'github', 'run', 'license', 'pipeline'],
         'Yes, MIT licence. Python scripts pipeline/01–11 recompute every number; the static site in /docs reads only their JSON output.',
         METHOD, ['github'])
+    add('Can I check my own place?', ['my place', 'own place', 'check', 'calculator', 'scout', 'any place', 'coordinates', 'my city'],
+        'Yes. GroundTwin Scout computes the Analog Engine formula live in your browser for any place name or coordinates you type, '
+        'against the Moon or Mars targets and any mission mode. It shows the score S, the rank among all land cells, the 7 criteria '
+        'and what Earth cannot reproduce. It is a calculator, not a chatbot: every number comes from our data files.', METHOD, ['scout'])
     add('How do I compare two places?', ['compare', 'comparison', 'versus', 'side by side', 'two places'],
         'Type "compare A and B" or "A vs B" with two places of the same kind: two lunar targets (e.g. Shackleton and Faustini), two '
         'Earth radar sites (e.g. Columbia Icefield and Edziza Lava Field) or two analog places (e.g. Mangystau and San Rafael Swell). '
@@ -244,7 +249,7 @@ def build():
 CATEGORIES = ['About the project', 'Using the site', 'Analogs', 'Moon radar', 'Data & NASA sources', 'Method & limits', 'Team & AI use']
 MOVE = {  # questions whose topic differs from their group above
     'What is next for GroundTwin?': 'About the project',
-    'How do I use the Explore Earth page?': 'Using the site', 'What are the mission modes?': 'Using the site',
+    'How do I use the Explore Earth page?': 'Using the site', 'Can I check my own place?': 'Using the site', 'What are the mission modes?': 'Using the site',
     'How do I compare two places?': 'Using the site', 'Is the code open? How do I run it?': 'Using the site',
     'Can I explore the raw data myself?': 'Data & NASA sources',
     'Why do wavelengths matter?': 'Method & limits', 'How did you validate the Analog Engine?': 'Method & limits',
