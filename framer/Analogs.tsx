@@ -447,54 +447,93 @@ function Images({ lat, lon, cols }: any) {
         </div>
     )
 }
-// Exploded "breakdown" of one place: the three maps of the same 4 deg region, stacked and labelled.
-function Breakdown({ lat, lon, target, name, S, top, color }: any) {
+// Exploded "breakdown" of one place, two views of the same 4 deg region:
+// "3 maps" = photo, relief, score map; "7 layers" = one map per criterion (match with the target) + the score map.
+function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
     const ref = useRef<HTMLDivElement>(null)
     const w = useWidth(ref)
     const [open, setOpen] = useState(false)
+    const [mode, setMode] = useState<string>("maps")
     useEffect(() => {
         const el = ref.current
         if (!el || typeof IntersectionObserver === "undefined") { setOpen(true); return }
-        const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setOpen(true); io.disconnect() } }, { threshold: 0.25 })
+        const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { setOpen(true); io.disconnect() } }, { threshold: 0.2 })
         io.observe(el)
         return () => io.disconnect()
     }, [])
-    const narrow = w > 0 && w < 620
-    const L = Math.round(Math.max(150, Math.min(300, (w || 900) * (narrow ? 0.46 : 0.3))))
-    const gap = open ? Math.round(L * 0.5) : Math.round(L * 0.07)
-    const top0 = Math.round(L * 0.08)
-    const left = narrow ? 0 : Math.round((w || 900) * 0.06)
-    const labX = narrow ? Math.round(L * 1.08) : Math.round((w || 900) * 0.52)
-    const H = top0 + 2 * Math.round(L * 0.5) + L + 30
-    const bd = BASE + "assets/img/bd/" + target + "_" + lat.toFixed(2) + "_" + lon.toFixed(2) + ".png"
-    const layers = [
-        { img: s2Url(lat, lon, 4, 600), k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
-        { img: reliefUrl(lat, lon, 4, 600), k: "02", t: "Terrain relief", sub: "ASTER GDEM · NASA GIBS", d: "Hills, slopes and flat ground. The score's terrain criteria (roughness, elevation) come from USGS GMTED2010." },
-        { img: bd, k: "03", t: "Our score map", sub: "7 criteria → 1 score · NASA MODIS, GPM + USGS", d: "Each 0.5° land square coloured by S (brighter = closer to the target). White box: this place" + (typeof S === "number" ? ", S = " + S.toFixed(2) + (typeof top === "number" ? " · top " + fmtPct(top) + "% of land" : "") : "") + "." },
-    ]
+    const W = w || 900
+    const narrow = W < 620
+    const many = mode === "layers" && !!r
+    const L = Math.round(Math.max(130, Math.min(many ? 230 : 300, W * (narrow ? 0.44 : many ? 0.24 : 0.3))))
+    const step = many ? 0.34 : 0.5
+    const gap = open ? Math.round(L * step) : Math.round(L * 0.06)
+    const left = narrow ? 0 : Math.round(W * (many ? 0.1 : 0.06))
+    const labX = narrow ? Math.round(L * 1.08) : Math.round(W * 0.52)
+    const fileBase = BASE + "assets/img/bd/" + target + "_" + lat.toFixed(2) + "_" + lon.toFixed(2)
+    const scoreTxt = typeof S === "number" ? ", S = " + S.toFixed(2) + (typeof top === "number" ? " · top " + fmtPct(top) + "% of land" : "") : ""
+    const scoreLayer = { img: fileBase + ".png", k: many ? "08" : "03", t: "Our score map", sub: many ? "weighted average of the 7 layers above" : "7 criteria → 1 score · NASA MODIS, GPM + USGS", d: "Each 0.5° land square coloured by S (brighter = closer to the target). White box: this place" + scoreTxt + "." }
+    const layers: any[] = many
+        ? FEATS.map((f, i) => {
+              const p = r.features && typeof r.features[f] === "number" ? r.features[f] : null
+              const t = r.profile && typeof r.profile[f] === "number" ? r.profile[f] : null
+              const st = status(r, f)
+              return {
+                  img: fileBase + "_" + f + ".png",
+                  k: "0" + (i + 1),
+                  t: FNAME[f] + (weights && weights[f] != null ? "  ×" + weights[f] : ""),
+                  sub: SOURCES[f],
+                  d: (p != null ? PHRASE[f] + " " + Math.round(p * 100) + "% of Earth's land" : "") + (t != null ? " · target " + t.toFixed(2) : "") + " · " + (st === "match" ? "match" : st === "differs" ? "differs" : "partly"),
+                  st,
+              }
+          }).concat([scoreLayer])
+        : [
+              { img: s2Url(lat, lon, 4, 600), k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
+              { img: reliefUrl(lat, lon, 4, 600), k: "02", t: "Terrain relief", sub: "ASTER GDEM · NASA GIBS", d: "Hills, slopes and flat ground. The score's terrain criteria (roughness, elevation) come from USGS GMTED2010." },
+              scoreLayer,
+          ]
+    const n = layers.length
+    const top0 = 64
+    const H = top0 + (n - 1) * Math.round(L * step) + L + 40
+    const tbtn = (k: string, label: string) => (
+        <button key={k} onClick={() => setMode(k)} style={{ cursor: "pointer", padding: "7px 12px", borderRadius: 999, border: "1px solid " + (mode === k ? color + "99" : C.line), background: mode === k ? C.s2 : "transparent", color: mode === k ? C.text : C.muted, fontFamily: MONO, fontSize: 11.5 }}>
+            {label}
+        </button>
+    )
+    const tr = "top 1s cubic-bezier(.22,1,.36,1)"
     return (
-        <div ref={ref} style={{ position: "relative", height: H, marginTop: 8 }}>
-            <div style={{ position: "absolute", left: 0, top: 0, fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.subtle, textTransform: "uppercase" }}>
-                <span style={{ color: C.text }}>{name}</span> / exploded view
+        <div ref={ref} style={{ position: "relative", height: H, marginTop: 8, transition: "height .4s ease" }}>
+            <div style={{ position: "absolute", left: 0, top: 0, right: 0, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.subtle, textTransform: "uppercase" }}>
+                    <span style={{ color: C.text }}>{name}</span> / exploded view
+                </div>
+                {r ? <div style={{ display: "flex", gap: 6 }}>{tbtn("maps", "3 maps")}{tbtn("layers", "Inside the score · 7 layers")}</div> : null}
             </div>
             {layers.map((ly, i) => {
-                const y = top0 + 24 + i * gap
+                const y = top0 + i * gap
+                const dot = ly.st === "differs" ? C.subtle : ly.st === "partly" ? C.muted : color
                 return (
-                    <React.Fragment key={ly.k}>
-                        <div style={{ position: "absolute", left: left + L / 2, top: y + L / 2, width: Math.max(0, labX - left - L / 2 - 12), height: 1, background: C.line, transition: "top 1s cubic-bezier(.22,1,.36,1)", zIndex: 0 }} />
-                        <span style={{ position: "absolute", left: labX - 16, top: y + L / 2 - 3, width: 7, height: 7, borderRadius: 7, background: color, transition: "top 1s cubic-bezier(.22,1,.36,1)" }} />
-                        <div style={{ position: "absolute", left, top: y, width: L, height: L, transform: "rotateX(58deg) rotateZ(-42deg)", transformOrigin: "50% 50%", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,.25)", boxShadow: "0 30px 60px rgba(0,0,0,.55)", background: C.s2, transition: "top 1s cubic-bezier(.22,1,.36,1)", zIndex: 10 - i }}>
-                            <img src={ly.img} alt={ly.t + " of " + name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                    <React.Fragment key={mode + ly.k}>
+                        <div style={{ position: "absolute", left: left + L / 2, top: y + L / 2, width: Math.max(0, labX - left - L / 2 - 12), height: 1, background: C.line, transition: tr, zIndex: 0 }} />
+                        <span style={{ position: "absolute", left: labX - 16, top: y + L / 2 - 3, width: 7, height: 7, borderRadius: 7, background: dot, transition: tr }} />
+                        <div style={{ position: "absolute", left, top: y, width: L, height: L, transform: "rotateX(58deg) rotateZ(-42deg)", transformOrigin: "50% 50%", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,.25)", boxShadow: "0 24px 50px rgba(0,0,0,.55)", background: C.s2, transition: tr, zIndex: 20 - i }}>
+                            <img src={ly.img} alt={ly.t + " map of " + name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                         </div>
-                        <div style={{ position: "absolute", left: labX, top: y + L / 2 - 12, right: 0, transition: "top 1s cubic-bezier(.22,1,.36,1)" }}>
-                            <div style={{ fontFamily: MONO, fontSize: 10.5, color }}>{ly.k}</div>
-                            <div style={{ fontFamily: HEAD, fontSize: narrow ? 15 : 18, fontWeight: 600, marginTop: 2 }}>{ly.t}</div>
+                        <div style={{ position: "absolute", left: labX, top: y + L / 2 - (many ? 9 : 12), right: 0, transition: tr }}>
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                                <span style={{ fontFamily: MONO, fontSize: 10.5, color: dot }}>{ly.k}</span>
+                                <span style={{ fontFamily: HEAD, fontSize: narrow ? 14 : many ? 15.5 : 18, fontWeight: 600 }}>{ly.t}</span>
+                            </div>
                             <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}>{ly.sub}</div>
-                            {narrow ? null : <div style={{ fontSize: 13, color: C.muted, marginTop: 6, lineHeight: 1.5, maxWidth: 380 }}>{ly.d}</div>}
+                            {narrow ? null : <div style={{ fontSize: many ? 12.5 : 13, color: C.muted, marginTop: many ? 3 : 6, lineHeight: 1.45, maxWidth: 400 }}>{ly.d}</div>}
                         </div>
                     </React.Fragment>
                 )
             })}
+            {many ? (
+                <div style={{ position: "absolute", left: 0, bottom: 0, fontSize: 12, color: C.subtle, maxWidth: 760, lineHeight: 1.5 }}>
+                    Layers 01–07: each square's match on one criterion, s = 1 − |place − target| (brighter = closer). Layer 08 averages them with the Science weights (×3 for dry and no plants).
+                </div>
+            ) : null}
         </div>
     )
 }
@@ -718,7 +757,7 @@ export default function AnalogDetail(props: any) {
                 )}
                 {it.scored ? (
                     <Section kicker="Breakdown" title="Three maps, one place" mt={52}>
-                        <Breakdown lat={f.lat} lon={f.lon} target={f.primary} name={f.name} S={f.targets[f.primary].S} top={f.targets[f.primary].top_percent} color={m.color} />
+                        <Breakdown lat={f.lat} lon={f.lon} target={f.primary} name={f.name} S={f.targets[f.primary].S} top={f.targets[f.primary].top_percent} color={m.color} r={it} weights={d.weights} />
                     </Section>
                 ) : null}
                 <Section kicker="Satellite view" title="What the place looks like" mt={52}>
@@ -777,7 +816,7 @@ export default function AnalogDetail(props: any) {
                 </div>
 
                 <Section kicker="Breakdown" title="Three maps, one place" mt={52}>
-                    <Breakdown lat={it.lat} lon={it.lon} target={it.target} name={it.region} S={it.S} top={it.topPercent} color={m.color} />
+                    <Breakdown lat={it.lat} lon={it.lon} target={it.target} name={it.region} S={it.S} top={it.topPercent} color={m.color} r={it} weights={d.weights} />
                 </Section>
                 <Section kicker="Satellite view" title="What the place looks like" mt={52}>
                     <Images lat={it.lat} lon={it.lon} cols={wide ? 3 : mid ? 2 : 1} />
@@ -819,6 +858,7 @@ export default function AnalogDetail(props: any) {
     }
 
     // Benchmarks: official training sites and Mangystau (not in the top 10)
+    const fm = it.key === "mangystau" ? (d.famous || []).find((x: any) => x.id === "mangystau" && x.scored && Math.abs(x.lat - it.sites[0].lat) < 1e-6) || null : null
     return (
         <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
             <NavRow path={path} listPath={listPath} />
@@ -836,7 +876,7 @@ export default function AnalogDetail(props: any) {
             ) : null}
             {it.sites.length ? (
                 <Section kicker="Breakdown" title="Three maps, one place">
-                    <Breakdown lat={it.sites[0].lat} lon={it.sites[0].lon} target={it.target} name={it.sites[0].name} S={null} top={null} color={m.color} />
+                    <Breakdown lat={it.sites[0].lat} lon={it.sites[0].lon} target={it.target} name={it.sites[0].name} S={fm ? fm.S : null} top={fm ? fm.topPercent : null} color={m.color} r={fm} weights={d.weights} />
                 </Section>
             ) : null}
             {it.sites.length ? (
