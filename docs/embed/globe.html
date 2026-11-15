@@ -62,7 +62,7 @@
     </div>
   </section>
 </div>
-<footer class="e-foot e-src">Imagery: NASA Blue Marble via <a href="https://www.earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA EOSDIS GIBS</a> · Pins and scores: GroundTwin data (<a href="https://github.com/zhureswe/groundtwin/blob/main/docs/data/analogs8.json" target="_blank" rel="noopener">analogs8.json</a>, <a href="https://github.com/zhureswe/groundtwin/blob/main/docs/data/famous_analogs.json" target="_blank" rel="noopener">famous_analogs.json</a>, <a href="https://github.com/zhureswe/groundtwin/blob/main/docs/data/country_top.json" target="_blank" rel="noopener">country_top.json</a>) from <a href="https://gpm.nasa.gov/data" target="_blank" rel="noopener">NASA GPM IMERG</a>, MODIS <a href="https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13a2-061" target="_blank" rel="noopener">NDVI (MOD13A2)</a>, <a href="https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11a2-061" target="_blank" rel="noopener">LST (MOD11A2)</a>, <a href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD08_M3" target="_blank" rel="noopener">aerosol (MOD08_M3)</a>, <a href="https://www.usgs.gov/publications/global-multi-resolution-terrain-elevation-data-2010-gmted2010" target="_blank" rel="noopener">USGS GMTED2010</a> · 3D engine: <a href="https://cesium.com/platform/cesiumjs/" target="_blank" rel="noopener">CesiumJS</a> · Not endorsed by NASA.</footer>
+<footer class="e-foot e-src">Imagery: NASA Blue Marble via <a href="https://www.earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA EOSDIS GIBS</a> · Pins and scores: GroundTwin data (<a href="https://github.com/zhureswe/groundtwin/blob/main/docs/data/famous_analogs.json" target="_blank" rel="noopener">famous_analogs.json</a>, <a href="https://github.com/zhureswe/groundtwin/blob/main/docs/data/country_top.json" target="_blank" rel="noopener">country_top.json</a>) from <a href="https://gpm.nasa.gov/data" target="_blank" rel="noopener">NASA GPM IMERG</a>, MODIS <a href="https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13a2-061" target="_blank" rel="noopener">NDVI (MOD13A2)</a>, <a href="https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11a2-061" target="_blank" rel="noopener">LST (MOD11A2)</a>, <a href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD08_M3" target="_blank" rel="noopener">aerosol (MOD08_M3)</a>, <a href="https://www.usgs.gov/publications/global-multi-resolution-terrain-elevation-data-2010-gmted2010" target="_blank" rel="noopener">USGS GMTED2010</a> · 3D engine: <a href="https://cesium.com/platform/cesiumjs/" target="_blank" rel="noopener">CesiumJS</a> · Not endorsed by NASA.</footer>
 
 <script src="common.js"></script>
 <script>window.GT_BASE = '../'; window.GT_MANUAL = true;</script>
@@ -76,28 +76,30 @@
 const { esc, fmt, topPct, ll, body, load, buttons, bars, chips } = GTE;
 const SITE = 'https://true-memory-123862.framer.app/analog?id=';   // detail pages on the Framer site
 const GROUPS = {
-  official_moon: { label: 'Official NASA analogs · Moon', color: '#9ee7f3' },
-  official_mars: { label: 'Official NASA analogs · Mars', color: '#ffb199' },
-  found_moon: { label: 'Found by GroundTwin · Moon', color: '#4fd1e8' },
-  found_mars: { label: 'Found by GroundTwin · Mars', color: '#ff6a3d' },
+  famous_moon: { label: 'Famous field analog · Moon', color: '#9ee7f3' },
+  famous_mars: { label: 'Famous field analogs · Mars', color: '#ffb199' },
+  moon: { label: "Our picks · Moon", color: '#4fd1e8' },
+  mars: { label: "Our pick · Mars", color: '#ff6a3d' },
   candidate: { label: 'Our candidate · Mangystau', color: '#6fcf97' },
 };
 const msg = (t) => { const m = document.getElementById('msg'); m.textContent = t; m.hidden = false; };
 
-// Same 8 places as the Analogs page (analogs8.json) + Mangystau. Detail links only where a Framer detail page exists:
-// famous analogs by id (famous_analogs.json), formula places by their country_top position.
-function pins(a8, fa, ct) {
+// Same 8 places as the Analogs page: 4 famous field analogs (famous_analogs.json) and our 4 picks:
+// Mangystau + the formula's best places (country_top.json: Moon #1, #2 and Mars #1).
+const KNOWN = ['atacama', 'death-valley', 'devon-island', 'utah', 'mangystau'], OURS = { moon_south_pole: 2, mars_gale: 1 };
+function pins(fa, ct) {
+  const out = [];
   const x = (v) => ({ position: v.position, top_percent: v.top_percent, match_features: v.match, partly_features: v.partly, differ_features: v.differ });
-  const near = (a, b) => Math.abs(a.lat - b.lat) < 0.3 && Math.abs(a.lon - b.lon) < 0.3;
-  const detail = (v) => { const f = fa.sites.find((s) => near(s, v)); if (f) return SITE + 'f-' + f.id;
-    for (const [tk, rows] of Object.entries(ct.top)) { const i = rows.findIndex((r) => near(r, v)); if (i >= 0) return SITE + body(tk) + '-' + (i + 1); } return null; };
-  const out = [...a8.official.map((v) => ['official', v]), ...a8.found.map((v) => ['found', v])].map(([g, v], k) => ({
-    g: `${g}_${body(v.target)}`, tk: v.target, text: g === 'official' ? '★' : String(k - 3), name: v.name, lat: v.lat, lon: v.lon, S: v.S, x: x(v),
-    feats: v.features, prof: v.profile, blurb: `${v.country}${v.listed_by ? ' · listed by ' + v.listed_by : ' · not on any official list'}`,
-    href: detail(v), note: `Coordinates: ${v.coord_source}` }));
-  const m = fa.sites.find((s) => s.id === 'mangystau'), mv = m.targets.mars_gale;
-  out.push({ g: 'candidate', tk: 'mars_gale', text: 'M', name: m.name, lat: m.lat, lon: m.lon, S: mv.S, x: x(mv), feats: m.features, prof: mv.profile,
-    blurb: m.blurb, href: SITE + 'mangystau', note: `Coordinates: ${m.coord_source}` });
+  for (const f of fa.sites.filter((x) => KNOWN.includes(x.id))) {
+    const v = f.scored ? f.targets[f.primary] : null, cand = f.id === 'mangystau';
+    out.push({ g: cand ? 'candidate' : 'famous_' + body(f.primary), tk: f.primary, text: cand ? 'M' : '★', name: f.name, lat: f.lat, lon: f.lon,
+      S: v && v.S, x: v && x(v), feats: f.features, prof: v && v.profile, blurb: f.blurb, reason: f.reason,
+      href: SITE + (cand ? 'mangystau' : 'f-' + f.id), note: `Coordinates: ${f.coord_source}${v ? ' · scored on its 0.5° cell' : ''}` });
+  }
+  for (const [tk, rows] of Object.entries(ct.top)) rows.slice(0, OURS[tk] || 0).forEach((r, i) => out.push({ g: body(tk), tk, text: String(i + 1),
+    name: `${r.province}, ${r.country}`, lat: r.lat, lon: r.lon, S: r.S, x: x(r), feats: r.features, prof: r.profile,
+    blurb: r.near ? `Near ${r.near}. Best-scoring 0.5° cell in ${r.country}.` : `Best-scoring 0.5° cell in ${r.country}.`,
+    href: SITE + body(tk) + '-' + (i + 1), note: '0.5° cell centre · place name from GeoNames' }));
   return out;
 }
 
@@ -109,15 +111,15 @@ function showInfo(p, T) {
       <div>Rank<b>#${p.x.position.toLocaleString('en')}</b>${topPct(p.x.top_percent)}</div></div>${bars(p.feats, p.prof)}${chips(p.x)}`
       : `<p class="e-text"><b>Not scored:</b> ${esc(p.reason || '')}.</p>`}
     <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[p.tk].cannot.join(', '))}.</p>
-    ${p.href ? `<div class="e-btns"><a class="e-btn ${body(p.tk)}" href="${p.href}" target="_top">Details, satellite images and sources →</a></div>` : ''}
+    <div class="e-btns"><a class="e-btn ${body(p.tk)}" href="${p.href}" target="_top">Details, satellite images and sources →</a></div>
     ${buttons(p.lat, p.lon, p.tk)}<p class="note">${esc(p.note)}</p>`;
   document.getElementById('info').hidden = false;
 }
 
 async function globe() {
   if (typeof Cesium === 'undefined') return msg('CesiumJS could not be loaded.');
-  let a8, fa, ct, T;
-  try { [a8, fa, ct, T] = await Promise.all(['analogs8', 'famous_analogs', 'country_top', 'targets'].map(load)); } catch (e) { return msg('Data not found: ' + e.message); }
+  let fa, ct, T;
+  try { [fa, ct, T] = await Promise.all(['famous_analogs', 'country_top', 'targets'].map(load)); } catch (e) { return msg('Data not found: ' + e.message); }
   Cesium.Ion.defaultAccessToken = '';
   const gibs = new Cesium.UrlTemplateImageryProvider({
     url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg',
@@ -132,7 +134,7 @@ async function globe() {
   viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#05070d');
   window.gtViewer = viewer;
   const pb = new Cesium.PinBuilder(), byEntity = new Map(), groups = {};
-  for (const p of pins(a8, fa, ct)) {
+  for (const p of pins(fa, ct)) {
     const e = viewer.entities.add({ position: Cesium.Cartesian3.fromDegrees(p.lon, p.lat),
       billboard: { image: pb.fromText(p.text, Cesium.Color.fromCssColorString(GROUPS[p.g].color), 40).toDataURL(), verticalOrigin: Cesium.VerticalOrigin.BOTTOM },
       label: { text: p.name, font: '12px sans-serif', fillColor: Cesium.Color.WHITE, outlineColor: Cesium.Color.BLACK, outlineWidth: 3,
