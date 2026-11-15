@@ -48,6 +48,58 @@ const SOURCES: Record<string, string> = {
     roughness: "USGS GMTED2010 · terrain roughness",
     elevation: "USGS GMTED2010 · mean elevation",
 }
+// Links that back up the text and numbers on the detail pages (checked November 2026).
+const DATA_LINKS: [string, string][] = [
+    ["NASA GPM IMERG precipitation (dryness)", "https://gpm.nasa.gov/data"],
+    ["MODIS MOD13A2 NDVI (plants) · NASA LP DAAC", "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13a2-061"],
+    ["MODIS MOD11A2 land surface temperature (day–night swing, cold) · NASA LP DAAC", "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11a2-061"],
+    ["MODIS MOD08_M3 aerosol optical depth (dust) · NASA LAADS", "https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD08_M3"],
+    ["USGS GMTED2010 elevation (roughness, altitude)", "https://www.usgs.gov/publications/global-multi-resolution-terrain-elevation-data-2010-gmted2010"],
+]
+const IMG_LINKS: [string, string][] = [
+    ["Sentinel-2 cloudless 2023 by EOX (close-up and region views)", "https://s2maps.eu/"],
+    ["NASA GIBS: ASTER shaded relief and Blue Marble layers", "https://www.earthdata.nasa.gov/gibs"],
+]
+const TARGET_LINKS: Record<string, [string, string][]> = {
+    moon_south_pole: [
+        ["NASA: Artemis III candidate landing regions near the lunar south pole", "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/"],
+        ["LROC (Lunar Reconnaissance Orbiter Camera), Arizona State University", "https://lroc.sese.asu.edu/"],
+    ],
+    mars_gale: [
+        ["NASA/JPL Photojournal PIA15687: Gale crater and Mount Sharp", "https://photojournal.jpl.nasa.gov/catalog/PIA15687"],
+    ],
+}
+const SITE_LINKS: Record<string, [string, string][]> = {
+    atacama: [["NASA Astrobiology: life-detection drill tested in the Atacama (ARADS)", "https://astrobiology.nasa.gov/news/nasa-tests-life-detection-drill-in-the-atacama-desert/"]],
+    "death-valley": [
+        ["National Park Service: NASA tests in Death Valley", "https://www.nps.gov/deva/nasa.htm"],
+        ["NASA: looking for salts on Mars (Death Valley comparison)", "https://science.nasa.gov/photojournal/looking-for-salts-on-mars/"],
+    ],
+    "devon-island": [
+        ["NASA: Haughton-Mars Project on Devon Island", "https://www.nasa.gov/mission/haughton-mars-project-hmp"],
+        ["NASA/JPL Photojournal PIA03714: Haughton crater", "https://photojournal.jpl.nasa.gov/catalog/PIA03714"],
+    ],
+    hawaii: [["NASA lunar rover and oxygen-production tests in Hawaii (2008 release)", "https://phys.org/news/2008-11-nasa-lunar-rovers-oxygen-production.html"]],
+    lanzarote: [
+        ["ESA: geology training for the Moon in Lanzarote", "https://www.esa.int/ESA_Multimedia/Images/2024/10/Geology_training_for_the_Moon"],
+        ["ESA: what is PANGAEA", "https://www.esa.int/Our_Activities/Human_Spaceflight/Caves/What_is_Pangaea"],
+    ],
+    "rio-tinto": [
+        ["NASA Astrobiology: drilling for life at Río Tinto", "https://astrobiology.nasa.gov/news/drilling-for-weird-life/"],
+        ["NASA Astrobiology: Mars drilling practice near the acidic Río Tinto", "https://astrobiology.nasa.gov/news/scientists-practice-mars-drilling-near-acidic-spanish-river/"],
+    ],
+    mcmurdo: [
+        ["NASA Earth Observatory: a Martian landscape in Antarctica", "https://www.earthobservatory.nasa.gov/images/4420/martian-landscape-antarctica"],
+        ["NASA Technical Reports: Antarctic Dry Valleys as a Mars analog", "https://ntrs.nasa.gov/citations/20100003844"],
+    ],
+    iceland: [
+        ["NASA History: Apollo astronaut geology training (includes Iceland)", "https://www.nasa.gov/wp-content/uploads/static/history/alsj/AstronautGeologyTraining.pdf"],
+        ["Exploration Museum, Húsavík: astronaut training in Iceland", "https://www.explorationmuseum.com/astronaut-training/"],
+    ],
+    utah: [["Space.com: Mars Desert Research Station (Mars Society, not NASA)", "https://www.space.com/24139-mock-mars-mission-utah-habitat.html"]],
+}
+const ANALOG_EXPLORER: [string, string] = ["NASA Analog Explorer: Earth places used as Moon and Mars analogs", "https://science.nasa.gov/solar-system/analog-explorer/"]
+
 const META: Record<string, any> = {
     moon_south_pole: {
         side: "moon",
@@ -81,7 +133,7 @@ function loadAll() {
                 if (!r.ok) throw new Error(n + ".json HTTP " + r.status)
                 return r.json()
             })
-        cache = Promise.all([get("showcase"), get("explanations"), get("targets"), get("famous_analogs").catch(() => ({ sites: [] })), get("country_top").catch(() => null)]).then(([sc, ex, tg, fa, ct]) => build(sc, ex, tg, fa, ct))
+        cache = Promise.all([get("showcase"), get("explanations"), get("targets"), get("famous_analogs").catch(() => ({ sites: [] })), get("country_top").catch(() => null), get("mangystau").catch(() => null), get("validation").catch(() => null)]).then(([sc, ex, tg, fa, ct, mg, va]) => build(sc, ex, tg, fa, ct, mg, va))
         cache.catch(() => {
             cache = null
         })
@@ -104,7 +156,7 @@ function row(e: any, fallback: any = {}) {
         textDiffer: e.differs || "",
     }
 }
-function build(sc: any, ex: any, tg: any, fa: any, ct: any) {
+function build(sc: any, ex: any, tg: any, fa: any, ct: any, mg?: any, va?: any) {
     let items: any[] = []
     const keys = ["moon_south_pole", sc.mars_target || "mars_gale"]
     for (const key of keys) {
@@ -140,7 +192,8 @@ function build(sc: any, ex: any, tg: any, fa: any, ct: any) {
             : { place: f.name, features: {}, profile: {}, match: [], partly: [], differ: [] }
         return { ...r, id: f.id === "mangystau" ? "mangystau" : "f-" + f.id, kind: "famous", famous: f, listRank: i + 1, target: f.primary, region: f.name + ", " + f.country, lat: f.lat, lon: f.lon, scored: !!f.scored }
     })
-    return { famous, items, bench, targets: tg.targets || {}, nCells: sc.n_cells || 60215, weights: ((tg.modes || {}).science || {}).weights || {}, aiLabel: ex.label || "AI-written from our data" }
+    const cand = mg && mg.rank_vs_mars ? { gale: mg.rank_vs_mars.mars_gale, jezero: mg.rank_vs_mars.mars_jezero, cut: 100 * ((va && va.top_fraction) || 0.1) } : null
+    return { cand, famous, items, bench, targets: tg.targets || {}, nCells: sc.n_cells || 60215, weights: ((tg.modes || {}).science || {}).weights || {}, aiLabel: ex.label || "AI-written from our data" }
 }
 
 // ---------- helpers ----------
@@ -284,6 +337,14 @@ export function AnalogList(props: any) {
                 <Loading err={err} />
             ) : (
                 <>
+                    {d.cand ? (
+                        <a href={path + "?id=mangystau"} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 22px", padding: "18px 22px", marginBottom: 22, borderRadius: 16, border: "1px solid " + C.mars + "66", background: C.mars + "14", color: C.text, textDecoration: "none" }}>
+                            <span style={{ fontFamily: MONO, fontSize: 11, color: C.mars, textTransform: "uppercase", letterSpacing: "0.06em" }}>New candidate · Mars</span>
+                            <span style={{ fontFamily: HEAD, fontSize: 19, fontWeight: 600 }}>Mangystau, Kazakhstan</span>
+                            <span style={{ fontSize: 14, color: C.muted, flex: "1 1 320px", lineHeight: 1.5 }}>Not a known test site, but our formula ranks it in the top {d.cand.gale}% of Earth's land for Gale crater and top {d.cand.jezero}% for Jezero, inside the top-{d.cand.cut}% band our blind test uses to recognise known analogs.</span>
+                            <span style={{ fontFamily: MONO, fontSize: 12, color: C.text }}>details →</span>
+                        </a>
+                    ) : null}
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 26 }}>
                         {famous.length ? tabBtn("famous", "Famous field analogs", "10 places agencies use · our score") : null}
                         {tabBtn("formula", "Our formula's top 10", "best place per country · 5 Moon + 5 Mars")}
@@ -485,6 +546,33 @@ function LinkBtn({ href, children }: any) {
         </a>
     )
 }
+function Sources({ target, site, extra }: any) {
+    const groups: [string, [string, string][]][] = []
+    const s = (SITE_LINKS[site] || []).concat(extra || [])
+    if (s.length) groups.push(["About this place", s])
+    groups.push(["Criteria data (NASA / USGS, 2015–2024)", DATA_LINKS])
+    groups.push(["Satellite images", IMG_LINKS])
+    groups.push(["Target", (TARGET_LINKS[target] || []).concat([ANALOG_EXPLORER])])
+    return (
+        <Section kicker="Sources" title="Where the information comes from">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "22px 36px" }}>
+                {groups.map(([h, links]) => (
+                    <div key={h}>
+                        <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>{h}</div>
+                        <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 9 }}>
+                            {links.map(([t, u]) => (
+                                <li key={u}>
+                                    <a href={u} target="_blank" rel="noopener" style={{ color: C.text, fontSize: 14, lineHeight: 1.45, textDecoration: "none", borderBottom: "1px solid " + C.line }}>{t} ↗</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+            <p style={{ fontSize: 12.5, color: C.subtle, margin: "18px 0 0", lineHeight: 1.5 }}>Scores and ranks are computed by our own code from these datasets. Not endorsed by NASA.</p>
+        </Section>
+    )
+}
 function plain(r: any) {
     const a = r.textMatch || ""
     const b = (r.textDiffer || "").split(" Earth cannot reproduce")[0]
@@ -598,6 +686,7 @@ export default function AnalogDetail(props: any) {
                         <LinkBtn href={m.trek}>{m.trekName}</LinkBtn>
                     </div>
                 </Section>
+                <Sources target={f.primary} site={f.id} />
                 <Section kicker="More field analogs" title="Keep exploring">
                     <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 10 }}>
                         <Card it={prevIt} href={path + "?id=" + prevIt.id} />
@@ -659,6 +748,7 @@ export default function AnalogDetail(props: any) {
                     </div>
                 </Section>
 
+                <Sources target={it.target} site="" extra={[["Place name: GeoNames (nearest town and province)", "https://www.geonames.org/"]]} />
                 <Section kicker="More analogs" title="Next in the top 10">
                     <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 10 }}>
                         <Card it={prevIt} href={path + "?id=" + prevIt.id} />
@@ -674,9 +764,9 @@ export default function AnalogDetail(props: any) {
         <div ref={ref} style={{ width: "100%", color: C.text, fontFamily: BODY, ...props.style }}>
             <NavRow path={path} listPath={listPath} />
             <div style={{ marginTop: 36 }}>
-                <Chip color={m.color}>{"vs " + targetLabel + " · not in the top 10"}</Chip>
+                <Chip color={m.color}>{it.key === "mangystau" && d.cand ? "Candidate Mars analog · flagged by our formula" : "vs " + targetLabel + " · not in the top 10"}</Chip>
                 <h1 style={{ fontFamily: HEAD, fontSize: wide ? 52 : mid ? 40 : 32, fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.02em", margin: "18px 0 0" }}>{it.name}</h1>
-                <div style={{ fontSize: 15, color: C.muted, marginTop: 12 }}>{String(it.title).split(":")[0]} · shown with its real rank, for comparison</div>
+                <div style={{ fontSize: 15, color: C.muted, marginTop: 12, lineHeight: 1.55, maxWidth: 860 }}>{it.key === "mangystau" && d.cand ? "Not a known test site yet. Our formula puts it in the top " + d.cand.gale + "% of Earth's land for Gale crater and the top " + d.cand.jezero + "% for Jezero crater, inside the top " + d.cand.cut + "% band our blind test uses to recognise known analogs. That makes it a candidate worth field work, not a proven analog." : String(it.title).split(":")[0] + " · shown with its real rank, for comparison"}</div>
             </div>
             {it.facts.length ? (
                 <Section kicker="Why this place" title="How it matches" mt={44}>
@@ -724,6 +814,7 @@ export default function AnalogDetail(props: any) {
                     <TargetPanel target={it.target} d={d} />
                 </Section>
             </div>
+            <Sources target={it.target} site="" extra={it.key === "mangystau" ? [["Mars Field Twin: Mangystau data and method (GroundTwin)", "https://zhureswe.github.io/groundtwin/#mangystau"]] : []} />
             <Section kicker="Back to the list" title="The top 10">
                 <div style={{ display: "grid", gridTemplateColumns: mid ? "1fr 1fr" : "1fr", gap: 10 }}>
                     {d.items.filter((x: any) => x.target === it.target).slice(0, 2).map((x: any) => (
