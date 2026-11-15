@@ -144,6 +144,8 @@ function box(lat: number, lon: number, dLat: number) {
 }
 function s2Url(lat: number, lon: number, dLat: number, px: number) {
     const b = box(lat, lon, dLat)
+    // Sentinel-2 cloudless has no Antarctica: use NASA Blue Marble there
+    if (lat < -60) return "https://wvs.earthdata.nasa.gov/api/v1/snapshot?REQUEST=GetSnapshot&TIME=2004-12-01&BBOX=" + [b.s, b.w, b.n, b.e].map((v) => v.toFixed(4)).join(",") + "&CRS=EPSG:4326&LAYERS=BlueMarble_NextGeneration&FORMAT=image/jpeg&WIDTH=" + px + "&HEIGHT=" + px
     return "https://tiles.maps.eox.at/wms?service=WMS&request=GetMap&version=1.1.1&layers=s2cloudless-2023&styles=&srs=EPSG:4326&bbox=" + [b.w, b.s, b.e, b.n].map((v) => v.toFixed(4)).join(",") + "&width=" + px + "&height=" + px + "&format=image/jpeg"
 }
 function reliefUrl(lat: number, lon: number, dLat: number, px: number) {
@@ -358,10 +360,12 @@ function Shot({ src, title, credit, rect, alt }: any) {
         </figure>
     )
 }
-const S2_CREDIT = "Sentinel-2 cloudless 2023 by EOX · contains modified Copernicus Sentinel data"
+const S2_CREDIT_EOX = "Sentinel-2 cloudless 2023 by EOX · contains modified Copernicus Sentinel data"
+const S2_CREDIT = S2_CREDIT_EOX
 const RELIEF_CREDIT = "NASA/METI ASTER GDEM shaded relief · via NASA GIBS"
 function Images({ lat, lon, cols }: any) {
     const c = cosd(lat)
+    const S2_CREDIT = lat < -60 ? "NASA Blue Marble Next Generation · via NASA GIBS" : S2_CREDIT_EOX
     const wide = 4
     const km = (deg: number) => Math.round((deg * 111) / 10) * 10
     return (
