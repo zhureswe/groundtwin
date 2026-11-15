@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GroundTwin Moon Ice</title>
+<!-- Code written with assistance from Claude (Anthropic) for GroundTwin, NASA Space Apps 2026. Embeddable: add ?embed=1 to hide header/footer.
+     All numbers come from ../data/earth_cpr.json, polarimetry.json, moon_targets.json and wavelength.json. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='16' r='10' fill='%234fd1e8'/%3E%3Ccircle cx='20' cy='16' r='10' fill='none' stroke='%23e8edf5' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="embed.css">
+<style>
+  .mi-step { margin-top: 28px; }
+  .mi-step h2 { font-size: clamp(1.3rem, 3vw, 1.8rem); }
+  .mi-lead { color: #c9d3e3; max-width: 820px; }
+  /* Earth ruler */
+  .ruler { display: grid; gap: 6px; margin-top: 8px; }
+  .r-row { display: grid; grid-template-columns: minmax(6.5em, 11em) minmax(0, 1fr) 3em; gap: 10px; align-items: center; font-size: .82rem; }
+  .r-row .lab { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .r-row .val { font-family: var(--font-mono); color: var(--muted); text-align: right; }
+  .r-track { position: relative; height: 14px; border-radius: 99px; background: rgba(255,255,255,.04); }
+  .r-iqr { position: absolute; top: 3px; height: 8px; border-radius: 99px; opacity: .55; }
+  .r-med { position: absolute; top: 0; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; border: 2px solid #05070d; }
+  .r-one { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 1px dashed rgba(255,255,255,.45); }
+  .r-axis { display: grid; grid-template-columns: minmax(6.5em, 11em) minmax(0, 1fr) 3em; gap: 10px; font-family: var(--font-mono); font-size: .68rem; color: var(--muted); }
+  .r-axis div { display: flex; justify-content: space-between; }
+  .r-head { margin-top: 10px; font-family: var(--font-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
+  /* stacked layers */
+  .stack { display: grid; gap: 0; margin-top: 12px; perspective: 1200px; }
+  .layer { position: relative; margin: 0 0 -10px; padding: 16px 18px 22px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface);
+    box-shadow: 0 10px 24px rgba(0,0,0,.45); transform: rotateX(8deg); transform-origin: top; transition: transform .25s; }
+  .layer:hover { transform: rotateX(0); }
+  .layer:nth-child(2) { margin-left: 14px; margin-right: -14px; }
+  .layer:nth-child(3) { margin-left: 28px; margin-right: -28px; margin-bottom: 0; }
+  .layer h3 { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px; }
+  .layer dl { display: grid; grid-template-columns: 7em minmax(0, 1fr); gap: 4px 10px; margin: 0; font-size: .86rem; }
+  .layer dt { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); text-transform: uppercase; padding-top: 2px; }
+  .layer dd { margin: 0; overflow-wrap: anywhere; }
+  .l-radar { border-left: 3px solid var(--ice); } .l-temp { border-left: 3px solid #8beaff; } .l-terrain { border-left: 3px solid #f0c35e; }
+  @media (max-width: 560px) { .layer:nth-child(n) { margin-left: 0; margin-right: 0; transform: none; } }
+  /* clues */
+  .pick { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 12px; }
+  .pick select { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; max-width: 100%; }
+  .clues3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .cl { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface2); }
+  .cl .ic { font-size: 1.6rem; line-height: 1; }
+  .cl b { display: block; margin: 6px 0 2px; font-family: var(--font-head); }
+  .cl.ok { border-color: rgba(111,207,151,.5); } .cl.bad { border-color: rgba(240,138,122,.4); }
+  .score { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+  .score .big { font: 700 clamp(2rem, 6vw, 3rem) var(--font-head); color: var(--ice); text-shadow: var(--glow); }
+  @media (max-width: 760px) { .clues3 { grid-template-columns: minmax(0, 1fr); } }
+  tr.sel td { background: rgba(79,209,232,.08); }
+</style>
+</head>
+<body>
+<header class="e-head"><a class="brand" href="../index.html" target="_top">GroundTwin</a><span class="e-title">Moon ice · radar checked on Earth</span></header>
+<main class="e-wrap">
+  <h2 style="margin-top:6px">Is there ice in the Moon's polar craters?</h2>
+
+  <section class="mi-step"><p class="hud">The problem</p>
+    <div class="card"><p class="mi-lead">NASA's <b>Mini-RF</b> radar sees a high <b>CPR</b> (circular polarization ratio: echo that kept its "twist" ÷ echo that flipped) inside some polar craters. Ice can do that — but <b>rough, rocky ground also gives high CPR</b>. So a bright radar crater alone does not prove ice.</p></div>
+  </section>
+
+  <section class="mi-step"><p class="hud">Step 1 — Check on Earth</p>
+    <div class="card"><p class="mi-lead">Canada's RCM radar uses the same design as Mini-RF. We measured CPR where we know what is on the ground.</p>
+      <div id="ruler" class="ruler"></div><p class="note" id="ruler-note"></p></div>
+    <div class="card why" id="finding"></div>
+  </section>
+
+  <section class="mi-step"><p class="hud">Step 2 — Overlay three NASA maps</p>
+    <p class="mi-lead">One clue is not enough, so we stack three independent maps of each crater from NASA's Lunar Reconnaissance Orbiter.</p>
+    <div class="stack" id="stack"></div>
+  </section>
+
+  <section class="mi-step"><p class="hud">Step 3 — Count the clues</p>
+    <div class="card"><div class="pick"><label for="crater">Crater</label><select id="crater"></select></div>
+      <div class="clues3" id="clues"></div><div class="score" id="score"></div></div>
+  </section>
+
+  <section class="mi-step"><p class="hud">Results</p>
+    <div class="card"><div class="table-wrap" id="results"></div><p class="note" id="results-note"></p></div>
+  </section>
+
+  <section class="mi-step"><p class="hud mars">Honest limits</p>
+    <div class="card limits"><ul id="limits"></ul></div>
+  </section>
+</main>
+<footer class="e-foot">Data: NASA LRO Mini-RF, Diviner, LOLA (PDS); CSA RADARSAT Constellation Mission — RADARSAT Constellation Mission Imagery © Government of Canada (2025). Crater coordinates: IAU Gazetteer. Not endorsed by NASA.</footer>
+<script src="common.js"></script>
+<script>
+'use strict';
+(async () => {
+  const { esc, fmt, load } = GTE;
+  const $ = (s) => document.querySelector(s);
+  let e, p, m, w;
+  try { [e, p, m, w] = await Promise.all(['earth_cpr', 'polarimetry', 'moon_targets', 'wavelength'].map(load)); }
+  catch (err) { $('#ruler').innerHTML = `<p class="muted">Data not found: ${esc(err.message)}</p>`; return; }
+  const COL = { smooth: '#8c9bab', rough_rock: '#f0a35e', ice: '#4fd1e8' };
+  const NAME = { smooth: 'Smooth ground', rough_rock: 'Rock / lava fields', ice: 'Glacier ice' };
+  const pretty = (s) => s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  const pct = (x) => `${fmt(x * 100, x < 0.01 ? 2 : 1)}%`;
+  const craters = m.targets.filter((t) => t.ies != null);
+  const ORDER = ['smooth', 'rough_rock', 'ice'];
+
+  /* Step 1: Earth ruler (class medians and site medians, middle 50% as bars) */
+  const xmax = Math.ceil(Math.max(...e.sites.map((s) => s.p75), ...Object.values(e.classes).map((c) => c.p75)) * 2) / 2;
+  const X = (v) => `${(Math.min(v, xmax) / xmax * 100).toFixed(2)}%`;
+  const track = (o, c) => `<div class="r-track"><span class="r-one" style="left:${X(1)}"></span><span class="r-iqr" style="left:${X(o.p25)};width:calc(${X(o.p75)} - ${X(o.p25)});background:${c}"></span>
+    <span class="r-med" style="left:${X(o.median)};background:${c}" title="median ${fmt(o.median)}"></span></div>`;
+  const axis = `<div class="r-axis"><span></span><div>${Array.from({ length: xmax * 2 + 1 }, (_, i) => `<span>${(i / 2).toFixed(1)}</span>`).join('')}</div><span></span></div>`;
+  $('#ruler').innerHTML = ORDER.map((c) => `<div class="r-head" style="color:${COL[c]}">${NAME[c]}</div>
+      <div class="r-row"><span class="lab"><b>All ${NAME[c].toLowerCase()}</b></span>${track(e.classes[c], COL[c])}<span class="val">${fmt(e.classes[c].median)}</span></div>
+      ${e.sites.filter((s) => s.cls === c).sort((a, b) => a.median - b.median).map((s) => `<div class="r-row"><span class="lab">${esc(pretty(s.site))}</span>${track(s, COL[c])}<span class="val">${fmt(s.median)}</span></div>`).join('')}`).join('') + axis;
+  $('#ruler-note').innerHTML = `Dot: median CPR; bar: middle 50% of ${e.look}×${e.look}-pixel blocks; dashed line: CPR = 1. ${e.sites.length} sites, ${esc(e.convention)}. The order holds: smooth &lt; rock &lt; ice.`;
+
+  const C = p.earth.classes;
+  $('#finding').innerHTML = `<h3>Main finding: one radar clue is not enough</h3><ol>
+    <li>A published test (${esc(p.criterion.source.split(';')[0])}) flags ice when <b>CPR &gt; ${p.criterion.cpr_min} and DOP &lt; ${p.criterion.dop_max}</b>. On Earth it passes <b>${pct(C.ice.frac_criterion)}</b> of glacier-ice cells and <b>${pct(C.rough_rock.frac_criterion)}</b> of lava/rock cells (smooth ground ${pct(C.smooth.frac_criterion)}) — it barely separates ice from lava.</li>
+    <li>The ellipticity angle χ separates the classes better (median smooth ${fmt(C.smooth.chi_median_of_sites_deg, 0)}°, rock ${fmt(C.rough_rock.chi_median_of_sites_deg, 0)}°, ice ${fmt(C.ice.chi_median_of_sites_deg, 0)}°), but it is linked to CPR.</li>
+    <li><b>So we never trust one number</b> — we combine three independent clues.</li></ol>`;
+
+  /* Step 2: three layers */
+  const src = m.targets[0].source.split('; ');
+  const layers = [
+    ['l-radar', 'Mini-RF radar', 'Radar contrast', `CPR inside the crater floor (r &lt; 0.8 R) vs a ring outside the rim (1.2–2 R). Rocks would be bright outside too; ice in a cold trap would not.`, src[0], `CPR inside ÷ outside &gt; ${m.ratio_threshold}`],
+    ['l-temp', 'Diviner temperature', 'Cold trap', `How warm the crater floor gets during the year. Water ice survives for billions of years only where it stays very cold.`, src[1], `median floor T<sub>max</sub> &lt; ${m.cold_threshold_k} K`],
+    ['l-terrain', 'LOLA terrain', 'Smooth floor', `Slope of the crater floor from laser altimetry. A smooth floor makes boulders a less likely cause of a high CPR.`, src[2], `median floor slope &lt; ${fmt(m.slope_threshold_deg, 2)}° (median over all craters)`],
+  ];
+  $('#stack').innerHTML = layers.map(([cls, title, clue, what, data, thr], i) => `<article class="layer ${cls}"><h3><span class="e-rank">LAYER ${i + 1}</span>${title}<span class="chip">${clue}</span></h3>
+    <dl><dt>Measures</dt><dd>${what}</dd><dt>Data</dt><dd class="small">${esc(data)}</dd><dt>Clue if</dt><dd><b>${thr}</b></dd></dl></article>`).join('');
+
+  /* Step 3: clues for one crater */
+  const sel = $('#crater');
+  sel.innerHTML = craters.map((t) => `<option ${t.name === 'Shackleton' ? 'selected' : ''}>${esc(t.name)}</option>`).join('');
+  function showCrater(name) {
+    const t = craters.find((x) => x.name === name), c = t.clues, r = t.cpr_in / t.cpr_out;
+    const box = (ok, title, num, why) => `<div class="cl ${ok ? 'ok' : 'bad'}"><span class="ic" aria-label="${ok ? 'yes' : 'no'}">${ok ? '✅' : '❌'}</span><b>${title}</b><div>${num}</div><div class="small muted">${why}</div></div>`;
+    $('#clues').innerHTML = box(c.radar, 'Radar contrast (Mini-RF)', `CPR ${fmt(t.cpr_in)} inside vs ${fmt(t.cpr_out)} outside = ×${fmt(r)}`, `needs &gt; ×${m.ratio_threshold}`)
+      + box(c.cold, 'Cold trap (Diviner)', `median T<sub>max</sub> ${Math.round(t.tmax_k)} K · ${fmt(t.frac_floor_below_110k * 100, 0)}% of floor &lt; ${m.cold_threshold_k} K`, `needs median &lt; ${m.cold_threshold_k} K`)
+      + box(c.smooth, 'Smooth floor (LOLA)', `median slope ${fmt(t.slope_deg, 1)}°`, `needs &lt; ${fmt(m.slope_threshold_deg, 1)}°`);
+    const verdict = t.ies === 3 ? 'strongly consistent with ice' : t.ies === 2 ? 'possibly icy — needs more evidence' : 'more likely rocks, slopes or too warm';
+    $('#score').innerHTML = `<span class="big">${t.ies} / 3</span><span><b>Evidence score</b> for ${esc(t.name)}: ${verdict}.<br><span class="small muted">An evidence score, not a probability. "Consistent with ice" is not proof of ice.</span></span>`;
+    document.querySelectorAll('#results tr[data-n]').forEach((tr) => tr.classList.toggle('sel', tr.dataset.n === name));
+  }
+
+  /* Results table, sorted by score */
+  const yn = (ok) => (ok ? '✓' : '✕');
+  const rows = [...craters].sort((a, b) => b.ies - a.ies || b.cpr_in / b.cpr_out - a.cpr_in / a.cpr_out);
+  $('#results').innerHTML = `<table class="cmp"><thead><tr><th>Crater</th><th>Score</th><th>CPR in / out</th><th>Median T<sub>max</sub></th><th>Floor &lt; ${m.cold_threshold_k} K</th><th>Floor slope</th></tr></thead>
+    <tbody>${rows.map((t) => `<tr data-n="${esc(t.name)}" style="cursor:pointer"><td>${esc(t.name)}</td><td><b>${t.ies} / 3</b></td>
+      <td>${fmt(t.cpr_in)} / ${fmt(t.cpr_out)} ${yn(t.clues.radar)}</td><td>${Math.round(t.tmax_k)} K ${yn(t.clues.cold)}</td>
+      <td>${fmt(t.frac_floor_below_110k * 100, 0)}%</td><td>${fmt(t.slope_deg, 1)}° ${yn(t.clues.smooth)}</td></tr>`).join('')}</tbody></table>`;
+  const mountains = m.targets.filter((t) => t.ies == null).map((t) => t.name);
+  $('#results-note').innerHTML = `${craters.filter((t) => t.ies >= 2).length} of ${craters.length} craters reach a score of 2 or more. Click a row to see its clues. ${mountains.length ? `Not scored (mountains, no crater floor): ${esc(mountains.join(', '))}.` : ''} T<sub>max</sub>: ${esc(m.tmax_definition)}.`;
+  $('#results').addEventListener('click', (ev) => { const tr = ev.target.closest('tr[data-n]'); if (tr) { sel.value = tr.dataset.n; showCrater(tr.dataset.n); $('#crater').scrollIntoView({ behavior: 'smooth', block: 'center' }); } });
+  sel.addEventListener('change', () => showCrater(sel.value));
+  showCrater(sel.value);
+
+  /* Honest limits */
+  const cab = m.targets.find((t) => t.name === 'Cabeus');
+  $('#limits').innerHTML = `<li><b>Different wavelengths.</b> RCM uses ${w.rcm.wavelength_cm} cm (C-band), Mini-RF ${w.minirf.wavelength_cm} cm (S-band). Each senses different roughness and depth (smooth below h ≈ ${fmt(Object.values(w.rcm.h_cm_at_filter_limits)[0])}–${fmt(Object.values(w.rcm.h_cm_at_filter_limits)[1])} cm for RCM, ${fmt(w.minirf.h_cm)} cm for Mini-RF), so we compare the order of classes and the inside/outside contrast, not exact values. No conversion factor is claimed.</li>
+    <li><b>Score ≠ probability.</b> "3 / 3" means three independent clues agree with ice — not a percentage chance of ice.</li>
+    ${cab ? `<li><b>Cabeus.</b> NASA's LCROSS impact (2009) found water in Cabeus, yet its median T<sub>max</sub> in our data is ${Math.round(cab.tmax_k)} K, so it fails the cold clue — only ${fmt(cab.frac_floor_below_110k * 100, 0)}% of its floor stays below ${m.cold_threshold_k} K. Our floor zone can include sunlit slopes. We did not change the rule after seeing this.</li>` : ''}
+    <li><b>Earth ice is not lunar ice.</b> Glacier ice is cleaner than ice mixed into lunar soil, and moisture changes the echo on Earth.</li>`;
+})();
+</script>
+</body>
+</html>
