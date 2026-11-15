@@ -16,8 +16,8 @@
 <main class="e-wrap">
   <div class="a8-head"><h2>Earth twins of the Moon and Mars</h2><a class="btn" id="how" href="analog-engine.html" hidden>How we computed this →</a></div>
 
-  <p class="hud">Top 4 official NASA analog sites</p>
-  <p class="a8-cap">Already used by NASA to test technology — scored by our formula.</p>
+  <p class="hud">Top 4 official analog sites</p>
+  <p class="a8-cap">Top 4 official analog sites — listed by NASA (Planetary Analog Explorer) or USGS, scored by our formula.</p>
   <div class="a8-grid" id="official"></div>
   <p class="note" id="rule-official"></p>
 
@@ -41,7 +41,7 @@
   const card = (x) => {
     const b = body(x.target), lab = T.targets[x.target].label.split(' (')[0];
     return `<article class="card a8-card ${b}"><span class="tag ${b === 'moon' ? 'ice' : 'mars'}">${esc(lab)}</span>
-      <h3>${esc(x.name)}</h3><span class="a8-meta">${esc(x.country)} · ${ll(x.lat, x.lon)}${x.listed_by ? ` · listed by ${esc(x.listed_by)}` : ''}</span>
+      <h3>${esc(x.name)}</h3><span class="a8-meta">${esc(x.country)} · ${ll(x.lat, x.lon)}</span>${x.listed_by ? `<div class="a8-listed">Listed by: ${esc(x.listed_by.startsWith('USGS') ? 'USGS' : x.listed_by)}</div>` : ''}
       <div class="e-nums"><div>S<b class="e-s ${b}">${fmt(x.S, 3)}</b></div><div>Match<b>${fmt(x.S * 100, 1)}%</b></div>
         <div>Rank<b>#${x.position.toLocaleString('en')}</b></div><div>Share<b>${topPct(x.top_percent).replace(' of land cells', '')}</b>of land cells</div></div>
       ${bars(x.features, x.profile)}${reasons(x.features, x.profile, w)}
