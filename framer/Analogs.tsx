@@ -98,6 +98,23 @@ const SITE_LINKS: Record<string, [string, string][]> = {
     ],
     utah: [["Space.com: Mars Desert Research Station (Mars Society, not NASA)", "https://www.space.com/24139-mock-mars-mission-utah-habitat.html"]],
 }
+const URLS = {
+    gpm: "https://gpm.nasa.gov/data",
+    mod13: "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13a2-061",
+    mod11: "https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11a2-061",
+    mod08: "https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD08_M3",
+    gmted: "https://www.usgs.gov/publications/global-multi-resolution-terrain-elevation-data-2010-gmted2010",
+    s2: "https://s2maps.eu/",
+    gibs: "https://www.earthdata.nasa.gov/gibs",
+    code: "https://github.com/zhureswe/groundtwin/blob/main/pipeline/17_breakdown_maps.py",
+    grid: "https://github.com/zhureswe/groundtwin/blob/main/docs/data/analog_grid.json",
+}
+const FEAT_URL: Record<string, string> = { aridity: URLS.gpm, barren: URLS.mod13, thermal_range: URLS.mod11, cold: URLS.mod11, dust: URLS.mod08, roughness: URLS.gmted, elevation: URLS.gmted }
+const SrcLink = ({ href, children, style }: any) => (
+    <a href={href} target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none", borderBottom: "1px dotted currentColor", ...style }}>
+        {children} ↗
+    </a>
+)
 const ANALOG_EXPLORER: [string, string] = ["NASA Analog Explorer: Earth places used as Moon and Mars analogs", "https://science.nasa.gov/solar-system/analog-explorer/"]
 
 const META: Record<string, any> = {
@@ -108,6 +125,7 @@ const META: Record<string, any> = {
         color: C.moon,
         img: BASE + "assets/img/moon_south_pole_lroc_wac.jpg",
         credit: "Lunar south pole, LROC Wide Angle Camera mosaic · NASA/GSFC/Arizona State University",
+        creditUrl: "https://lroc.sese.asu.edu/",
         trek: "https://trek.nasa.gov/moon/",
         trekName: "NASA Moon Trek",
     },
@@ -118,6 +136,7 @@ const META: Record<string, any> = {
         color: C.mars,
         img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gale_crater_with_Curiosity_landing_ellipse_(PIA15687).jpg?width=900",
         credit: "Gale crater and Mount Sharp, PIA15687 · NASA/JPL-Caltech/ESA/DLR/FU Berlin/MSSS",
+        creditUrl: "https://photojournal.jpl.nasa.gov/catalog/PIA15687",
         trek: "https://trek.nasa.gov/mars/",
         trekName: "NASA Mars Trek",
     },
@@ -417,7 +436,7 @@ function Section({ title, kicker, children, mt = 56 }: any) {
         </section>
     )
 }
-function Shot({ src, title, credit, rect, alt }: any) {
+function Shot({ src, title, credit, rect, alt, href }: any) {
     return (
         <figure style={{ margin: 0 }}>
             <div style={{ position: "relative", aspectRatio: "1 / 1", borderRadius: 14, overflow: "hidden", background: C.s2, border: "1px solid " + C.line }}>
@@ -426,7 +445,7 @@ function Shot({ src, title, credit, rect, alt }: any) {
             </div>
             <figcaption style={{ marginTop: 10 }}>
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{title}</div>
-                <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3, lineHeight: 1.5 }}>{credit}</div>
+                <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3, lineHeight: 1.5 }}>{href ? <SrcLink href={href}>{credit}</SrcLink> : credit}</div>
             </figcaption>
         </figure>
     )
@@ -437,13 +456,14 @@ const RELIEF_CREDIT = "NASA/METI ASTER GDEM shaded relief · via NASA GIBS"
 function Images({ lat, lon, cols }: any) {
     const c = cosd(lat)
     const S2_CREDIT = lat < -60 ? "NASA Blue Marble Next Generation · via NASA GIBS" : S2_CREDIT_EOX
+    const S2_HREF = lat < -60 ? URLS.gibs : URLS.s2
     const wide = 4
     const km = (deg: number) => Math.round((deg * 111) / 10) * 10
     return (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(" + cols + ", minmax(0,1fr))", gap: 18 }}>
-            <Shot src={s2Url(lat, lon, 0.5, 720)} alt="Sentinel-2 close-up of the scored cell" title={"Close-up · about " + Math.round(0.5 * 111) + " km across"} credit={S2_CREDIT} rect={{ w: c * 100 - 1, h: 99 }} />
-            <Shot src={s2Url(lat, lon, wide, 720)} alt="Sentinel-2 view of the region" title={"Region · about " + km(wide) + " km across"} credit={S2_CREDIT} rect={{ w: (0.5 / wide) * 100 * c, h: (0.5 / wide) * 100 }} />
-            <Shot src={reliefUrl(lat, lon, wide, 720)} alt="Terrain relief of the region" title="Terrain relief · same area" credit={RELIEF_CREDIT} rect={{ w: (0.5 / wide) * 100 * c, h: (0.5 / wide) * 100 }} />
+            <Shot src={s2Url(lat, lon, 0.5, 720)} alt="Sentinel-2 close-up of the scored cell" title={"Close-up · about " + Math.round(0.5 * 111) + " km across"} credit={S2_CREDIT} href={S2_HREF} rect={{ w: c * 100 - 1, h: 99 }} />
+            <Shot src={s2Url(lat, lon, wide, 720)} alt="Sentinel-2 view of the region" title={"Region · about " + km(wide) + " km across"} credit={S2_CREDIT} href={S2_HREF} rect={{ w: (0.5 / wide) * 100 * c, h: (0.5 / wide) * 100 }} />
+            <Shot src={reliefUrl(lat, lon, wide, 720)} alt="Terrain relief of the region" title="Terrain relief · same area" credit={RELIEF_CREDIT} href={URLS.gibs} rect={{ w: (0.5 / wide) * 100 * c, h: (0.5 / wide) * 100 }} />
         </div>
     )
 }
@@ -471,7 +491,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
     const labX = narrow ? Math.round(L * 1.08) : Math.round(W * 0.52)
     const fileBase = BASE + "assets/img/bd/" + target + "_" + lat.toFixed(2) + "_" + lon.toFixed(2)
     const scoreTxt = typeof S === "number" ? ", S = " + S.toFixed(2) + (typeof top === "number" ? " · top " + fmtPct(top) + "% of land" : "") : ""
-    const scoreLayer = { img: fileBase + ".png", k: many ? "08" : "03", t: "Our score map", sub: many ? "weighted average of the 7 layers above" : "7 criteria → 1 score · NASA MODIS, GPM + USGS", d: "Each 0.5° land square coloured by S (brighter = closer to the target). White box: this place" + scoreTxt + "." }
+    const scoreLayer = { img: fileBase + ".png", k: many ? "08" : "03", t: "Our score map", href: URLS.code, sub: many ? "weighted average of the 7 layers above · our code" : "7 criteria → 1 score · NASA MODIS, GPM + USGS · our code", d: "Each 0.5° land square coloured by S (brighter = closer to the target). White box: this place" + scoreTxt + "." }
     const layers: any[] = many
         ? FEATS.map((f, i) => {
               const p = r.features && typeof r.features[f] === "number" ? r.features[f] : null
@@ -479,6 +499,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
               const st = status(r, f)
               return {
                   img: fileBase + "_" + f + ".png",
+                  href: FEAT_URL[f],
                   k: "0" + (i + 1),
                   t: FNAME[f] + (weights && weights[f] != null ? "  ×" + weights[f] : ""),
                   sub: SOURCES[f],
@@ -487,8 +508,8 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
               }
           }).concat([scoreLayer])
         : [
-              { img: s2Url(lat, lon, 4, 600), k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
-              { img: reliefUrl(lat, lon, 4, 600), k: "02", t: "Terrain relief", sub: "ASTER GDEM · NASA GIBS", d: "Hills, slopes and flat ground. The score's terrain criteria (roughness, elevation) come from USGS GMTED2010." },
+              { img: s2Url(lat, lon, 4, 600), href: lat < -60 ? URLS.gibs : URLS.s2, k: "01", t: "Satellite photo", sub: "Sentinel-2 cloudless 2023 · EOX", d: "What the land looks like. We look at it to check the place; it does not enter the score." },
+              { img: reliefUrl(lat, lon, 4, 600), href: URLS.gibs, k: "02", t: "Terrain relief", sub: "ASTER GDEM · NASA GIBS", d: "Hills, slopes and flat ground. The score's terrain criteria (roughness, elevation) come from USGS GMTED2010." },
               scoreLayer,
           ]
     const n = layers.length
@@ -523,7 +544,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
                                 <span style={{ fontFamily: MONO, fontSize: 10.5, color: dot }}>{ly.k}</span>
                                 <span style={{ fontFamily: HEAD, fontSize: narrow ? 14 : many ? 15.5 : 18, fontWeight: 600 }}>{ly.t}</span>
                             </div>
-                            <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}>{ly.sub}</div>
+                            <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}>{ly.href ? <SrcLink href={ly.href}>{ly.sub}</SrcLink> : ly.sub}</div>
                             {narrow ? null : <div style={{ fontSize: many ? 12.5 : 13, color: C.muted, marginTop: many ? 3 : 6, lineHeight: 1.45, maxWidth: 400 }}>{ly.d}</div>}
                         </div>
                     </React.Fragment>
@@ -531,7 +552,7 @@ function Breakdown({ lat, lon, target, name, S, top, color, r, weights }: any) {
             })}
             {many ? (
                 <div style={{ position: "absolute", left: 0, bottom: 0, fontSize: 12, color: C.subtle, maxWidth: 760, lineHeight: 1.5 }}>
-                    Layers 01–07: each square's match on one criterion, s = 1 − |place − target| (brighter = closer). Layer 08 averages them with the Science weights (×3 for dry and no plants).
+                    Layers 01–07: each square's match on one criterion, s = 1 − |place − target| (brighter = closer). Layer 08 averages them with the Science weights (×3 for dry and no plants). Cell values: <SrcLink href={URLS.grid}>analog_grid.json</SrcLink>, computed in Google Earth Engine from the NASA and USGS datasets linked above.
                 </div>
             ) : null}
         </div>
@@ -561,7 +582,7 @@ function Criteria({ r, color, weights, wide }: any) {
                                 {p !== null ? PHRASE[f] + " " + Math.round(p * 100) + "% of Earth's land" : "No value"}
                                 {t !== null ? <span style={{ color: C.subtle }}> · target {t.toFixed(2)}</span> : null}
                             </div>
-                            <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}>{SOURCES[f]}</div>
+                            <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, marginTop: 3 }}><SrcLink href={FEAT_URL[f]}>{SOURCES[f]}</SrcLink></div>
                         </div>
                         {wide ? <StatusTag st={st} c={stColor} /> : null}
                     </div>
@@ -612,7 +633,7 @@ function TargetPanel({ target, d }: any) {
                 <img src={m.img} alt={tg.label || m.head} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
             <div style={{ padding: 20 }}>
-                <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, lineHeight: 1.5 }}>{m.credit}</div>
+                <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.subtle, lineHeight: 1.5 }}>{m.creditUrl ? <SrcLink href={m.creditUrl}>{m.credit}</SrcLink> : m.credit}</div>
                 <div style={{ fontFamily: HEAD, fontSize: 19, fontWeight: 600, marginTop: 12 }}>{(tg.label || m.head).replace(" - ", " · ")}</div>
                 <div style={{ fontSize: 13, color: C.muted, marginTop: 6, lineHeight: 1.5 }}>The white marks on the bars are this target's profile on the same 7 criteria.</div>
                 {tg.cannot && tg.cannot.length ? (
@@ -883,7 +904,7 @@ export default function AnalogDetail(props: any) {
                 <Section kicker="Satellite view" title={it.sites.length > 1 ? "The sites" : "The site"}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(" + (wide ? Math.min(3, it.sites.length) : mid ? 2 : 1) + ", minmax(0,1fr))", gap: 18 }}>
                         {it.sites.map((s: any) => (
-                            <Shot key={s.name} src={s2Url(s.lat, s.lon, 0.25, 640)} alt={"Sentinel-2 view of " + s.name} title={s.name + " · " + fmtLL(s.lat, s.lon)} credit={S2_CREDIT + " · coordinates: " + String(s.coord_source || "").split(":")[0]} />
+                            <Shot key={s.name} src={s2Url(s.lat, s.lon, 0.25, 640)} alt={"Sentinel-2 view of " + s.name} title={s.name + " · " + fmtLL(s.lat, s.lon)} credit={S2_CREDIT + " · coordinates: " + String(s.coord_source || "").split(":")[0]} href={URLS.s2} />
                         ))}
                     </div>
                 </Section>

@@ -8,6 +8,8 @@ html, body { overflow-x: hidden; }
 .e-head .e-title { font-family: var(--font-mono); font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
 .e-foot { padding: 16px clamp(12px, 3vw, 24px); border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: .72rem; color: var(--muted); }
 .is-embed .e-head, .is-embed .e-foot { display: none !important; }
+.is-embed .e-foot.e-src { display: block !important; }   /* data sources stay visible inside Framer */
+.e-src a { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
 .hud { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ice); display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
 .hud::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(79,209,232,.5), transparent); }
 .hud.mars { color: var(--mars); }

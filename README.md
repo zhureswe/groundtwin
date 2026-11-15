@@ -42,11 +42,13 @@ python 12_paper.py ; python 14_submission.py
 The website is static: `python -m http.server -d docs`, then open http://localhost:8000. Every number on the site and in the paper comes from `docs/data/*.json`. The full list of numbers with their source keys is in `paper/numbers.md`, and the audit is in `paper/number_audit.md`.
 
 ## Data
-- **NASA:** LRO Mini-RF, Diviner and LOLA (PDS Geosciences); MODIS (MOD11A2, MOD13A2, MOD08_M3, MCD12Q1); GPM IMERG; Blue Marble via GIBS; Planetary Analog Explorer.
-- **CSA / NRCan:** RADARSAT Constellation Mission CEOS-ARD.
-- **ESA:** Copernicus Sentinel-2, Copernicus DEM.
-- **USGS:** GMTED2010, Terrestrial Analog Data Portal, IAU Gazetteer.
-- **Site coordinates:** IAU, CGNDB, Wikipedia, OpenStreetMap, USGS (recorded per site).
+- **NASA Moon:** LRO [Mini-RF](https://science.nasa.gov/mission/lro/mini-rf/), [Diviner](https://pds-geosciences.wustl.edu/missions/lro/diviner.htm), [LOLA](https://pds-geosciences.wustl.edu/missions/lro/lola.htm).
+- **NASA Earth:** [GPM IMERG](https://gpm.nasa.gov/data); MODIS [MOD13A2 NDVI](https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13a2-061), [MOD11A2 LST](https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod11a2-061), [MOD08_M3 aerosol](https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD08_M3); [Blue Marble and ASTER relief via GIBS](https://www.earthdata.nasa.gov/gibs); [Planetary Analog Explorer](https://science.nasa.gov/solar-system/analog-explorer/).
+- **NASA targets:** [Artemis III candidate regions](https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/); [PIA15687 Gale crater](https://photojournal.jpl.nasa.gov/catalog/PIA15687); [LROC](https://lroc.sese.asu.edu/).
+- **CSA / NRCan:** [RADARSAT Constellation Mission CEOS-ARD](https://registry.opendata.aws/rcm-ceos-ard/).
+- **ESA:** Copernicus Sentinel-2 ([Sentinel-2 cloudless by EOX](https://s2maps.eu/)), Copernicus DEM.
+- **USGS:** [GMTED2010](https://www.usgs.gov/publications/global-multi-resolution-terrain-elevation-data-2010-gmted2010), [Known Terrestrial Analog Sites](https://catalog.data.gov/dataset/known-terrestrial-analog-sites-for-planetary-science), [IAU Gazetteer](https://planetarynames.wr.usgs.gov).
+- **Site coordinates:** IAU, CGNDB, Wikipedia, OpenStreetMap, USGS (recorded per site in `docs/data/*.json`). Place names: [GeoNames](https://www.geonames.org/).
 
 RADARSAT Constellation Mission Imagery © Government of Canada (2025). RADARSAT is an official mark of the Canadian Space Agency. GroundTwin is not endorsed by NASA or any space agency.
 
