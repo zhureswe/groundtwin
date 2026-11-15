@@ -821,7 +821,7 @@
     "intelligence",
     "chatgpt"
    ],
-   "a": "We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.",
+   "a": "We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and editing the English texts. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.",
    "label": "Our method",
    "links": [],
    "section": "#about"

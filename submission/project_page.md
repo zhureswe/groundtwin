@@ -40,7 +40,7 @@ GroundTwin uses Earth as the twin of the Moon and Mars. First and foremost, our 
 **Tools.** Python (numpy, rasterio, rioxarray, pyproj, shapely, scipy, matplotlib, earthengine-api), Google Earth Engine, HTML/CSS/JavaScript with Leaflet, Chart.js, KaTeX and CesiumJS, and GitHub Pages.
 
 ## Use of Artificial Intelligence
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and editing the English texts. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.
 
 ## NASA Data
 - LRO Mini-RF global mosaics (CPR, degree of polarization M, Stokes S1, S4): https://science.nasa.gov/mission/lro/mini-rf/ · https://pds-geosciences.wustl.edu/missions/lro/

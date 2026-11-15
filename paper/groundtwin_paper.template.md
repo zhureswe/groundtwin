@@ -137,7 +137,7 @@ All code (Python pipeline `pipeline/01–12`) and the derived JSON files are ope
 
 ## 9. AI use statement
 
-We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and drafting and editing the English texts (paper, README, site texts, help answers) from our results. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.
+We used Claude (Anthropic), through Claude Code, as a tool for writing code, processing data, and editing the English texts. The project idea, the choice of sites and methods, checking the results and the visual design are our own. No AI-generated images or videos are used.
 
 ## References
 

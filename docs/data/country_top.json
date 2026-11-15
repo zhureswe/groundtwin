@@ -1,0 +1,444 @@
+{
+ "demo": false,
+ "mode": "science",
+ "n_cells": 60215,
+ "min_separation_km": 600,
+ "rule": "Best-scoring 0.5-deg land cell per country, cells at least 600 km apart, Science weights. Rank = 1 + number of land cells with a higher S.",
+ "names": "Country, province and nearest town: GeoNames via the reverse_geocoder package (offline).",
+ "top": {
+  "moon_south_pole": [
+   {
+    "rank": 1,
+    "lat": 36.75,
+    "lon": 85.75,
+    "S": 0.925,
+    "position": 1,
+    "n_cells": 60215,
+    "top_percent": 0.002,
+    "country": "China",
+    "cc": "CN",
+    "province": "Xinjiang",
+    "near": "Aqqan",
+    "features": {
+     "aridity": 0.951,
+     "barren": 0.949,
+     "thermal_range": 0.992,
+     "cold": 0.761,
+     "dust": 0.271,
+     "roughness": 0.863,
+     "elevation": 0.995
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 1,
+     "cold": 1,
+     "dust": 0.3,
+     "roughness": 0.8,
+     "elevation": 0.7
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "partly": [
+     "cold",
+     "elevation"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 2,
+    "lat": 46.25,
+    "lon": 95.25,
+    "S": 0.904,
+    "position": 18,
+    "n_cells": 60215,
+    "top_percent": 0.03,
+    "country": "Mongolia",
+    "cc": "MN",
+    "province": "Govi-Altai",
+    "near": "Sharga",
+    "features": {
+     "aridity": 0.895,
+     "barren": 0.909,
+     "thermal_range": 0.966,
+     "cold": 0.798,
+     "dust": 0.338,
+     "roughness": 0.765,
+     "elevation": 0.928
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 1,
+     "cold": 1,
+     "dust": 0.3,
+     "roughness": 0.8,
+     "elevation": 0.7
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "partly": [
+     "cold",
+     "elevation"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 3,
+    "lat": 35.25,
+    "lon": 78.75,
+    "S": 0.902,
+    "position": 25,
+    "n_cells": 60215,
+    "top_percent": 0.042,
+    "country": "India",
+    "cc": "IN",
+    "province": "Ladakh",
+    "near": "Leh",
+    "features": {
+     "aridity": 0.928,
+     "barren": 0.93,
+     "thermal_range": 0.978,
+     "cold": 0.758,
+     "dust": 0.254,
+     "roughness": 0.944,
+     "elevation": 0.999
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 1,
+     "cold": 1,
+     "dust": 0.3,
+     "roughness": 0.8,
+     "elevation": 0.7
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "partly": [
+     "cold",
+     "elevation"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 4,
+    "lat": -25.75,
+    "lon": -68.25,
+    "S": 0.887,
+    "position": 92,
+    "n_cells": 60215,
+    "top_percent": 0.153,
+    "country": "Argentina",
+    "cc": "AR",
+    "province": "Catamarca",
+    "near": "Antofagasta de la Sierra",
+    "features": {
+     "aridity": 0.933,
+     "barren": 0.948,
+     "thermal_range": 1.0,
+     "cold": 0.531,
+     "dust": 0.1,
+     "roughness": 0.821,
+     "elevation": 0.988
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 1,
+     "cold": 1,
+     "dust": 0.3,
+     "roughness": 0.8,
+     "elevation": 0.7
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "partly": [
+     "cold",
+     "elevation"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 5,
+    "lat": -24.25,
+    "lon": 14.75,
+    "S": 0.881,
+    "position": 147,
+    "n_cells": 60215,
+    "top_percent": 0.244,
+    "country": "Namibia",
+    "cc": "NA",
+    "province": "Erongo",
+    "near": "Walvis Bay",
+    "features": {
+     "aridity": 0.974,
+     "barren": 0.924,
+     "thermal_range": 0.984,
+     "cold": 0.272,
+     "dust": 0.244,
+     "roughness": 0.765,
+     "elevation": 0.475
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 1,
+     "cold": 1,
+     "dust": 0.3,
+     "roughness": 0.8,
+     "elevation": 0.7
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness"
+    ],
+    "partly": [
+     "elevation"
+    ],
+    "differ": [
+     "cold"
+    ]
+   }
+  ],
+  "mars_gale": [
+   {
+    "rank": 1,
+    "lat": 40.25,
+    "lon": 86.75,
+    "S": 0.941,
+    "position": 1,
+    "n_cells": 60215,
+    "top_percent": 0.002,
+    "country": "China",
+    "cc": "CN",
+    "province": "Xinjiang",
+    "near": "Yuli",
+    "features": {
+     "aridity": 0.962,
+     "barren": 0.951,
+     "thermal_range": 0.991,
+     "cold": 0.562,
+     "dust": 0.807,
+     "roughness": 0.729,
+     "elevation": 0.795
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 0.9,
+     "cold": 0.7,
+     "dust": 0.8,
+     "roughness": 0.7,
+     "elevation": 0.6
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "cold",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "partly": [],
+    "differ": []
+   },
+   {
+    "rank": 2,
+    "lat": 27.25,
+    "lon": 6.75,
+    "S": 0.926,
+    "position": 26,
+    "n_cells": 60215,
+    "top_percent": 0.043,
+    "country": "Algeria",
+    "cc": "DZ",
+    "province": "Illizi",
+    "near": "Illizi",
+    "features": {
+     "aridity": 0.978,
+     "barren": 0.905,
+     "thermal_range": 0.895,
+     "cold": 0.304,
+     "dust": 0.792,
+     "roughness": 0.683,
+     "elevation": 0.608
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 0.9,
+     "cold": 0.7,
+     "dust": 0.8,
+     "roughness": 0.7,
+     "elevation": 0.6
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "partly": [
+     "cold"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 3,
+    "lat": 25.25,
+    "lon": 33.75,
+    "S": 0.923,
+    "position": 34,
+    "n_cells": 60215,
+    "top_percent": 0.056,
+    "country": "Egypt",
+    "cc": "EG",
+    "province": "Aswan",
+    "near": "Idfu",
+    "features": {
+     "aridity": 0.989,
+     "barren": 0.941,
+     "thermal_range": 0.939,
+     "cold": 0.233,
+     "dust": 0.817,
+     "roughness": 0.729,
+     "elevation": 0.498
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 0.9,
+     "cold": 0.7,
+     "dust": 0.8,
+     "roughness": 0.7,
+     "elevation": 0.6
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "partly": [
+     "cold"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 4,
+    "lat": 22.75,
+    "lon": 15.75,
+    "S": 0.917,
+    "position": 69,
+    "n_cells": 60215,
+    "top_percent": 0.115,
+    "country": "Chad",
+    "cc": "TD",
+    "province": "Tibesti",
+    "near": "Bardai",
+    "features": {
+     "aridity": 0.986,
+     "barren": 0.935,
+     "thermal_range": 0.902,
+     "cold": 0.362,
+     "dust": 0.757,
+     "roughness": 0.534,
+     "elevation": 0.772
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 0.9,
+     "cold": 0.7,
+     "dust": 0.8,
+     "roughness": 0.7,
+     "elevation": 0.6
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "partly": [
+     "cold"
+    ],
+    "differ": []
+   },
+   {
+    "rank": 5,
+    "lat": 28.25,
+    "lon": -3.75,
+    "S": 0.915,
+    "position": 90,
+    "n_cells": 60215,
+    "top_percent": 0.149,
+    "country": "Morocco",
+    "cc": "MA",
+    "province": "Drâa-Tafilalet",
+    "near": "Mhamid",
+    "features": {
+     "aridity": 0.961,
+     "barren": 0.92,
+     "thermal_range": 0.972,
+     "cold": 0.334,
+     "dust": 0.787,
+     "roughness": 0.623,
+     "elevation": 0.575
+    },
+    "profile": {
+     "aridity": 1,
+     "barren": 1,
+     "thermal_range": 0.9,
+     "cold": 0.7,
+     "dust": 0.8,
+     "roughness": 0.7,
+     "elevation": 0.6
+    },
+    "match": [
+     "aridity",
+     "barren",
+     "thermal_range",
+     "dust",
+     "roughness",
+     "elevation"
+    ],
+    "partly": [
+     "cold"
+    ],
+    "differ": []
+   }
+  ]
+ }
+}

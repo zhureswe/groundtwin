@@ -62,7 +62,7 @@
     </div>
   </section>
 </div>
-<footer class="e-foot">Imagery: NASA Blue Marble via NASA EOSDIS GIBS · Pins and scores: GroundTwin data (showcase.json, explanations.json) · Not endorsed by NASA.</footer>
+<footer class="e-foot">Imagery: NASA Blue Marble via NASA EOSDIS GIBS · Pins and scores: GroundTwin data (famous_analogs.json, country_top.json) · 3D engine: CesiumJS · Not endorsed by NASA.</footer>
 
 <script src="common.js"></script>
 <script>window.GT_BASE = '../'; window.GT_MANUAL = true;</script>
@@ -74,41 +74,51 @@
 'use strict';
 (() => {   // own scope: app.js also defines fmt/topPct globally
 const { esc, fmt, topPct, ll, body, load, buttons, bars, chips } = GTE;
+const SITE = 'https://true-memory-123862.framer.app/analog?id=';   // detail pages on the Framer site
 const GROUPS = {
-  moon: { label: 'Top 5 · Moon south pole', color: '#4fd1e8' },
-  mars: { label: 'Top 5 · Mars', color: '#ff6a3d' },
-  moon_reference: { label: 'Moon reference · Arizona', color: '#f0c35e' },
-  mars_reference: { label: 'Mars reference · Utah', color: '#f0c35e' },
-  mangystau: { label: 'Our site · Mangystau', color: '#6fcf97' },
+  famous_moon: { label: 'Famous field analogs · Moon', color: '#9ee7f3' },
+  famous_mars: { label: 'Famous field analogs · Mars', color: '#ffb199' },
+  moon: { label: "Our formula's top 5 · Moon", color: '#4fd1e8' },
+  mars: { label: "Our formula's top 5 · Mars", color: '#ff6a3d' },
+  candidate: { label: 'New candidate · Mangystau', color: '#6fcf97' },
 };
 const msg = (t) => { const m = document.getElementById('msg'); m.textContent = t; m.hidden = false; };
 
-function pins(sc, ex, T) {
+// Same places as the Analogs page: 10 famous field analogs (famous_analogs.json) and the formula's
+// best place per country, 5 Moon + 5 Mars (country_top.json).
+function pins(fa, ct) {
   const out = [];
-  for (const [tk, rows] of Object.entries(sc.top)) rows.forEach((r, i) => out.push({ g: body(tk), tk, text: String(r.rank), name: r.region || 'Unnamed cell',
-    lat: r.lat, lon: r.lon, S: r.S, x: ex.top[tk][i], feats: ex.top[tk][i].features, note: `0.5° cell centre · #${r.rank} of the top 5 by formula` }));
-  for (const c of sc.cards) c.sites.forEach((s, i) => {
-    const one = c.rows.length === c.sites.length, row = one ? c.rows[i] : c.rows[0], x = one ? ex.cards[c.key][i] : ex.cards[c.key][0];
-    out.push({ g: c.key, tk: c.target, text: c.key === 'mangystau' ? 'M' : '★', name: s.name, lat: s.lat, lon: s.lon, S: row.S, x, feats: row.features,
-      note: `${one ? '' : `Score for ${row.place}. `}Coordinates: ${s.coord_source}` });
-  });
+  const x = (v) => ({ position: v.position, top_percent: v.top_percent, match_features: v.match, partly_features: v.partly, differ_features: v.differ });
+  for (const f of fa.sites) {
+    const v = f.scored ? f.targets[f.primary] : null, cand = f.id === 'mangystau';
+    out.push({ g: cand ? 'candidate' : 'famous_' + body(f.primary), tk: f.primary, text: cand ? 'M' : '★', name: f.name, lat: f.lat, lon: f.lon,
+      S: v && v.S, x: v && x(v), feats: f.features, prof: v && v.profile, blurb: f.blurb, reason: f.reason,
+      href: SITE + (cand ? 'mangystau' : 'f-' + f.id), note: `Coordinates: ${f.coord_source}${v ? ' · scored on its 0.5° cell' : ''}` });
+  }
+  for (const [tk, rows] of Object.entries(ct.top)) rows.forEach((r, i) => out.push({ g: body(tk), tk, text: String(i + 1),
+    name: `${r.province}, ${r.country}`, lat: r.lat, lon: r.lon, S: r.S, x: x(r), feats: r.features, prof: r.profile,
+    blurb: r.near ? `Near ${r.near}. Best-scoring 0.5° cell in ${r.country}.` : `Best-scoring 0.5° cell in ${r.country}.`,
+    href: SITE + body(tk) + '-' + (i + 1), note: '0.5° cell centre · place name from GeoNames' }));
   return out;
 }
 
-function showInfo(p, T, label) {
+function showInfo(p, T) {
+  const tl = esc(T.targets[p.tk].label.split(' (')[0]);
   document.getElementById('info-body').innerHTML = `<h3>${esc(p.name)}</h3><span class="e-sub">${esc(GROUPS[p.g].label)} · ${ll(p.lat, p.lon)}</span>
-    <div class="e-nums"><div>S vs ${esc(T.targets[p.tk].label.split(' (')[0])}<b class="e-s ${body(p.tk)}">${fmt(p.S)}</b></div>
-      <div>Rank<b>#${p.x.position.toLocaleString('en')}</b>${topPct(p.x.top_percent)}</div></div>
-    ${bars(p.feats, p.x.profile)}${chips(p.x)}<p class="e-text">${esc(p.x.matches)} <span class="e-ai">${esc(label)}</span></p>
-    <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[p.tk].cannot.join(', '))}.</p>${buttons(p.lat, p.lon, p.tk)}
-    <p class="note">${esc(p.note)}</p>`;
+    <p class="e-text">${esc(p.blurb || '')}</p>
+    ${p.x ? `<div class="e-nums"><div>S vs ${tl}<b class="e-s ${body(p.tk)}">${fmt(p.S)}</b></div>
+      <div>Rank<b>#${p.x.position.toLocaleString('en')}</b>${topPct(p.x.top_percent)}</div></div>${bars(p.feats, p.prof)}${chips(p.x)}`
+      : `<p class="e-text"><b>Not scored:</b> ${esc(p.reason || '')}.</p>`}
+    <p class="e-cannot"><b>What Earth cannot reproduce:</b> ${esc(T.targets[p.tk].cannot.join(', '))}.</p>
+    <div class="e-btns"><a class="e-btn ${body(p.tk)}" href="${p.href}" target="_top">Details, satellite images and sources →</a></div>
+    ${buttons(p.lat, p.lon, p.tk)}<p class="note">${esc(p.note)}</p>`;
   document.getElementById('info').hidden = false;
 }
 
 async function globe() {
   if (typeof Cesium === 'undefined') return msg('CesiumJS could not be loaded.');
-  let sc, ex, T;
-  try { [sc, ex, T] = await Promise.all(['showcase', 'explanations', 'targets'].map(load)); } catch (e) { return msg('Data not found: ' + e.message); }
+  let fa, ct, T;
+  try { [fa, ct, T] = await Promise.all(['famous_analogs', 'country_top', 'targets'].map(load)); } catch (e) { return msg('Data not found: ' + e.message); }
   Cesium.Ion.defaultAccessToken = '';
   const gibs = new Cesium.UrlTemplateImageryProvider({
     url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg',
@@ -123,7 +133,7 @@ async function globe() {
   viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#05070d');
   window.gtViewer = viewer;
   const pb = new Cesium.PinBuilder(), byEntity = new Map(), groups = {};
-  for (const p of pins(sc, ex, T)) {
+  for (const p of pins(fa, ct)) {
     const e = viewer.entities.add({ position: Cesium.Cartesian3.fromDegrees(p.lon, p.lat),
       billboard: { image: pb.fromText(p.text, Cesium.Color.fromCssColorString(GROUPS[p.g].color), 40).toDataURL(), verticalOrigin: Cesium.VerticalOrigin.BOTTOM },
       label: { text: p.name, font: '12px sans-serif', fillColor: Cesium.Color.WHITE, outlineColor: Cesium.Color.BLACK, outlineWidth: 3,
@@ -133,7 +143,7 @@ async function globe() {
   document.getElementById('legend-items').innerHTML = Object.entries(GROUPS).filter(([k]) => groups[k]).map(([k, g]) =>
     `<label><input type="checkbox" data-g="${k}" checked><i style="background:${g.color}"></i>${g.label} (${groups[k].length})</label>`).join('');
   document.getElementById('legend').addEventListener('change', (ev) => { const g = ev.target.dataset.g; if (g) groups[g].forEach((e) => { e.show = ev.target.checked; }); });
-  viewer.selectedEntityChanged.addEventListener((e) => { const p = e && byEntity.get(e); if (p) showInfo(p, T, ex.label); else document.getElementById('info').hidden = true; });
+  viewer.selectedEntityChanged.addEventListener((e) => { const p = e && byEntity.get(e); if (p) showInfo(p, T); else document.getElementById('info').hidden = true; });
   document.getElementById('close').addEventListener('click', () => { viewer.selectedEntity = undefined; });
   viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(60, 35, 2.2e7) });
 }
